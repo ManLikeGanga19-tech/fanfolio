@@ -1,0 +1,104 @@
+/* FanFolio — generated from tokens.json */
+:root, [data-theme="dark"] {
+  --bg: #0b0b0f; /* Page background behind everything. Dark is the default theme for the fan app. */
+  --surface: #15151c; /* Cards, sheets, post containers, Filament panels. */
+  --surface-raised: #1e1e28; /* Hovered rows, inputs, chips, nested cards on surface. */
+  --border: #2e2e3a; /* Hairlines and dividers. Never used to carry meaning on its own. */
+  --border-strong: #6b6978; /* Input and control borders (meets 3:1 against surface). */
+  --ink: #f5f3ef; /* Primary text and icons on bg, surface and surface-raised. */
+  --ink-muted: #a8a6b3; /* Secondary text: timestamps, captions, helper text. 4.5:1 on surface in both themes. */
+  --brand: #e8a33d; /* FanFolio amber. Primary buttons, money (credits, earnings), active nav, links. One brand action per view. */
+  --brand-hover: #f5b85a; /* Hover and pressed state of brand fills. */
+  --on-brand: #1a1206; /* Text and icons placed on a brand fill. */
+  --focus: #8ab4ff; /* 2px focus ring on every interactive element. Blue so it never reads as a brand action. */
+  --success: #34c47c; /* Confirmed payments, approved KYC, sent payouts. */
+  --warning: #f5d06b; /* Pending states: 7-day hold, under review, past-due subscription. */
+  --danger: #f0525b; /* Errors, removals, bans, destructive actions. Also the 18+ badge outline. */
+  --overlay: rgba(0, 0, 0, 0.72); /* Scrim behind sheets and dialogs; tint over blurred locked media. */
+}
+[data-theme="light"] {
+  --bg: #faf8f5;
+  --surface: #ffffff;
+  --surface-raised: #f3f0eb;
+  --border: #ddd8cf;
+  --border-strong: #8c8794;
+  --ink: #16141a;
+  --ink-muted: #5e5a66;
+  --brand: #9a5a06;
+  --brand-hover: #7e4904;
+  --on-brand: #ffffff;
+  --focus: #1f5fd1;
+  --success: #157a47;
+  --warning: #7a5600;
+  --danger: #c62f3a;
+  --overlay: rgba(22, 20, 26, 0.56);
+}
+:root {
+  --space-1: 4px; /* Icon-to-label gaps, chip padding. */
+  --space-2: 8px; /* Gaps inside a control group; tight lists. */
+  --space-4: 16px; /* Card padding on mobile; default gap between blocks. */
+  --space-6: 24px; /* Card padding on desktop; section gaps. */
+  --space-8: 32px; /* Page gutters on desktop; gaps between page sections. */
+  --radius-sm: 6px; /* Chips, badges, small inputs. */
+  --radius-md: 10px; /* Buttons, inputs, list rows. */
+  --radius-lg: 16px; /* Cards, media, bottom sheets. */
+  --radius-pill: 999px; /* Balance chip, avatars, filter pills. */
+  --font-display: Sora, system-ui, sans-serif;
+  --font-sans: Inter, system-ui, sans-serif;
+  --text-display: 700 48px/52px var(--font-display);
+  --text-h1: 700 32px/40px var(--font-display);
+  --text-h2: 600 24px/32px var(--font-display);
+  --text-h3: 600 18px/26px var(--font-display);
+  --text-body: 400 15px/22px var(--font-sans);
+  --text-small: 400 13px/18px var(--font-sans);
+  --text-label: 600 12px/16px var(--font-sans);
+}
+.display {
+  font-family: var(--font-display);
+  font-size: 48px;
+  line-height: 52px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+.h1 {
+  font-family: var(--font-display);
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+.h2 {
+  font-family: var(--font-display);
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.h3 {
+  font-family: var(--font-display);
+  font-size: 18px;
+  line-height: 26px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.body {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.small {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+.label {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 600;
+  letter-spacing: 0;
+}

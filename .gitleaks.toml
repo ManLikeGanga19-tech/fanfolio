@@ -1,0 +1,17 @@
+title = "FanFolio gitleaks config"
+
+[extend]
+useDefault = true
+
+# Local-only Docker and CI credentials are deliberately low-value and documented as such.
+[allowlist]
+description = "Local and CI throwaway credentials"
+regexes = [
+  '''fanfolio-local-only''',
+  '''fanfolio-ci-only''',
+  '''password-for-tests-only''',
+  '''test-secret-not-real''',
+]
+paths = [
+  '''docs/design-system/design-system-export\.zip''',
+]

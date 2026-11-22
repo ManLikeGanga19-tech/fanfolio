@@ -1,0 +1,118 @@
+# Local stack. One command: docker compose up
+# App: http://localhost:8088   Mail: http://localhost:8025   MinIO console: http://localhost:9001
+
+x-app: &app
+  build:
+    context: .
+    dockerfile: docker/php/Dockerfile
+    target: dev
+  image: fanfolio-app:dev
+  volumes:
+    - .:/var/www/html
+  env_file:
+    - path: .env
+      required: false
+  environment:
+    DB_HOST: postgres
+    DB_READ_HOSTS: postgres
+    REDIS_HOST: redis
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+
+services:
+  app:
+    <<: *app
+    ports:
+      - "${FORWARD_APP_PORT:-8088}:8000"
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(@file_get_contents('http://127.0.0.1:8000/up') === false ? 1 : 0);"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 120s
+
+  horizon:
+    <<: *app
+    command: ["php", "artisan", "horizon"]
+    environment:
+      DB_HOST: postgres
+      DB_READ_HOSTS: postgres
+      REDIS_HOST: redis
+      FANFOLIO_BOOTSTRAP: "0"
+    depends_on:
+      app:
+        condition: service_healthy
+
+  scheduler:
+    <<: *app
+    command: ["php", "artisan", "schedule:work"]
+    environment:
+      DB_HOST: postgres
+      DB_READ_HOSTS: postgres
+      REDIS_HOST: redis
+      FANFOLIO_BOOTSTRAP: "0"
+    depends_on:
+      app:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: fanfolio
+      POSTGRES_USER: fanfolio
+      POSTGRES_PASSWORD: fanfolio-local-only
+    ports:
+      - "${FORWARD_DB_PORT:-15432}:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fanfolio -d fanfolio"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "${FORWARD_REDIS_PORT:-16379}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  meilisearch:
+    image: getmeili/meilisearch:v1.15
+    environment:
+      MEILI_ENV: development
+      MEILI_NO_ANALYTICS: "true"
+    ports:
+      - "${FORWARD_MEILI_PORT:-7700}:7700"
+    volumes:
+      - meilisearch:/meili_data
+
+  minio:
+    image: minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: fanfolio
+      MINIO_ROOT_PASSWORD: fanfolio-local-only
+    ports:
+      - "${FORWARD_MINIO_PORT:-9000}:9000"
+      - "${FORWARD_MINIO_CONSOLE_PORT:-9001}:9001"
+    volumes:
+      - minio:/data
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "${FORWARD_MAILPIT_PORT:-8025}:8025"
+
+volumes:
+  postgres:
+  meilisearch:
+  minio:

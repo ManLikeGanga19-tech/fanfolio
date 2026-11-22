@@ -1,0 +1,18 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    level: max
+    paths:
+        - app
+        - bootstrap/app.php
+        - bootstrap/providers.php
+        - config/fanfolio.php
+        - database
+        - routes
+        - tests/Architecture/Support
+    excludePaths:
+        - app/Modules/*/Tests/*
+    tmpDir: storage/framework/cache/phpstan
+    checkMissingCallableSignature: true
+    treatPhpDocTypesAsCertain: false

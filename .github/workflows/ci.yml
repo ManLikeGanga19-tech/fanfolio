@@ -1,0 +1,146 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  PHP_VERSION: "8.4"
+  PHP_EXTENSIONS: pdo_pgsql, redis, intl, bcmath, zip, sodium, pcntl, posix, gd, exif
+
+jobs:
+  static:
+    name: Lint and static analysis
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: ${{ env.PHP_EXTENSIONS }}
+          coverage: none
+      - uses: ramsey/composer-install@v3
+      - name: Pint
+        run: vendor/bin/pint --test
+      - name: Rector (dry run)
+        run: vendor/bin/rector process --dry-run --no-progress-bar
+      - name: Larastan (level max)
+        run: vendor/bin/phpstan analyse --memory-limit=2G --no-progress
+
+  tests:
+    name: Tests (Pest, parallel)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: fanfolio_test
+          POSTGRES_USER: fanfolio
+          POSTGRES_PASSWORD: fanfolio-ci-only
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U fanfolio" --health-interval 5s --health-timeout 3s --health-retries 20
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 5s --health-timeout 3s --health-retries 20
+    env:
+      DB_HOST: 127.0.0.1
+      DB_READ_HOSTS: 127.0.0.1
+      DB_USERNAME: fanfolio
+      DB_PASSWORD: fanfolio-ci-only
+      REDIS_HOST: 127.0.0.1
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: ${{ env.PHP_EXTENSIONS }}
+          coverage: pcov
+      - uses: ramsey/composer-install@v3
+      - name: Prepare environment
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+          PGPASSWORD=fanfolio-ci-only psql -h 127.0.0.1 -U fanfolio -d template1 -c 'CREATE EXTENSION IF NOT EXISTS citext;'
+          PGPASSWORD=fanfolio-ci-only psql -h 127.0.0.1 -U fanfolio -d fanfolio_test -c 'CREATE EXTENSION IF NOT EXISTS citext;'
+      - name: Migrations are reversible (migrate, rollback, migrate)
+        env:
+          DB_DATABASE: fanfolio_test
+        run: |
+          php artisan migrate --force
+          php artisan migrate:rollback --force
+          php artisan migrate --force
+          php artisan migrate:fresh --force
+      - name: Architecture suite
+        run: vendor/bin/pest --testsuite=Architecture
+      - name: Full suite (parallel)
+        run: vendor/bin/pest --parallel
+
+  security:
+    name: Secrets, dependencies, SAST
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: gitleaks
+        run: |
+          docker run --rm -v "$PWD:/repo" zricethezav/gitleaks:latest git /repo --config /repo/.gitleaks.toml --redact --exit-code 1
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ env.PHP_VERSION }}
+          extensions: ${{ env.PHP_EXTENSIONS }}
+          coverage: none
+      - uses: ramsey/composer-install@v3
+      - name: composer audit
+        run: composer audit --abandoned=report
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: npm audit (high and critical)
+        run: |
+          npm ci --ignore-scripts
+          npm audit --audit-level=high
+      - name: Semgrep SAST (fail on high)
+        run: |
+          docker run --rm -v "$PWD:/src" semgrep/semgrep:latest \
+            semgrep scan --config p/php --config p/secrets --config p/security-audit \
+            --severity ERROR --error --metrics off --exclude vendor --exclude node_modules /src
+
+  terraform:
+    name: Terraform fmt and validate
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra/terraform
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+      - run: terraform fmt -check -recursive
+      - run: terraform init -backend=false
+      - run: terraform validate
+
+  docker:
+    name: Production image builds
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/php/Dockerfile
+          target: prod
+          push: false
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
