@@ -7,6 +7,7 @@ namespace App\Modules\Identity\Http\Controllers;
 use App\Modules\Audit\Contracts\AuditLog;
 use App\Modules\Identity\Actions\CompleteLogin;
 use App\Modules\Identity\Actions\LoginWithPassword;
+use App\Modules\Identity\Actions\PendingLogin;
 use App\Modules\Identity\Exceptions\IdentityException;
 use App\Modules\Identity\Models\User;
 use Illuminate\Contracts\View\View;
@@ -17,6 +18,8 @@ use Illuminate\Validation\ValidationException;
 
 final class LoginController
 {
+    use SignsIn;
+
     public function show(): View
     {
         return view('identity::auth.login');
@@ -35,9 +38,14 @@ final class LoginController
             throw ValidationException::withMessages([$e->field => $e->getMessage()]);
         }
 
-        Auth::login($user);
-        $request->session()->regenerate();
-        $complete->handle($user, 'password');
+        // A password alone never signs in an account that has a second factor.
+        if ($user->mfa_enabled) {
+            PendingLogin::start($request->session(), $user);
+
+            return redirect()->route('login.mfa');
+        }
+
+        $this->signIn($request, $user, 'password', $complete);
 
         return redirect()->intended(route('account'));
     }

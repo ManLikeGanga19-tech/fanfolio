@@ -48,6 +48,11 @@ return [
     'identity' => [
         'max_active_devices' => 3,
         'password_min_length' => 12,
+        // SEC-04: a sensitive change (payout method, new factor, consent) needs a factor confirmed this recently.
+        'step_up_minutes' => 10,
+        // Time allowed between the password and the second factor at login.
+        'mfa_challenge_minutes' => 5,
+        'recovery_codes' => 10,
         // Phone one-time codes: screen "Verify phone (OTP)".
         'phone_code' => [
             'digits' => 6,

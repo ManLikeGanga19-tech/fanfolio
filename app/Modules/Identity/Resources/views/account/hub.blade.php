@@ -11,6 +11,9 @@
         </x-ui.card>
 
         <nav aria-label="Account" class="flex flex-col divide-y divide-border rounded-lg bg-surface">
+            <a href="{{ route('account.security') }}" class="flex min-h-11 items-center justify-between px-4 py-3 hover:bg-surface-raised">
+                <span>Devices &amp; security</span>
+            </a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="flex min-h-11 w-full items-center px-4 py-3 text-left text-danger hover:bg-surface-raised">Log out</button>

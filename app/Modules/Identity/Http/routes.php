@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 use App\Modules\Identity\Http\Controllers\AccountController;
 use App\Modules\Identity\Http\Controllers\LoginController;
+use App\Modules\Identity\Http\Controllers\MfaChallengeController;
+use App\Modules\Identity\Http\Controllers\PasskeyLoginController;
 use App\Modules\Identity\Http\Controllers\PhoneController;
+use App\Modules\Identity\Http\Controllers\SecurityController;
 use App\Modules\Identity\Http\Controllers\SignUpController;
+use App\Modules\Identity\Http\Controllers\StepUpController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function (): void {
@@ -16,6 +20,12 @@ Route::middleware('guest')->group(function (): void {
 
     Route::get('/login', [LoginController::class, 'show'])->name('login');
     Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:login');
+
+    Route::post('/login/passkey/options', [PasskeyLoginController::class, 'options'])->middleware('throttle:passkey')->name('login.passkey.options');
+    Route::post('/login/passkey', [PasskeyLoginController::class, 'store'])->middleware('throttle:passkey')->name('login.passkey');
+
+    Route::get('/login/mfa', [MfaChallengeController::class, 'show'])->name('login.mfa');
+    Route::post('/login/mfa', [MfaChallengeController::class, 'store'])->middleware('throttle:mfa');
 });
 
 Route::middleware('auth')->group(function (): void {
@@ -25,4 +35,27 @@ Route::middleware('auth')->group(function (): void {
 
     Route::get('/account', [AccountController::class, 'show'])->name('account');
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
+
+    // Step-up: "Confirm it's you".
+    Route::get('/account/confirm', [StepUpController::class, 'show'])->name('account.confirm');
+    Route::post('/account/confirm', [StepUpController::class, 'store'])->middleware('throttle:mfa');
+    Route::post('/account/confirm/passkey/options', [StepUpController::class, 'passkeyOptions'])->middleware('throttle:passkey')->name('account.confirm.passkey.options');
+    Route::post('/account/confirm/passkey', [StepUpController::class, 'passkey'])->middleware('throttle:passkey')->name('account.confirm.passkey');
+
+    // Devices & security: sign-in methods. Changes need a recent step-up.
+    Route::get('/account/security', [SecurityController::class, 'show'])->name('account.security');
+    Route::get('/account/security/recovery-codes', [SecurityController::class, 'showRecoveryCodes'])->name('account.security.recovery-codes');
+
+    Route::middleware('step-up')->group(function (): void {
+        Route::post('/account/passkeys/options', [SecurityController::class, 'passkeyOptions'])->middleware('throttle:passkey')->name('account.passkeys.options');
+        Route::post('/account/passkeys', [SecurityController::class, 'storePasskey'])->middleware('throttle:passkey')->name('account.passkeys.store');
+        Route::delete('/account/passkeys/{credential}', [SecurityController::class, 'destroyPasskey'])->name('account.passkeys.destroy');
+
+        Route::post('/account/security/totp', [SecurityController::class, 'startTotp'])->name('account.totp.start');
+        Route::get('/account/security/totp', [SecurityController::class, 'showTotp'])->name('account.totp.show');
+        Route::post('/account/security/totp/confirm', [SecurityController::class, 'confirmTotp'])->middleware('throttle:mfa')->name('account.totp.confirm');
+        Route::delete('/account/security/totp', [SecurityController::class, 'destroyTotp'])->name('account.totp.destroy');
+
+        Route::post('/account/security/recovery-codes', [SecurityController::class, 'regenerateRecoveryCodes'])->name('account.security.recovery-codes.regenerate');
+    });
 });
