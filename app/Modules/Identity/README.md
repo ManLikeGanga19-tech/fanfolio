@@ -19,6 +19,8 @@ Other modules must not read or write these tables or use this module's models; a
 | POST | `/signup/phone/verify` | Check the code (5 attempts, 10 minutes) | 10 per minute per account |
 | GET, POST | `/login` | Email and password | 5 per minute per email and address, 30 per address |
 | POST | `/logout` | Sign out | |
+| GET, POST | `/signup/age` | Sign up step 3 (optional): 18+ check with ID or selfie age estimate | 5 starts per hour per account |
+| GET | `/signup/age/return?ref=` | Back from the provider; the result is fetched from the provider, never read from the browser | |
 | GET | `/account` | Account hub | |
 | POST | `/login/passkey/options`, `/login/passkey` | Log in with passkey (user verification required) | 20 per minute per address |
 | GET, POST | `/login/mfa` | Second factor after a password: authenticator or recovery code | 5 per minute per account, 20 per address |
@@ -37,6 +39,13 @@ Other modules must not read or write these tables or use this module's models; a
 - `step-up` route middleware (`EnsureRecentStepUp`) needs a factor confirmed in the last 10 minutes; signing in counts. Use it for payouts, payout-method changes (M3) and consent (M7).
 - TOTP codes are single use (last accepted time step is stored). Recovery codes: 10, single use, keyed hashes, shown once.
 - Passkey browser code: `resources/js/passkeys.js` (no inline script, CSP-safe). Tests use `Tests\Support\VirtualAuthenticator` for full ceremonies.
+
+## Age verification
+
+- `AgeVerifications::start()` opens a provider session (`IdentityVerifier`, purpose `fan_age`, method document or selfie age estimate) and records a pending row.
+- `complete()` loads the row for the signed-in user only, asks the provider for the result and sets `users.age_verified_at` on a pass (`AgeVerified` after commit). Fail, under-18 and suspected fraud are recorded with a reason; review stays pending.
+- `age_verifications` keeps the provider reference, method, status, reason and date only (rule 10): no images, document data or date of birth.
+- "Not now, show safe content only" leaves the account unverified; adult content stays hidden.
 
 ## Devices (SEC-05, D-03)
 

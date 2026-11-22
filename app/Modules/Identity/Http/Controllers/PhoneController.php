@@ -83,7 +83,8 @@ final class PhoneController
             throw ValidationException::withMessages([$e->field => $e->getMessage()]);
         }
 
-        return redirect()->route('account');
+        // On to step 3, the optional 18+ check.
+        return redirect()->route('signup.age');
     }
 
     private function user(Request $request): User

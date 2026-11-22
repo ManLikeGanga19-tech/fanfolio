@@ -10,5 +10,6 @@ final readonly class VerificationRequest
         public string $subjectId,
         public VerificationPurpose $purpose,
         public string $returnUrl,
+        public VerificationMethod $method = VerificationMethod::Document,
     ) {}
 }
