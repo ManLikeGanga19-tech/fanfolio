@@ -28,17 +28,57 @@
         </exclude>
     </source>
     <php>
-        <env name="APP_ENV" value="testing"/>
-        <env name="APP_MAINTENANCE_DRIVER" value="file"/>
-        <env name="HASH_DRIVER" value="argon2id"/>
-        <env name="CACHE_STORE" value="array"/>
-        <env name="DB_CONNECTION" value="pgsql"/>
-        <env name="DB_DATABASE" value="fanfolio_test"/>
-        <env name="MAIL_MAILER" value="array"/>
-        <env name="QUEUE_CONNECTION" value="sync"/>
-        <env name="SESSION_DRIVER" value="array"/>
-        <env name="BROADCAST_CONNECTION" value="null"/>
-        <env name="PULSE_ENABLED" value="false"/>
-        <env name="TELESCOPE_ENABLED" value="false"/>
+        <!-- Docker and CI set real environment variables; force wins over them in both $_ENV and $_SERVER. -->
+        <env name="APP_ENV" value="testing" force="true"/>
+        <server name="APP_ENV" value="testing" force="true"/>
+        <env name="APP_MAINTENANCE_DRIVER" value="file" force="true"/>
+        <server name="APP_MAINTENANCE_DRIVER" value="file" force="true"/>
+        <env name="HASH_DRIVER" value="argon2id" force="true"/>
+        <server name="HASH_DRIVER" value="argon2id" force="true"/>
+        <env name="CACHE_STORE" value="array" force="true"/>
+        <server name="CACHE_STORE" value="array" force="true"/>
+        <env name="DB_CONNECTION" value="pgsql" force="true"/>
+        <server name="DB_CONNECTION" value="pgsql" force="true"/>
+        <env name="DB_DATABASE" value="fanfolio_test" force="true"/>
+        <server name="DB_DATABASE" value="fanfolio_test" force="true"/>
+        <env name="MAIL_MAILER" value="array" force="true"/>
+        <server name="MAIL_MAILER" value="array" force="true"/>
+        <env name="QUEUE_CONNECTION" value="sync" force="true"/>
+        <server name="QUEUE_CONNECTION" value="sync" force="true"/>
+        <env name="SESSION_DRIVER" value="array" force="true"/>
+        <server name="SESSION_DRIVER" value="array" force="true"/>
+        <env name="BROADCAST_CONNECTION" value="null" force="true"/>
+        <server name="BROADCAST_CONNECTION" value="null" force="true"/>
+        <env name="PULSE_ENABLED" value="false" force="true"/>
+        <server name="PULSE_ENABLED" value="false" force="true"/>
+        <env name="TELESCOPE_ENABLED" value="false" force="true"/>
+        <server name="TELESCOPE_ENABLED" value="false" force="true"/>
+        <!-- Rule: tests never call a real payment, KYC or DRM service. -->
+        <env name="FANFOLIO_TOPUP_DRIVER" value="fake" force="true"/>
+        <server name="FANFOLIO_TOPUP_DRIVER" value="fake" force="true"/>
+        <env name="FANFOLIO_PAYOUT_BANK_DRIVER" value="fake" force="true"/>
+        <server name="FANFOLIO_PAYOUT_BANK_DRIVER" value="fake" force="true"/>
+        <env name="FANFOLIO_PAYOUT_USDT_DRIVER" value="fake" force="true"/>
+        <server name="FANFOLIO_PAYOUT_USDT_DRIVER" value="fake" force="true"/>
+        <env name="FANFOLIO_PAYOUT_PAXUM_DRIVER" value="fake" force="true"/>
+        <server name="FANFOLIO_PAYOUT_PAXUM_DRIVER" value="fake" force="true"/>
+        <env name="FANFOLIO_FX_DRIVER" value="fake" force="true"/>
+        <server name="FANFOLIO_FX_DRIVER" value="fake" force="true"/>
+        <env name="FANFOLIO_KYC_DRIVER" value="fake" force="true"/>
+        <server name="FANFOLIO_KYC_DRIVER" value="fake" force="true"/>
+        <env name="FANFOLIO_SMS_DRIVER" value="fake" force="true"/>
+        <server name="FANFOLIO_SMS_DRIVER" value="fake" force="true"/>
+        <env name="FANFOLIO_BREACHED_PASSWORDS_DRIVER" value="fake" force="true"/>
+        <server name="FANFOLIO_BREACHED_PASSWORDS_DRIVER" value="fake" force="true"/>
+        <env name="FANFOLIO_DRM_DRIVER" value="fake" force="true"/>
+        <server name="FANFOLIO_DRM_DRIVER" value="fake" force="true"/>
+        <env name="FANFOLIO_MALWARE_DRIVER" value="fake" force="true"/>
+        <server name="FANFOLIO_MALWARE_DRIVER" value="fake" force="true"/>
+        <env name="FANFOLIO_ABUSE_HASH_DRIVER" value="fake" force="true"/>
+        <server name="FANFOLIO_ABUSE_HASH_DRIVER" value="fake" force="true"/>
+        <env name="FANFOLIO_CLASSIFIER_DRIVER" value="fake" force="true"/>
+        <server name="FANFOLIO_CLASSIFIER_DRIVER" value="fake" force="true"/>
+        <env name="FANFOLIO_LEAK_CRAWLER_DRIVER" value="fake" force="true"/>
+        <server name="FANFOLIO_LEAK_CRAWLER_DRIVER" value="fake" force="true"/>
     </php>
 </phpunit>
