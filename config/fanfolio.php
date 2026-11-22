@@ -51,6 +51,11 @@ return [
         'username_change_days' => 30,
     ],
 
+    // SEC-01: two years, the minimum for the HSTS preload list.
+    'security' => [
+        'hsts_max_age' => 63072000,
+    ],
+
     'media' => [
         'signed_url_ttl_seconds' => 60,
         'upload_url_ttl_minutes' => 15,

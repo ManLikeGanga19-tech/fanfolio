@@ -35,6 +35,20 @@ jobs:
       - name: Larastan (level max)
         run: vendor/bin/phpstan analyse --memory-limit=2G --no-progress
 
+  frontend:
+    name: Front-end build and tokens
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: tokens.css matches docs/design-system/tokens.json
+        run: npm run tokens -- --check
+      - run: npm run build
+
   tests:
     name: Tests (Pest, parallel)
     runs-on: ubuntu-latest
