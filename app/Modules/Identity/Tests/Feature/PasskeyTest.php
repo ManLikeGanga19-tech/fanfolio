@@ -133,7 +133,7 @@ it('cannot remove someone else\'s passkey (SEC-06)', function (): void {
     registerPasskey($owner, $authenticator);
 
     $intruder = User::factory()->create();
-    $this->actingAs($intruder);
+    actAs($intruder);
     RequireStepUp::confirm(session()->driver());
 
     $this->delete('/account/passkeys/'.$authenticator->id())->assertSessionHasErrors('passkey');

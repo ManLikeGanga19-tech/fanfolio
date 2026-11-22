@@ -65,7 +65,9 @@ final class MfaChallengeController
             ]);
         }
 
-        $this->signIn($request, $user, $code !== '' ? 'password+totp' : 'password+recovery_code', $complete);
+        if (! $this->signIn($request, $user, $code !== '' ? 'password+totp' : 'password+recovery_code', $complete)) {
+            return redirect()->route('login.devices');
+        }
 
         return redirect()->intended(route('account'));
     }

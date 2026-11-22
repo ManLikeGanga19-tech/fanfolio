@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 // Shared helpers for Identity feature tests (loaded by tests/Pest.php).
 
+use App\Modules\Identity\Actions\Devices;
 use App\Modules\Identity\Actions\RequireStepUp;
 use App\Modules\Identity\Actions\Totp;
 use App\Modules\Identity\Enums\Role;
@@ -18,7 +19,7 @@ use Tests\Support\VirtualAuthenticator;
  */
 function registerPasskey(User $user, VirtualAuthenticator $authenticator): void
 {
-    test()->actingAs($user);
+    actAs($user);
     RequireStepUp::confirm(session()->driver());
 
     $options = test()->postJson('/account/passkeys/options')->assertOk()->json();
@@ -54,7 +55,7 @@ function totpCode(User $user, int $offset = 0): string
  */
 function enableTotp(User $user): array
 {
-    test()->actingAs($user);
+    actAs($user);
     RequireStepUp::confirm(session()->driver());
 
     test()->post('/account/security/totp')->assertRedirect(route('account.totp.show'));
@@ -77,4 +78,14 @@ function userWithTotp(Role $role = Role::Fan): array
     session()->flush();
 
     return [$user, $codes];
+}
+
+/**
+ * Signs in as $user in the test session, as a fresh sign-in would: the previous
+ * account's device binding is dropped, so the device middleware registers this one.
+ */
+function actAs(User $user): void
+{
+    session()->forget(Devices::SESSION_KEY);
+    test()->actingAs($user);
 }

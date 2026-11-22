@@ -4,18 +4,22 @@ declare(strict_types=1);
 
 namespace App\Modules\Identity\Http\Controllers;
 
+use App\Modules\Identity\Actions\Devices;
 use App\Modules\Identity\Actions\Passkeys;
 use App\Modules\Identity\Actions\RecoveryCodes;
 use App\Modules\Identity\Actions\Totp;
 use App\Modules\Identity\Exceptions\IdentityException;
-use App\Modules\Identity\Http\DeviceLabel;
 use App\Modules\Identity\Models\TotpSecret;
 use App\Modules\Identity\Models\User;
+use App\Modules\Identity\Models\UserDevice;
+use App\Modules\Identity\Support\DeviceLabel;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\ValidationException;
 use Laragear\WebAuthn\Http\Requests\AttestationRequest;
 use Laragear\WebAuthn\Http\Requests\AttestedRequest;
@@ -26,16 +30,54 @@ use Laragear\WebAuthn\Http\Requests\AttestedRequest;
  */
 final class SecurityController
 {
-    public function show(Request $request, RecoveryCodes $recoveryCodes): View
+    public function show(Request $request, RecoveryCodes $recoveryCodes, Devices $devices): View
     {
         $user = $this->user($request);
 
         return view('identity::account.security', [
             'user' => $user,
+            'devices' => $devices->active($user),
+            'currentDeviceId' => $request->session()->get(Devices::SESSION_KEY),
+            'deviceLimit' => Devices::limit(),
             'passkeys' => $user->webAuthnCredentials()->whereNull('disabled_at')->orderBy('created_at')->get(),
             'hasTotp' => $user->hasConfirmedTotp(),
             'recoveryCodesLeft' => $recoveryCodes->remaining($user),
         ]);
+    }
+
+    /**
+     * RevokeDevice: signs a device out. Signing out this device logs out here too.
+     */
+    public function destroyDevice(Request $request, Devices $devices, UserDevice $device): RedirectResponse
+    {
+        $user = $this->user($request);
+        Gate::authorize('revoke', $device);
+
+        try {
+            $devices->revoke($user, $device->id);
+        } catch (IdentityException $e) {
+            return back()->withErrors([$e->field => $e->getMessage()]);
+        }
+
+        if ($device->id === $request->session()->get(Devices::SESSION_KEY)) {
+            Auth::guard('web')->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login');
+        }
+
+        return redirect()->route('account.security')->with('status', "Signed out of {$device->label}.");
+    }
+
+    public function signOutOtherDevices(Request $request, Devices $devices): RedirectResponse
+    {
+        $current = $request->session()->get(Devices::SESSION_KEY);
+        abort_unless(is_string($current), 409);
+
+        $count = $devices->revokeOthers($this->user($request), $current);
+
+        return redirect()->route('account.security')->with('status', $count === 0 ? 'No other devices were signed in.' : 'Signed out of all other devices.');
     }
 
     public function passkeyOptions(AttestationRequest $request): Responsable

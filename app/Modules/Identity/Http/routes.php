@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Modules\Identity\Http\Controllers\AccountController;
+use App\Modules\Identity\Http\Controllers\DeviceLimitController;
 use App\Modules\Identity\Http\Controllers\LoginController;
 use App\Modules\Identity\Http\Controllers\MfaChallengeController;
 use App\Modules\Identity\Http\Controllers\PasskeyLoginController;
@@ -26,6 +27,11 @@ Route::middleware('guest')->group(function (): void {
 
     Route::get('/login/mfa', [MfaChallengeController::class, 'show'])->name('login.mfa');
     Route::post('/login/mfa', [MfaChallengeController::class, 'store'])->middleware('throttle:mfa');
+
+    // D-03: device limit reached at sign-in.
+    Route::get('/login/devices', [DeviceLimitController::class, 'show'])->name('login.devices');
+    Route::delete('/login/devices/{device}', [DeviceLimitController::class, 'destroy'])->name('login.devices.destroy');
+    Route::post('/login/devices/continue', [DeviceLimitController::class, 'continue'])->name('login.devices.continue');
 });
 
 Route::middleware('auth')->group(function (): void {
@@ -44,6 +50,8 @@ Route::middleware('auth')->group(function (): void {
 
     // Devices & security: sign-in methods. Changes need a recent step-up.
     Route::get('/account/security', [SecurityController::class, 'show'])->name('account.security');
+    Route::delete('/account/devices/{device}', [SecurityController::class, 'destroyDevice'])->name('account.security.devices.destroy');
+    Route::post('/account/devices/sign-out-others', [SecurityController::class, 'signOutOtherDevices'])->name('account.security.devices.others');
     Route::get('/account/security/recovery-codes', [SecurityController::class, 'showRecoveryCodes'])->name('account.security.recovery-codes');
 
     Route::middleware('step-up')->group(function (): void {

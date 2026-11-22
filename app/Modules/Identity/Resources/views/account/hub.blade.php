@@ -13,6 +13,7 @@
         <nav aria-label="Account" class="flex flex-col divide-y divide-border rounded-lg bg-surface">
             <a href="{{ route('account.security') }}" class="flex min-h-11 items-center justify-between px-4 py-3 hover:bg-surface-raised">
                 <span>Devices &amp; security</span>
+                <span class="text-small text-ink-muted">{{ $deviceCount }} {{ $deviceCount === 1 ? 'device' : 'devices' }}</span>
             </a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf

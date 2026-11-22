@@ -29,8 +29,10 @@ const post = async (url, body = {}) => {
     const json = await response.json().catch(() => ({}));
 
     if (!response.ok) {
-        if (json.confirm) {
-            window.location.assign(json.confirm);
+        // The server may send the person elsewhere: to confirm it is them, or to the device limit page.
+        const next = json.confirm ?? json.redirect;
+        if (next) {
+            window.location.assign(next);
         }
         throw new Error(json.message ?? 'Something went wrong. Try again.');
     }
