@@ -1,4 +1,4 @@
-"""Generate <x-icon> and <x-illustration> Blade components from the screens canvas.
+"""Generate <x-ui.icon> and <x-ui.illustration> Blade components from the screens canvas.
 
 Icons: the canvas's 24px stroke icons. Illustrations: its 120px spot drawings, with every
 hex colour replaced by a design-system token class (fill-*/stroke-*), so views hold no hex.
@@ -144,7 +144,7 @@ ill_blade = """{{-- Spot illustrations from the screens canvas (docs/screens/can
     {{ $attributes->merge(['class' => 'shrink-0']) }}>{!! $inner !!}</svg>
 """ % php_map(ills)
 
-base = os.path.join(repo, 'resources', 'views', 'components')
+base = os.path.join(repo, 'resources', 'views', 'components', 'ui')
 for fname, body in (('icon.blade.php', icon_blade), ('illustration.blade.php', ill_blade)):
     with io.open(os.path.join(base, fname), 'w', encoding='utf-8', newline='\n') as f:
         f.write(body)

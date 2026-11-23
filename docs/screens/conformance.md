@@ -2,7 +2,7 @@
 
 **Source:** the screens canvas, exported as board sources in `docs/screens/canvas/*.dc.html` (read from the owner's canvas on 24 Nov 2026; it replaces the PDF export for building). The owner's instruction: every screen resembles its board, including its icons and illustrations. Sample names, prices and numbers stay mock data and are never built in.
 
-**How:** icons are the canvas's stroke icons (1.5 px, 24 px grid) as one Blade component, `<x-icon name="…">`. Spot illustrations are the canvas's 120 px drawings as `<x-illustration name="…">`, recoloured with design-system tokens (no hex in views). Owner decisions that changed a board stay as decided (D-08 photo, D-12 email code, D-13 optional phone, D-14 phone handoff) and are noted per row.
+**How:** icons are the canvas's stroke icons (1.5 px, 24 px grid) as one Blade component, `<x-ui.icon name="…">`. Spot illustrations are the canvas's 120 px drawings as `<x-ui.illustration name="…">`, recoloured with design-system tokens (no hex in views). Owner decisions that changed a board stay as decided (D-08 photo, D-12 email code, D-13 optional phone, D-14 phone handoff) and are noted per row.
 
 Status: **to do**, **done**, or **later** (the screen arrives with its milestone and is built to the board from the start).
 
