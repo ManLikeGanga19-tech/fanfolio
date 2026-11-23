@@ -1,6 +1,6 @@
 {{-- Screen: Verify phone (OTP), step 2 of 3. --}}
-<x-layouts.app title="Verify your phone">
-    <div class="mx-auto flex max-w-md flex-col gap-6 py-8">
+<x-layouts.auth title="Verify your phone">
+    <div class="flex flex-col gap-8">
         <div class="flex flex-col gap-2">
             <p class="text-label text-ink-muted">STEP 2 OF 3 · PHONE</p>
             <h1 class="text-h1">Verify your phone</h1>
@@ -38,4 +38,4 @@
             </div>
         @endif
     </div>
-</x-layouts.app>
+</x-layouts.auth>

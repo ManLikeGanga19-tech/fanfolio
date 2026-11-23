@@ -1,6 +1,6 @@
 {{-- Second step of a password login for accounts with MFA. --}}
-<x-layouts.app title="Confirm it's you">
-    <div class="mx-auto flex max-w-md flex-col gap-6 py-8">
+<x-layouts.auth title="Confirm it's you">
+    <div class="flex flex-col gap-8">
         <div class="flex flex-col gap-2">
             <h1 class="text-h1">Confirm it's you</h1>
             <p class="text-ink-muted">Your account has a second sign-in method.</p>
@@ -32,4 +32,4 @@
             </form>
         </details>
     </div>
-</x-layouts.app>
+</x-layouts.auth>

@@ -1,6 +1,6 @@
 {{-- Screen: Log in (passkey first, email fallback). --}}
-<x-layouts.app title="Log in">
-    <div class="mx-auto flex max-w-md flex-col gap-6 py-8">
+<x-layouts.auth title="Log in">
+    <div class="flex flex-col gap-8">
         <div class="flex flex-col gap-2">
             <h1 class="text-h1">Welcome back</h1>
             <p class="text-ink-muted">Log in with the passkey on this phone. No password needed.</p>
@@ -31,4 +31,4 @@
             New to FanFolio? <a class="text-brand underline" href="{{ route('signup') }}">Create an account</a>
         </p>
     </div>
-</x-layouts.app>
+</x-layouts.auth>

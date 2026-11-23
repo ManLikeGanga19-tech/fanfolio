@@ -1,6 +1,6 @@
 {{-- Choose a new password (from the reset email). Not a canvas board; built in the log in screen's style. --}}
-<x-layouts.app title="Choose a new password">
-    <div class="mx-auto flex max-w-md flex-col gap-6 py-8">
+<x-layouts.auth title="Choose a new password">
+    <div class="flex flex-col gap-8">
         <div class="flex flex-col gap-2">
             <h1 class="text-h1">Choose a new password</h1>
             <p class="text-ink-muted">This signs you out on every device. If your account has a passkey or authenticator app, you still need it to log in.</p>
@@ -15,4 +15,4 @@
             <x-ui.button variant="brand" type="submit">Change password</x-ui.button>
         </form>
     </div>
-</x-layouts.app>
+</x-layouts.auth>
