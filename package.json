@@ -12,6 +12,7 @@
         "@axe-core/playwright": "^4.14.0",
         "@playwright/test": "^1.65.1",
         "@tailwindcss/vite": "^4.0.0",
+        "chokidar": "^4.0.3",
         "laravel-vite-plugin": "^1.2.0",
         "tailwindcss": "^4.0.0",
         "vite": "^6.0.11"
