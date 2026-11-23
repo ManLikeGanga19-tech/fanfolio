@@ -213,7 +213,7 @@ it('shows Review & submit with the masked details and the D-02 wording', functio
         ->assertOk()
         ->assertSee('Check everything')
         ->assertSee('Test Creator · @test.creator')
-        ->assertSee('····0000 · Captured', false)
+        ->assertSeeInOrder(['National ID ····0000', 'Captured'])
         ->assertSee('Test Bank ····2222')
         ->assertSee('and the 20% platform fee.', false)
         ->assertSee('Everyone in my content is 18+ and will verify their identity and consent to each post before it goes live.')

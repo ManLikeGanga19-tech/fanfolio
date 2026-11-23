@@ -1,4 +1,4 @@
-{{-- Screen: Creator onboarding 5 · Payout method (step 4 of 4). Needs a recent step-up (SEC-04).
+{{-- Screen: Creator onboarding 5 · Payout method, step 4 of 4 (canvas board Main · 5). Needs a recent step-up (SEC-04).
      Without JavaScript every rail's fields show; with :has() support only the chosen rail's do. --}}
 @php
     $chosen = old('rail', $current?->rail->value ?? 'bank');
@@ -10,11 +10,10 @@
     $railError = $errors->first('rail');
 @endphp
 <x-layouts.auth title="Payout method">
-    <div class="flex flex-col gap-8">
-        <div class="flex flex-col gap-2">
-            <p class="text-label text-ink-muted">STEP 4 OF 4 · GET PAID</p>
-            <h1 class="text-h1">Where should we send your money?</h1>
-        </div>
+    <div class="flex flex-col gap-6">
+        <a href="{{ route('creator.kyc') }}" class="-ml-2 flex size-11 items-center justify-center text-ink" aria-label="Back"><x-ui.icon name="arrow-left" :size="24" /></a>
+        <x-ui.progress-steps :total="4" :current="4" label="GET PAID" />
+        <h1 class="text-h2">Where should we send your money?</h1>
 
         @foreach (['kyc', 'payout'] as $field)
             @error($field)
@@ -41,10 +40,10 @@
                 @endif
 
                 @foreach ($rails as $value => [$name, $timing])
-                    <div class="group flex flex-col gap-4 rounded-md border border-border-strong bg-surface p-4 has-checked:border-brand">
+                    <div class="group flex flex-col gap-4 rounded-md border border-border bg-surface p-3.5 has-checked:border-2 has-checked:border-brand">
                         <label class="flex min-h-11 items-start gap-3">
                             <input type="radio" name="rail" value="{{ $value }}" class="mt-1 size-5 accent-brand" @checked($chosen === $value)>
-                            <span class="flex flex-col gap-1">
+                            <span class="flex flex-col">
                                 <span class="font-semibold">{{ $name }}</span>
                                 <span class="text-small text-ink-muted">{{ $timing }}</span>
                             </span>

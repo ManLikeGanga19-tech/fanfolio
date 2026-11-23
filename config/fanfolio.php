@@ -14,6 +14,8 @@ return [
         'name' => 'FanFolio',
         'domain' => env('FANFOLIO_DOMAIN', '[domain]'),
         'privacy_email' => env('FANFOLIO_PRIVACY_EMAIL', 'privacy@[domain]'),
+        // "Contact support" on the canvas. Placeholder until the owner sets the domain and inbox.
+        'support_email' => env('FANFOLIO_SUPPORT_EMAIL', 'support@[domain]'),
         'statement_descriptor' => 'FF*DIGITAL',
     ],
 

@@ -87,7 +87,7 @@ it('goes from profile basics to the ID step', function (): void {
     $this->get('/creator/kyc')
         ->assertOk()
         ->assertSee('STEP 2 OF 4 · IDENTITY DOCUMENT')
-        ->assertSee("STEP 3 OF 4 · PROVE IT'S YOU", false)
+        ->assertSee("STEP 3 OF 4 · PROVE IT'S YOU")
         ->assertSee('We match your face to your ID, then delete the video. Fans never see it.')
         ->assertSee('Start ID check');
 });
