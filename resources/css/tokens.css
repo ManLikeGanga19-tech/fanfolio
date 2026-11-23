@@ -1,0 +1,86 @@
+/* Generated from docs/design-system/tokens.json by scripts/build-tokens.mjs. Do not edit. */
+
+:root,
+[data-theme="dark"] {
+    --ff-bg: #0b0b0f;
+    --ff-surface: #15151c;
+    --ff-surface-raised: #1e1e28;
+    --ff-border: #2e2e3a;
+    --ff-border-strong: #6b6978;
+    --ff-ink: #f5f3ef;
+    --ff-ink-muted: #a8a6b3;
+    --ff-brand: #e8a33d;
+    --ff-brand-hover: #f5b85a;
+    --ff-on-brand: #1a1206;
+    --ff-focus: #8ab4ff;
+    --ff-success: #34c47c;
+    --ff-warning: #f5d06b;
+    --ff-danger: #f0525b;
+    --ff-overlay: rgba(0, 0, 0, 0.72);
+}
+
+[data-theme="light"] {
+    --ff-bg: #faf8f5;
+    --ff-surface: #ffffff;
+    --ff-surface-raised: #f3f0eb;
+    --ff-border: #ddd8cf;
+    --ff-border-strong: #8c8794;
+    --ff-ink: #16141a;
+    --ff-ink-muted: #5e5a66;
+    --ff-brand: #9a5a06;
+    --ff-brand-hover: #7e4904;
+    --ff-on-brand: #ffffff;
+    --ff-focus: #1f5fd1;
+    --ff-success: #157a47;
+    --ff-warning: #7a5600;
+    --ff-danger: #c62f3a;
+    --ff-overlay: rgba(22, 20, 26, 0.56);
+}
+
+@theme inline {
+    --color-bg: var(--ff-bg);
+    --color-surface: var(--ff-surface);
+    --color-surface-raised: var(--ff-surface-raised);
+    --color-border: var(--ff-border);
+    --color-border-strong: var(--ff-border-strong);
+    --color-ink: var(--ff-ink);
+    --color-ink-muted: var(--ff-ink-muted);
+    --color-brand: var(--ff-brand);
+    --color-brand-hover: var(--ff-brand-hover);
+    --color-on-brand: var(--ff-on-brand);
+    --color-focus: var(--ff-focus);
+    --color-success: var(--ff-success);
+    --color-warning: var(--ff-warning);
+    --color-danger: var(--ff-danger);
+    --color-overlay: var(--ff-overlay);
+}
+
+@theme {
+    --font-display: Sora, system-ui, sans-serif;
+    --font-sans: Inter, system-ui, sans-serif;
+    --text-display: 48px;
+    --text-display--line-height: 52px;
+    --text-display--font-weight: 700;
+    --text-h1: 32px;
+    --text-h1--line-height: 40px;
+    --text-h1--font-weight: 700;
+    --text-h2: 24px;
+    --text-h2--line-height: 32px;
+    --text-h2--font-weight: 600;
+    --text-h3: 18px;
+    --text-h3--line-height: 26px;
+    --text-h3--font-weight: 600;
+    --text-body: 15px;
+    --text-body--line-height: 22px;
+    --text-body--font-weight: 400;
+    --text-small: 13px;
+    --text-small--line-height: 18px;
+    --text-small--font-weight: 400;
+    --text-label: 12px;
+    --text-label--line-height: 16px;
+    --text-label--font-weight: 600;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-pill: 999px;
+}

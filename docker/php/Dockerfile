@@ -23,10 +23,21 @@ RUN chmod +x /usr/local/bin/fanfolio-entrypoint
 ENTRYPOINT ["fanfolio-entrypoint"]
 CMD ["php", "artisan", "octane:start", "--server=swoole", "--host=0.0.0.0", "--port=8000"]
 
+# ---- front-end assets (Vite + Tailwind), built once for the production image ----
+FROM node:22-alpine AS assets
+WORKDIR /build
+COPY package.json package-lock.json ./
+RUN npm ci --ignore-scripts
+COPY vite.config.js ./
+COPY resources ./resources
+COPY app/Modules ./app/Modules
+RUN npm run build
+
 # ---- production: code baked in, no dev dependencies ----
 FROM base AS prod
 ENV APP_ENV=production
 COPY --chown=app:app . .
+COPY --from=assets --chown=app:app /build/public/build ./public/build
 RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader --classmap-authoritative \
     && rm -rf tests docs infra .github
 USER app

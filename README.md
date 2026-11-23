@@ -12,7 +12,7 @@ Requirements: Docker.
 docker compose up -d
 ```
 
-The first start installs dependencies, creates `.env`, generates the app key and runs migrations.
+The first start installs dependencies, creates `.env`, generates the app key and runs migrations. The `assets` service rebuilds CSS and JS into `public/build` whenever a view or stylesheet changes.
 
 | Service | URL |
 |---|---|
@@ -39,6 +39,10 @@ CI (`.github/workflows/ci.yml`) also runs:
 - Semgrep
 - Terraform validate
 - the production image build
+
+## Design tokens
+
+`resources/css/tokens.css` is generated from `docs/design-system/tokens.json` and exposes each token as a Tailwind utility (`bg-surface`, `text-ink-muted`, `bg-brand`, `rounded-lg`, `text-h1` and so on). After the design system changes, run `npm run tokens`. CI fails if the CSS is out of date, and an architecture test fails if a view hard-codes a colour.
 
 ## Layout
 

@@ -58,6 +58,16 @@ services:
       app:
         condition: service_healthy
 
+  # Rebuilds CSS and JS into public/build on change. node_modules stays inside the
+  # container because the host copy may hold binaries for another OS.
+  assets:
+    image: node:22-alpine
+    working_dir: /app
+    command: ["sh", "-c", "npm ci --ignore-scripts && npm run watch"]
+    volumes:
+      - .:/app
+      - /app/node_modules
+
   postgres:
     image: postgres:17-alpine
     environment:

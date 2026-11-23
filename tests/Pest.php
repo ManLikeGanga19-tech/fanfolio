@@ -8,6 +8,10 @@ use Tests\TestCase;
 // Feature tests hit PostgreSQL and Redis (run them in Docker or CI).
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
+    ->beforeEach(function (): void {
+        // Pages render without a built Vite manifest in tests.
+        $this->withoutVite();
+    })
     ->in('Feature', '../app/Modules/*/Tests/Feature');
 
 // Unit and architecture tests boot the app but never touch the database.
