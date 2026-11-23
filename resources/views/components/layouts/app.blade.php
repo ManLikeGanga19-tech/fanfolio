@@ -10,7 +10,8 @@
     {{ $head ?? '' }}
 </head>
 <body class="min-h-dvh bg-bg text-ink antialiased">
-    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-surface focus:px-4 focus:py-2">
+    {{-- Off-screen until focused, at full size: a 1px sr-only link would sit on the logo as a tiny touch target (WCAG 2.2 target size). --}}
+    <a href="#main" class="fixed -top-full left-4 z-50 inline-flex min-h-11 items-center rounded-md bg-surface px-4 py-2 font-semibold text-ink focus:top-4">
         Skip to content
     </a>
 
