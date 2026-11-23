@@ -8,6 +8,8 @@ use App\Modules\Identity\Database\Factories\UserFactory;
 use App\Modules\Identity\Enums\AccountStatus;
 use App\Modules\Identity\Enums\Role;
 use Carbon\CarbonImmutable;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -33,7 +35,7 @@ use Laragear\WebAuthn\WebAuthnData;
  * @property CarbonImmutable|null $last_login_at
  * @property CarbonImmutable $created_at
  */
-final class User extends Authenticatable implements WebAuthnAuthenticatable
+final class User extends Authenticatable implements FilamentUser, WebAuthnAuthenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory;
@@ -67,6 +69,15 @@ final class User extends Authenticatable implements WebAuthnAuthenticatable
         'status' => 'active',
         'mfa_enabled' => false,
     ];
+
+    /**
+     * Filament panels: staff with MFA only (SEC-15, rule 13). EnsureAdminAccess checks
+     * the same and also the IP allow-list and SSO switch, with auditing.
+     */
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return $this->role->isStaff() && $this->mfa_enabled && $this->status->canSignIn();
+    }
 
     /**
      * Passkeys show the username, never the email or legal name.
