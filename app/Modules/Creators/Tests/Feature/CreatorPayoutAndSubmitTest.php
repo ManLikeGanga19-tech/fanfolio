@@ -18,7 +18,7 @@ beforeEach(function (): void {
     $this->audit = RecordingAuditLog::swap();
 });
 
-/** A signed-in applicant (MFA, fresh step-up) whose ID and selfie the fake provider passed: legal name TEST PERSON. */
+/** A signed-in applicant (MFA, authenticator code just confirmed) whose ID and selfie the fake provider passed: legal name TEST PERSON. */
 function kycPassedApplicant(): Creator
 {
     $user = signedInFanWithMfa();
@@ -28,6 +28,7 @@ function kycPassedApplicant(): Creator
     test()->get((string) test()->post('/creator/kyc')->headers->get('Location'));
 
     expect($creator->refresh()->kyc_status)->toBe(KycStatus::Review);
+    confirmedSecondFactor();
 
     return $creator;
 }
@@ -46,6 +47,7 @@ const FAKE_TRC20 = 'T'.'111111111111111111111111111111111';
 
 it('sends applicants who have not passed the ID check back to it', function (): void {
     $user = signedInFanWithMfa();
+    confirmedSecondFactor();
     Creator::factory()->create(['user_id' => $user->id]);
 
     $this->get('/creator/payout')->assertRedirect(route('creator.kyc'));
@@ -60,6 +62,7 @@ it('sends guests to log in and non-applicants to Become a creator', function ():
     $this->get('/creator/review')->assertRedirect(route('login'));
 
     signedInFanWithMfa();
+    confirmedSecondFactor();
     $this->get('/creator/payout')->assertRedirect(route('creator.start'));
     $this->get('/creator/review')->assertRedirect(route('creator.start'));
 });
@@ -80,7 +83,7 @@ it('shows the payout board with the legal name to match', function (): void {
         ->assertSee('Review and submit');
 });
 
-it('needs a recent step-up to see or change the payout method (SEC-04)', function (): void {
+it('needs the second factor confirmed just before seeing or changing the payout method (SEC-04, D-13)', function (): void {
     kycPassedApplicant();
     staleStepUp();
 
@@ -90,9 +93,18 @@ it('needs a recent step-up to see or change the payout method (SEC-04)', functio
     $this->post('/creator/payout', bankPayout())->assertRedirect(route('account.confirm'));
     expect(PayoutMethod::query()->count())->toBe(0);
 
+    // Signing in (or a password or recovery code) is an ordinary step-up: not enough here.
     confirmedStepUp();
+    $this->post('/creator/payout', bankPayout())->assertRedirect(route('account.confirm'));
+    expect(PayoutMethod::query()->count())->toBe(0);
+
+    confirmedSecondFactor();
     $this->post('/creator/payout', bankPayout())->assertRedirect(route('creator.review'));
     expect(PayoutMethod::query()->count())->toBe(1);
+
+    // It lapses after 10 minutes.
+    $this->travel(11)->minutes();
+    $this->get('/creator/payout')->assertRedirect(route('account.confirm'));
 });
 
 it('saves a bank account encrypted, masked and audited, with the name matched', function (): void {

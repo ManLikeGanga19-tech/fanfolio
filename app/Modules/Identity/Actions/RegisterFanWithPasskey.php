@@ -43,12 +43,13 @@ final readonly class RegisterFanWithPasskey
     /**
      * Holds the sign-up details in the session and returns the passkey creation options.
      */
-    public function options(Session $session, string $email, string $username): JsonTransport
+    public function options(Session $session, string $email, string $username, ?string $phoneE164 = null): JsonTransport
     {
         $pending = [
             'id' => (string) Str::ulid(),
             'email' => $email,
             'username' => $username,
+            'phone' => $phoneE164,
             'expires_at' => now()->addSeconds(self::TTL_SECONDS)->getTimestamp(),
         ];
 
@@ -110,7 +111,7 @@ final readonly class RegisterFanWithPasskey
     }
 
     /**
-     * @return array{id: string, email: string, username: string, expires_at: int}
+     * @return array{id: string, email: string, username: string, phone: ?string, expires_at: int}
      */
     private function pending(Session $session): array
     {
@@ -131,6 +132,7 @@ final readonly class RegisterFanWithPasskey
             'id' => $pending['id'],
             'email' => $pending['email'],
             'username' => $pending['username'],
+            'phone' => is_string($pending['phone'] ?? null) ? $pending['phone'] : null,
             'expires_at' => $pending['expires_at'],
         ];
     }
@@ -138,12 +140,14 @@ final readonly class RegisterFanWithPasskey
     /**
      * An unsaved account with its id fixed in advance, so the passkey is tied to it.
      *
-     * @param  array{id: string, email: string, username: string, expires_at: int}  $pending
+     * @param  array{id: string, email: string, username: string, phone: ?string, expires_at: int}  $pending
      */
     private function draft(array $pending): User
     {
         $user = new User(['email' => $pending['email'], 'username' => $pending['username']]);
         $user->id = $pending['id'];
+        // Optional and unverified (D-12): encrypted, no keyed hash.
+        $user->forceFill(['phone_e164' => $pending['phone']]);
 
         return $user;
     }

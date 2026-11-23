@@ -3,7 +3,7 @@
     <div class="mx-auto flex max-w-md flex-col gap-6 py-8">
         <div class="flex flex-col gap-2">
             <h1 class="text-h1">Confirm it's you</h1>
-            <p class="text-ink-muted">This change needs a quick check.</p>
+            <p class="text-ink-muted">{{ $secondFactorOnly ? 'Payouts need your passkey or authenticator app, even if you signed in a moment ago.' : 'This change needs a quick check.' }}</p>
         </div>
 
         @if ($hasPasskey)
@@ -27,7 +27,8 @@
             @endif
         </form>
 
-        @unless ($usesPassword)
+        {{-- D-13: a recovery code is not accepted for payouts. --}}
+        @unless ($usesPassword || $secondFactorOnly)
             <details class="rounded-lg bg-surface p-4">
                 <summary class="cursor-pointer font-semibold">Use a recovery code</summary>
                 <form method="POST" action="{{ route('account.confirm') }}" class="mt-4 flex flex-col gap-4" novalidate>

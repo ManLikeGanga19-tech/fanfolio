@@ -43,6 +43,13 @@ Other modules must not read or write these tables or use this module's models; a
 
 ## MFA and step-up (SEC-04)
 
+Two levels of the `step-up` route middleware:
+
+- `step-up`: any factor confirmed in the last 10 minutes. Signing in counts; so do a password (accounts without MFA) and a recovery code.
+- `step-up:second-factor` (D-13, payouts and payout details): a passkey or authenticator code confirmed on "Confirm it's you" in the last 10 minutes. Signing in, a password or a recovery code does not count, and the confirm page hides them. An account without a passkey or authenticator app is sent to Devices & security to set one up. JSON requests get a 403 with `confirm` or `setup`.
+
+Each step-up is audited as `identity.step_up` with `second_factor` true or false.
+
 - A passkey (user verification required) or a confirmed authenticator app turns `mfa_enabled` on; removing the last one turns it off. Creators, moderators and admins cannot remove their last factor.
 - With MFA on, a password alone never signs in: the account waits in `PendingLogin` (5 minutes) for a TOTP or recovery code. A passkey signs in directly.
 - `EnsureMfaEnrolled` (web group) sends creators and staff without MFA to set it up.
@@ -86,7 +93,7 @@ Other modules must not read or write these tables or use this module's models; a
 ## Data protection
 
 - Sign-up email codes are stored only as keyed hashes (`App\Support\Security\KeyedHash`).
-- The phone columns on `users` stay encrypted (SEC-10) but are no longer filled at sign-up (D-12).
+- Sign-up takes an optional phone number (D-12): `users.phone_e164`, encrypted (SEC-10), unverified. The verified email is the primary contact. `phone_hash` stays empty until a number is verified, so an unverified number cannot block its owner.
 - Logins, failed logins, logouts, sign-ups and email verification write to Audit through `AuditLog`.
 
 See `docs/backend-spec.md` for the module's rules.

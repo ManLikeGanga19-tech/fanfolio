@@ -57,6 +57,8 @@ test('sign up works from the keyboard alone', async ({ page }) => {
     await page.keyboard.type('keyboard.only@example.test');
     await page.keyboard.press('Tab');
     await page.keyboard.type('keyboard_only');
+    await page.keyboard.press('Tab'); // phone number (optional)
+    await expect(page.getByLabel('Phone number (optional)')).toBeFocused();
     await page.keyboard.press('Tab');
     await page.keyboard.type('short');
     await page.keyboard.press('Tab'); // show password button

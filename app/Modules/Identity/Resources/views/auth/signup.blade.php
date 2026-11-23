@@ -11,6 +11,8 @@
             @csrf
             <x-ui.input name="email" label="Email" type="email" autocomplete="email" required />
             <x-ui.input name="username" label="Username" autocomplete="username" hint="Shown to creators instead of your name" required />
+            {{-- Decision D-12: optional and unverified; the verified email is the primary contact. --}}
+            <x-ui.input name="phone" label="Phone number (optional)" type="tel" autocomplete="tel" inputmode="tel" placeholder="+254" hint="With the country code. Kept private; we contact you by email." />
             <x-ui.input name="password" label="Password" type="password" autocomplete="new-password" hint="At least 12 characters" minlength="12" required />
             <x-ui.input name="password_confirmation" label="Confirm password" type="password" autocomplete="new-password" required />
 
