@@ -9,6 +9,7 @@ use App\Modules\Identity\Enums\AccountStatus;
 use App\Modules\Identity\Enums\Role;
 use Carbon\CarbonImmutable;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasName;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -35,7 +36,7 @@ use Laragear\WebAuthn\WebAuthnData;
  * @property CarbonImmutable|null $last_login_at
  * @property CarbonImmutable $created_at
  */
-final class User extends Authenticatable implements FilamentUser, WebAuthnAuthenticatable
+final class User extends Authenticatable implements FilamentUser, HasName, WebAuthnAuthenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory;
@@ -77,6 +78,14 @@ final class User extends Authenticatable implements FilamentUser, WebAuthnAuthen
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->role->isStaff() && $this->mfa_enabled && $this->status->canSignIn();
+    }
+
+    /**
+     * Staff are shown by username in the panel, never by email or legal name (rule 13).
+     */
+    public function getFilamentName(): string
+    {
+        return '@'.$this->username;
     }
 
     /**

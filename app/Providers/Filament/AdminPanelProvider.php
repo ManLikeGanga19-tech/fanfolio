@@ -8,7 +8,6 @@ use App\Modules\Identity\Http\Middleware\EnsureAdminAccess;
 use App\Modules\Identity\Http\Middleware\EnsureDeviceActive;
 use Filament\Enums\ThemeMode;
 use Filament\FontProviders\LocalFontProvider;
-use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -63,12 +62,13 @@ final class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            // Filament's own Authenticate is left out on purpose: Laravel's middleware priority
+            // would run it ahead of EnsureAdminAccess and refuse staff without an audit entry.
+            // EnsureAdminAccess covers guests, staff role, MFA, IP allow-list and SSO.
             ->authMiddleware([
                 // A session whose device was signed out ends here first.
                 EnsureDeviceActive::class,
-                // Staff, MFA, IP allow-list and SSO switch, with every refusal audited.
                 EnsureAdminAccess::class,
-                Authenticate::class,
             ]);
     }
 }
