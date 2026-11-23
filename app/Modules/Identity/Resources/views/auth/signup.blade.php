@@ -7,7 +7,7 @@
             <p class="text-ink-muted">Takes under a minute. Creators only see your username.</p>
         </div>
 
-        <form method="POST" action="{{ route('signup') }}" class="flex flex-col gap-4" novalidate>
+        <form id="signup-form" method="POST" action="{{ route('signup') }}" class="flex flex-col gap-4" novalidate>
             @csrf
             <x-ui.input name="email" label="Email" type="email" autocomplete="email" required />
             <x-ui.input name="username" label="Username" autocomplete="username" hint="Shown to creators instead of your name" required />
@@ -30,6 +30,15 @@
 
             <x-ui.button variant="brand" type="submit">Continue</x-ui.button>
         </form>
+
+        {{-- Uses the email, username and 18+ box above; no password needed. --}}
+        <div class="flex flex-col gap-2">
+            <p class="text-center text-small text-ink-muted">or</p>
+            <x-ui.button data-passkey="create" data-form="signup-form"
+                data-options-url="{{ route('signup.passkey.options') }}"
+                data-submit-url="{{ route('signup.passkey') }}">Continue with a passkey</x-ui.button>
+            <p id="passkey-status" class="text-small text-danger" role="status" aria-live="polite"></p>
+        </div>
 
 
         <p class="text-small text-ink-muted">

@@ -40,6 +40,14 @@ final readonly class LoginWithPassword
             throw new IdentityException(self::FAILED, 'email');
         }
 
+        if ($user->password === null) {
+            // Passkey-only account: same work and same answer as a wrong password.
+            $this->hasher->check($password, self::TIMING_HASH);
+            $this->audit->record('identity.login_failed', null, 'user', $user->id, ['reason' => 'no_password']);
+
+            throw new IdentityException(self::FAILED, 'email');
+        }
+
         if (! $this->hasher->check($password, $user->password)) {
             $this->audit->record('identity.login_failed', null, 'user', $user->id, ['reason' => 'password']);
 

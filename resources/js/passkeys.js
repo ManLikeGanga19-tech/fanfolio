@@ -34,7 +34,9 @@ const post = async (url, body = {}) => {
         if (next) {
             window.location.assign(next);
         }
-        throw new Error(json.message ?? 'Something went wrong. Try again.');
+        // Validation errors (422) list each field's message; show them all.
+        const fieldErrors = json.errors ? Object.values(json.errors).flat().join(' ') : '';
+        throw new Error(fieldErrors || json.message || 'Something went wrong. Try again.');
     }
 
     return json;
@@ -75,6 +77,24 @@ const encodeCredential = (credential) => {
     };
 };
 
+// With data-form="<form id>", the options request carries that form's fields (never a
+// password or the CSRF field, which travels in the header).
+const formFields = (formId) => {
+    const form = formId ? document.getElementById(formId) : null;
+    if (!form) {
+        return {};
+    }
+
+    const fields = {};
+    for (const [name, value] of new FormData(form)) {
+        if (name !== '_token' && !name.startsWith('password')) {
+            fields[name] = value;
+        }
+    }
+
+    return fields;
+};
+
 const run = async (button) => {
     const status = document.getElementById(button.dataset.statusId ?? 'passkey-status');
     const say = (message) => {
@@ -87,7 +107,7 @@ const run = async (button) => {
     say('');
 
     try {
-        const options = decodeOptions(await post(button.dataset.optionsUrl));
+        const options = decodeOptions(await post(button.dataset.optionsUrl, formFields(button.dataset.form)));
         const credential = button.dataset.passkey === 'create'
             ? await navigator.credentials.create({ publicKey: options })
             : await navigator.credentials.get({ publicKey: options });

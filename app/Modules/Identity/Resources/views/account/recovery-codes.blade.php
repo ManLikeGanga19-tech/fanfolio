@@ -14,6 +14,6 @@
             </ul>
         </x-ui.card>
 
-        <x-ui.button variant="brand" :href="route('account.security')">I have saved them</x-ui.button>
+        <x-ui.button variant="brand" :href="$next">I have saved them</x-ui.button>
     </div>
 </x-layouts.app>
