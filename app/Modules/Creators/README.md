@@ -3,7 +3,7 @@
 Creator applications, KYC, profiles, pricing, payout methods.
 
 - **Owns tables:** `creators`, `creator_kyc`, `payout_methods`
-- **Publishes events:** `CreatorApplied`, `CreatorKycPassed`, `CreatorKycFailed`, `CreatorApproved`, `CreatorSuspended`
+- **Publishes events:** `CreatorApplied`, `CreatorKycPassed`, `CreatorKycFailed`, `CreatorApproved`, `CreatorSuspended` (all after commit)
 - **Public surface:** `App\Modules\Creators\Contracts\*` and `App\Modules\Creators\Events\*`. Everything else is private to this module.
 
 Other modules must not read or write these tables or use this module's models; architecture tests enforce this. Domain events implement `ShouldDispatchAfterCommit`.
@@ -25,9 +25,29 @@ See `docs/backend-spec.md` for the module's rules and `docs/plans/M2.md` for the
 | POST | `/creator/kyc` | Opens a session with the KYC provider and sends the creator to its hosted page (D-11) | 10 per hour per account (each start is a paid provider session) |
 | GET | `/creator/kyc/return?ref=` | The provider sends the creator back here. The result is fetched from the provider for a check that belongs to this creator; nothing in the URL but the reference is read | 20 per minute per account |
 | GET, POST | `/creator/payout` | Step 4 of 4: bank account, USDT (TRC-20) wallet or Paxum. Needs a passkey or authenticator code confirmed in the last 10 minutes (`step-up:second-factor`, SEC-04, D-13) and a passed ID check | 20 per minute per account |
-| GET, POST | `/creator/review` | Review & submit (board 6). Needs the page, a passed ID check, a payout method and both statements; then "We're reviewing your account" | 20 per minute per account |
+| GET, POST | `/creator/review` | Review & submit (board 6). Needs the page, a passed ID check, a payout method and both statements, then goes to `/creator/status` | 20 per minute per account |
+| GET | `/creator/status` | Board 7 "We're reviewing your account", board 8 "One thing to fix" when staff send it back, and the approved, ID expired, paused and rejected screens. Studio sends everyone it refuses here | none |
 
 The routes act only on the signed-in account's own application; no ids appear in URLs.
+
+## Staff review (decision D-10)
+
+`/admin/creator-approvals` (Filament, admin panel) lists submitted applications: page, category, 18+ flag, document type and last 4, whether the selfie matched, the payout hint, whether the payout name matches the ID, and when it was submitted. No legal name, date of birth or full numbers (rule 13). The full approvals board replaces it in M8.
+
+| Action | Needs | Result | Audit | Event / email |
+|---|---|---|---|---|
+| `ApproveCreator` | submitted, KYC `review`, a payout method | `active`, KYC `approved`, `approved_at` | `creator.approved` | `CreatorApproved` (Identity gives the creator role); "You're approved" |
+| `RequestCreatorFix` | submitted | back to `onboarding` with `fix_kind` (`retake_id`, `payout`, `profile`) and an optional note under 300 characters, shown to the creator. `retake_id` sets KYC to `action_needed` | `creator.fix_requested` | "One thing to fix" |
+| `RejectCreator` | submitted, a reason from `RejectCreator::REASONS` | KYC `rejected`, no retry. The creator sees a neutral message | `creator.rejected` with the reason | `CreatorKycFailed` for Trust & Safety; neutral email |
+| `SuspendCreator` | active (idempotent) | `suspended`: publishing and earning stop at once | `creator.suspended` | `CreatorSuspended` (rule 9). The users board that calls it arrives in M8 |
+
+Each Action checks, inside the Action, that the actor is staff with MFA (`Identity\Contracts\Accounts::isStaff`) and is not deciding on their own application, and locks the row. Submitting again clears the fix.
+
+**ID viewer (D-01).** `GET /admin/kyc-documents/{creator}/{side}` (staff only, `staff` middleware) fetches the front, back or selfie frame from the provider through `IdentityVerifier::fetchDocumentImage` and streams it with `Cache-Control: no-store`. Nothing is kept. Each view is audited as `kyc.document_viewed`.
+
+## Studio
+
+`/studio` is a Filament panel (`App\Providers\Filament\StudioPanelProvider`). `Http\Middleware\EnsureStudioAccess` lets in only accounts with MFA for whom `CreatorEligibility::canPublish` is true. Anyone else (in review, sent back, rejected, ID expired, suspended) goes to `/creator/status`. It shares the admin panel's relaxed CSP (D-07); fan pages keep the strict one. For now it holds only a welcome page; posts, prices, earnings and payouts arrive with their milestones.
 
 ## Handles
 

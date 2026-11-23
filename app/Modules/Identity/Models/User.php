@@ -78,7 +78,12 @@ final class User extends Authenticatable implements FilamentUser, HasName, WebAu
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        return $this->role->isStaff() && $this->mfa_enabled && $this->status->canSignIn();
+        if (! $this->mfa_enabled || ! $this->status->canSignIn()) {
+            return false;
+        }
+
+        // Studio: creators (and the creator's eligibility is checked by EnsureStudioAccess).
+        return $panel->getId() === 'studio' ? $this->role === Role::Creator : $this->role->isStaff();
     }
 
     /**

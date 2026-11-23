@@ -6,6 +6,7 @@ namespace App\Modules\Creators\Models;
 
 use App\Modules\Creators\Database\Factories\CreatorFactory;
 use App\Modules\Creators\Enums\CreatorStatus;
+use App\Modules\Creators\Enums\FixKind;
 use App\Modules\Creators\Enums\KycStatus;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
@@ -30,6 +31,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property CarbonImmutable|null $suspended_at
  * @property CarbonImmutable|null $id_expires_at
  * @property CarbonImmutable|null $id_expiry_reminded_at
+ * @property FixKind|null $fix_kind
+ * @property string|null $fix_note
+ * @property string|null $reviewed_by
+ * @property CarbonImmutable|null $reviewed_at
  */
 final class Creator extends Model
 {
@@ -92,6 +97,12 @@ final class Creator extends Model
         return $check?->legal_name;
     }
 
+    /** The message for "One thing to fix" (board 8): the staff note, or the standard one. */
+    public function fixMessage(): ?string
+    {
+        return $this->fix_kind === null ? null : ($this->fix_note ?? $this->fix_kind->message());
+    }
+
     /** Initials shown until profile photos arrive with media scanning in M4 (decision D-08). */
     public function initials(): string
     {
@@ -121,6 +132,8 @@ final class Creator extends Model
             'suspended_at' => 'immutable_datetime',
             'id_expires_at' => 'immutable_datetime',
             'id_expiry_reminded_at' => 'immutable_datetime',
+            'fix_kind' => FixKind::class,
+            'reviewed_at' => 'immutable_datetime',
         ];
     }
 }

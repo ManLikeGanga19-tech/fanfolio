@@ -15,6 +15,12 @@ interface Accounts
     /** A passkey or a confirmed authenticator app (SEC-04). */
     public function hasMfa(string $userId): bool;
 
+    /**
+     * Staff (moderator or admin) with MFA on and allowed to sign in. Other modules use it
+     * to check, inside their own Actions, that an admin decision comes from staff.
+     */
+    public function isStaff(string $userId): bool;
+
     /** The handle shown to creators and fans, without the @. */
     public function username(string $userId): ?string;
 

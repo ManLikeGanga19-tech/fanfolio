@@ -90,6 +90,11 @@ return [
         'success' => '#34c47c',
     ],
 
+    // The creator /studio panel (Filament). Approved creators with MFA only.
+    'studio' => [
+        'path' => 'studio',
+    ],
+
     // SEC-15: the /admin panel. Staff only, MFA always, from allowed addresses only.
     'admin' => [
         'path' => 'admin',

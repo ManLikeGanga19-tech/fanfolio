@@ -82,7 +82,13 @@ Each step-up is audited as `identity.step_up` with `second_factor` true or false
 
 ## For other modules
 
-`Contracts\Accounts` answers what other modules may ask about an account by user id: `hasMfa`, `username`, and `notify`, which sends a notification to the account without giving the caller its email address or phone number (rule 13).
+`Contracts\Accounts` answers what other modules may ask about an account by user id: `hasMfa`, `isStaff` (moderator or admin with MFA, allowed to sign in; for staff checks inside other modules' Actions), `username`, and `notify`, which sends a notification to the account without giving the caller its email address or phone number (rule 13).
+
+## Roles and panels
+
+- `Listeners\GrantCreatorRole` gives an account the creator role when it hears `Creators\Events\CreatorApproved`. It is idempotent and audited as `identity.role_changed`.
+- `User::canAccessPanel`: the `admin` panel is for staff, the `studio` panel for creators; both need MFA and an account that may sign in. Studio also checks creator eligibility (`Creators\Http\Middleware\EnsureStudioAccess`).
+- Route middleware alias `staff` (`EnsureAdminAccess`) protects staff pages outside the Filament panel, such as the ID viewer.
 
 ## Gateways
 

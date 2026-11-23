@@ -43,15 +43,16 @@ final class SecurityHeaders
     }
 
     /**
-     * Decision D-07: the admin panel (Filament on Livewire and Alpine) needs runtime
-     * evaluation and inline styles. Only /admin and the Livewire endpoints it calls get
-     * them; every fan page keeps the strict policy.
+     * Decision D-07: the admin and Studio panels (Filament on Livewire and Alpine) need
+     * runtime evaluation and inline styles. Only /admin, /studio and the Livewire
+     * endpoints they call get them; every fan page keeps the strict policy.
      */
     private function isAdmin(Request $request): bool
     {
-        $path = config()->string('fanfolio.admin.path');
+        $admin = config()->string('fanfolio.admin.path');
+        $studio = config()->string('fanfolio.studio.path');
 
-        return $request->is($path, $path.'/*', 'livewire/*');
+        return $request->is($admin, $admin.'/*', $studio, $studio.'/*', 'livewire/*');
     }
 
     private function contentSecurityPolicy(string $nonce, bool $admin): string
