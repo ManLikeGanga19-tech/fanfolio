@@ -54,3 +54,13 @@ it('issues session cookies that are secure, HttpOnly and SameSite=Lax', function
         ->and(config('session.http_only'))->toBeTrue()
         ->and(config('session.same_site'))->toBe('lax');
 });
+
+it('sends a failed form back to the form, not to the origin-only Referer', function (): void {
+    // With strict-origin, a browser posts the form with only the site origin as Referer.
+    $this->get('/signup')->assertOk();
+
+    $this->withHeader('Referer', url('/'))
+        ->post('/signup', ['email' => 'not-an-email'])
+        ->assertRedirect(url('/signup'))
+        ->assertSessionHasErrors('email');
+});

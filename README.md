@@ -30,7 +30,10 @@ Override a host port with `FORWARD_APP_PORT`, `FORWARD_DB_PORT` and the like whe
 docker compose exec app vendor/bin/pest --parallel      # full suite (needs Postgres)
 docker compose exec app composer ci                     # Pint, Rector, Larastan, tests
 vendor/bin/pest --testsuite=Architecture,Unit           # fast, no database
+npx playwright install chromium && npm run test:a11y   # axe, keyboard and focus checks against the running app
 ```
+
+The accessibility checks (`tests/Browser`) open every fan page in Chromium, phone and desktop sizes. They fail on any WCAG 2.2 A/AA axe violation, on a control without a visible focus ring, or on a broken keyboard path. The signed-in pages are reached by signing up a fresh fake account through the real screens. Point them at another address with `A11Y_BASE_URL`.
 
 CI (`.github/workflows/ci.yml`) also runs:
 - migrate → rollback → migrate
@@ -39,6 +42,7 @@ CI (`.github/workflows/ci.yml`) also runs:
 - Semgrep
 - Terraform validate
 - the production image build
+- the accessibility checks, against an app started with the Fake drivers
 
 ## Design tokens
 
