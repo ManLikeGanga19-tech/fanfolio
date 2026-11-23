@@ -1,6 +1,6 @@
 {{-- Forgot password: not a canvas board; built in the log in screen's style. --}}
-<x-layouts.app title="Reset your password">
-    <div class="mx-auto flex max-w-md flex-col gap-6 py-8">
+<x-layouts.auth title="Reset your password">
+    <div class="flex flex-col gap-8">
         <div class="flex flex-col gap-2">
             <h1 class="text-h1">Reset your password</h1>
             <p class="text-ink-muted">Enter the email on your account. We will send you a link to choose a new password.</p>
@@ -20,4 +20,4 @@
             Remembered it? <a class="text-brand underline" href="{{ route('login') }}">Log in</a>
         </p>
     </div>
-</x-layouts.app>
+</x-layouts.auth>

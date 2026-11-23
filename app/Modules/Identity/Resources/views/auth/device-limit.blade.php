@@ -1,6 +1,6 @@
 {{-- Decision D-03: a 4th device is refused; the user can sign out one of their devices and continue. --}}
-<x-layouts.app title="Too many devices">
-    <div class="mx-auto flex max-w-md flex-col gap-6 py-8">
+<x-layouts.auth title="Too many devices">
+    <div class="flex flex-col gap-8">
         <div class="flex flex-col gap-2">
             <h1 class="text-h1">You are signed in on {{ $limit }} devices</h1>
             <p class="text-ink-muted">Your subscriptions work on up to {{ $limit }} devices. Sign out of one to use this device.</p>
@@ -27,4 +27,4 @@
             <x-ui.button variant="brand" type="submit" :disabled="! $canContinue">Continue on this device</x-ui.button>
         </form>
     </div>
-</x-layouts.app>
+</x-layouts.auth>

@@ -1,6 +1,6 @@
 {{-- Screen: Sign up, step 1 of 3 (account). --}}
-<x-layouts.app title="Sign up">
-    <div class="mx-auto flex max-w-md flex-col gap-6 py-8">
+<x-layouts.auth title="Sign up">
+    <div class="flex flex-col gap-8">
         <div class="flex flex-col gap-2">
             <p class="text-label text-ink-muted">STEP 1 OF 3 · ACCOUNT</p>
             <h1 class="text-h1">Create your account</h1>
@@ -45,4 +45,4 @@
             Already on FanFolio? <a class="text-brand underline" href="{{ route('login') }}">Log in</a>
         </p>
     </div>
-</x-layouts.app>
+</x-layouts.auth>

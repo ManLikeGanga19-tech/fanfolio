@@ -1,6 +1,6 @@
 {{-- Screen: Age verification (18+, optional), sign up step 3. --}}
-<x-layouts.app title="Confirm you are 18+">
-    <div class="mx-auto flex max-w-md flex-col gap-6 py-8">
+<x-layouts.auth title="Confirm you are 18+">
+    <div class="flex flex-col gap-8">
         <div class="flex flex-col gap-2">
             <p class="text-label text-ink-muted">STEP 3 OF 3 · AGE CHECK</p>
             <h1 class="text-h1">Confirm you are 18+</h1>
@@ -41,4 +41,4 @@
 
         <x-ui.button variant="ghost" :href="route('account')">Not now, show safe content only</x-ui.button>
     </div>
-</x-layouts.app>
+</x-layouts.auth>

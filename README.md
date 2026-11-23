@@ -24,6 +24,17 @@ The first start installs dependencies, creates `.env`, generates the app key and
 
 Override a host port with `FORWARD_APP_PORT`, `FORWARD_DB_PORT` and the like when one is taken.
 
+### Faster on Windows
+
+The Docker stack reads the code through the Windows file system (slower still inside OneDrive). For day-to-day work, run PHP natively with only Postgres in Docker:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\dev.ps1   # app on http://localhost:8088
+npm run watch                                            # rebuild CSS and JS on change (second terminal)
+```
+
+This needs PHP 8.4 with `extension=pdo_pgsql` on in `php.ini`. Sessions, cache and the queue use files, and mail goes to `storage/logs/laravel.log`. Use the full Docker stack for Horizon, Redis, MinIO and Mailpit.
+
 ## Checks
 
 ```sh
