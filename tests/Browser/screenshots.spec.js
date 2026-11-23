@@ -6,6 +6,6 @@ for (const path of ['login', 'signup', 'forgot-password']) {
     test(`screenshot of /${path}`, async ({ page }, testInfo) => {
         await page.goto(`/${path}`);
         await page.waitForLoadState('networkidle');
-        await page.screenshot({ path: `playwright-report/screens/${path}-${testInfo.project.name}.png`, fullPage: true });
+        await page.screenshot({ path: `screenshots/${path}-${testInfo.project.name}.png`, fullPage: true });
     });
 }
