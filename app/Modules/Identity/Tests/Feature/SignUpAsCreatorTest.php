@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Modules\Identity\Models\User;
 use App\Modules\Identity\Notifications\EmailVerificationCode;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Testing\TestResponse;
 
 // Canvas AuthSignup: "I'm a fan / I'm a creator". A creator goes from the email step to Become a creator.
 
@@ -27,7 +28,7 @@ function signUpAs(array $overrides = []): User
     return User::query()->where('email', 'joining@example.test')->sole();
 }
 
-function verifyFirstEmailCode(User $user): Illuminate\Testing\TestResponse
+function verifyFirstEmailCode(User $user): TestResponse
 {
     $code = Notification::sent($user, EmailVerificationCode::class)->last()->code;
 

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Blade;
+use Illuminate\View\ViewException;
 
 // Decision D-19: icons and illustrations come from the screens canvas and use token classes only.
 
@@ -44,4 +45,4 @@ it('keeps hex colours out of the generated components', function (string $compon
 
 it('refuses an unknown name instead of rendering nothing', function (): void {
     Blade::render('<x-ui.icon name="no-such-icon" />');
-})->throws(Illuminate\View\ViewException::class);
+})->throws(ViewException::class);
