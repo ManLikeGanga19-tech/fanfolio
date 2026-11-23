@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Studio dashboard</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Sora:wght@600;700&amp;display=swap">
+<style>
+body{margin:0;background:#0B0B0F}
+a{color:#E8A33D}a:hover{color:#F5B85A}
+.app *{box-sizing:border-box}
+.side{flex:1 1 248px;max-width:100%;background:#15151C;border-right:1px solid #2E2E3A;padding:24px 12px;display:flex;flex-direction:column;gap:4px}
+.wm{font:600 18px/26px Sora,sans-serif;padding:0 12px 20px;display:flex;gap:8px;align-items:baseline}
+.side a{display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:10px;color:#A8A6B3;text-decoration:none;font-size:15px}
+.side a[aria-current]{background:#1E1E28;color:#F5F3EF;font-weight:600}
+.h1{font:700 32px/40px Sora,sans-serif;margin:0}.h3{font:600 18px/26px Sora,sans-serif;margin:0}
+.p{font:400 15px/22px Inter,sans-serif;color:#A8A6B3;margin:0}.sm{font:400 13px/18px Inter,sans-serif;color:#A8A6B3;margin:0}
+.lbl{font:600 12px/16px Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#A8A6B3}
+.btn{height:44px;border-radius:10px;font:600 15px/20px Inter,sans-serif;display:inline-flex;align-items:center;justify-content:center;border:1px solid #6B6978;background:#15151C;color:#F5F3EF;text-decoration:none;padding:0 18px}
+.btn.pr{background:#E8A33D;border-color:#E8A33D;color:#1A1206}
+.pill{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;background:#1E1E28;font:600 12px/16px Inter,sans-serif;color:#F5F3EF}
+.ok{color:#34C47C}.warn{color:#F5D06B}.br{color:#E8A33D}
+.card{background:#15151C;border:1px solid #2E2E3A;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:8px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px}.v{font:700 32px/40px Sora,sans-serif}
+.bars{display:flex;align-items:flex-end;gap:6px;height:180px;border-bottom:1px solid #2E2E3A}.bars span{flex:1;background:#E8A33D;border-radius:3px 3px 0 0}
+table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;font:600 12px/16px Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#A8A6B3;padding:8px;border-bottom:1px solid #2E2E3A}td{padding:10px 8px;border-bottom:1px solid #2E2E3A}
+.av{border-radius:50%;background:#6B6978;flex:none;display:inline-block}
+</style>
+</helmet>
+<div class="app" style="min-height: 960px; display: flex; flex-wrap: wrap; background: #0B0B0F; font-family: Inter, system-ui, sans-serif; color: #F5F3EF">
+  <nav class="side" aria-label="Studio">
+    <div class="wm">FanFolio <span class="lbl br">Studio</span></div>
+    <a href="#" aria-current="page">Dashboard</a><a href="#">Upload &amp; schedule</a><a href="#">Content library</a><a href="#">Prices &amp; bundles</a><a href="#">Fans</a><a href="#">Messages</a><a href="#">Earnings &amp; withdrawals</a><a href="#">Verification</a>
+  </nav>
+  <main style="flex: 999 1 560px; min-width: 0; padding: 32px; display: flex; flex-direction: column; gap: 24px">
+    <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between">
+      <div><h1 class="h1">Good evening, Amani</h1><p class="p">Here is how your page is doing in November.</p></div>
+      <a href="#" class="btn pr">New post</a>
+    </div>
+    <div class="kpis">
+      <div class="card"><span class="sm">Earnings this month</span><span class="v">$2,480</span><span class="sm ok">+12% vs October</span></div>
+      <div class="card"><span class="sm">Pending · 7-day hold</span><span class="v">$410</span><span class="sm warn">Releases 24 Nov</span></div>
+      <div class="card"><span class="sm">Active subscribers</span><span class="v">612</span><span class="sm ok">+38 this week</span></div>
+      <div class="card"><span class="sm">PPV unlock rate</span><span class="v">18%</span><span class="sm ok">+3 pts vs October</span></div>
+    </div>
+    <section class="card" style="padding: 24px; gap: 16px">
+      <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; align-items: center"><h2 class="h3">Daily earnings, last 30 days (USD)</h2><div style="display: flex; gap: 6px"><span class="pill">30 days</span><span class="pill" style="background: transparent; color: #A8A6B3">90 days</span><span class="pill" style="background: transparent; color: #A8A6B3">12 months</span></div></div>
+      <div class="bars" role="img" aria-label="Daily earnings trending up over 30 days"><span style="height: 31%"></span><span style="height: 42%"></span><span style="height: 29%"></span><span style="height: 48%"></span><span style="height: 54%"></span><span style="height: 37%"></span><span style="height: 40%"></span><span style="height: 69%"></span><span style="height: 51%"></span><span style="height: 45%"></span><span style="height: 57%"></span><span style="height: 62%"></span><span style="height: 47%"></span><span style="height: 44%"></span><span style="height: 73%"></span><span style="height: 92%"></span><span style="height: 65%"></span><span style="height: 58%"></span><span style="height: 53%"></span><span style="height: 68%"></span><span style="height: 71%"></span><span style="height: 78%"></span><span style="height: 61%"></span><span style="height: 64%"></span><span style="height: 85%"></span><span style="height: 75%"></span><span style="height: 67%"></span><span style="height: 80%"></span><span style="height: 88%"></span><span style="height: 100%"></span></div>
+      <div style="display: flex; justify-content: space-between" class="sm"><span>22 Oct</span><span>5 Nov</span><span>19 Nov</span></div>
+    </section>
+    <div style="display: flex; flex-wrap: wrap; gap: 16px">
+      <section class="card" style="flex: 2 1 420px; padding: 24px">
+        <h2 class="h3">Top posts this month</h2>
+        <div style="overflow-x: auto"><table><thead><tr><th>Post</th><th>Type</th><th>Unlocks</th><th>Earned</th></tr></thead><tbody>
+          <tr><td>Golden hour, Diani</td><td><span class="pill br">PPV</span></td><td>214</td><td>$535</td></tr>
+          <tr><td>Studio session (video)</td><td><span class="pill">Subscribers</span></td><td>—</td><td>$1,120</td></tr>
+          <tr><td>Unreleased demo #3</td><td><span class="pill br">PPV</span></td><td>131</td><td>$328</td></tr>
+        </tbody></table></div>
+      </section>
+      <section class="card" style="flex: 1 1 260px; padding: 24px; gap: 12px">
+        <h2 class="h3">Recent subscribers</h2>
+        <div style="display: flex; gap: 10px; align-items: center"><span class="av" style="width: 32px; height: 32px"></span><div><strong>@kevo_254</strong><p class="sm">3 months · 12 min ago</p></div></div>
+        <div style="display: flex; gap: 10px; align-items: center"><span class="av" style="width: 32px; height: 32px"></span><div><strong>@lulu.n</strong><p class="sm">1 month · 1h ago</p></div></div>
+        <div style="display: flex; gap: 10px; align-items: center"><span class="av" style="width: 32px; height: 32px"></span><div><strong>@baraka_m</strong><p class="sm">6 months · 3h ago</p></div></div>
+      </section>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

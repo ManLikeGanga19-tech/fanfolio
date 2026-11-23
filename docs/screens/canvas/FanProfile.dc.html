@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Fan profile and settings</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Sora:wght@600;700&amp;display=swap">
+<style>
+body{margin:0;background:#0B0B0F}
+a{color:#E8A33D}a:hover{color:#F5B85A}
+.app *{box-sizing:border-box}
+.phone{width:390px;height:844px;background:#0B0B0F;border:1px solid #2E2E3A;border-radius:28px;overflow:hidden;display:flex;flex-direction:column;flex:none}
+.ph-head{height:60px;display:flex;align-items:center;gap:12px;padding:0 16px;flex:none}
+.ph-body{flex:1;overflow:hidden;padding:4px 16px 16px;display:flex;flex-direction:column;gap:14px}
+.cap{font:600 14px/20px Inter,sans-serif;color:#A8A6B3;margin:0 0 12px}
+.lbl{font:600 12px/16px Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#A8A6B3;margin:0}
+.h2{font:600 24px/32px Sora,sans-serif;margin:0;flex:1}.h3{font:600 18px/26px Sora,sans-serif;margin:0}
+.p{font:400 15px/22px Inter,sans-serif;color:#A8A6B3;margin:0}.sm{font:400 13px/18px Inter,sans-serif;color:#A8A6B3;margin:0}
+.btn{height:48px;border-radius:10px;font:600 15px/20px Inter,sans-serif;display:flex;align-items:center;justify-content:center;border:1px solid #6B6978;background:#15151C;color:#F5F3EF;text-decoration:none;padding:0 16px;cursor:pointer}
+.btn.pr{background:#E8A33D;border-color:#E8A33D;color:#1A1206}
+.btn.dg{background:transparent;border-color:#F0525B;color:#F0525B}
+.row{display:flex;align-items:center;gap:12px}
+.pill{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;background:#1E1E28;font:600 12px/16px Inter,sans-serif;white-space:nowrap}
+.ok{color:#34C47C}.warn{color:#F5D06B}.bad{color:#F0525B}.br{color:#E8A33D}
+.av{border-radius:50%;background:#6B6978;flex:none}
+.grp{background:#15151C;border-radius:16px;overflow:hidden}
+.set{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #2E2E3A;min-height:56px}.set:last-child{border-bottom:0}
+.sw{width:44px;height:24px;border-radius:12px;background:#E8A33D;display:inline-flex;align-items:center;justify-content:flex-end;padding:3px;flex:none}.sw span{width:18px;height:18px;border-radius:50%;background:#1A1206}.sw.off{background:#6B6978;justify-content:flex-start}.sw.off span{background:#F5F3EF}
+.fld{display:flex;flex-direction:column;gap:8px;font:600 15px/22px Inter,sans-serif}
+.in{min-height:48px;background:#1E1E28;border:1px solid #6B6978;border-radius:10px;color:#F5F3EF;font:400 15px/22px Inter,sans-serif;padding:12px 14px;display:flex;align-items:center;gap:8px}
+.radio{width:20px;height:20px;border-radius:50%;border:2px solid #6B6978;flex:none}.radio.on{border-color:#E8A33D;box-shadow:inset 0 0 0 4px #15151C;background:#E8A33D}
+.chip{display:inline-flex;align-items:center;height:36px;padding:0 14px;border-radius:999px;background:#1E1E28;font:400 13px Inter,sans-serif;white-space:nowrap}.chip.on{background:#F5F3EF;color:#0B0B0F;font-weight:600}
+nav.tab{height:72px;border-top:1px solid #2E2E3A;background:#15151C;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));flex:none}
+nav.tab a{display:flex;align-items:center;justify-content:center;font-size:13px;color:#A8A6B3;text-decoration:none}
+nav.tab a[aria-current]{color:#E8A33D;font-weight:600}
+</style>
+</helmet>
+<div class="app" style="width: 2620px; height: 1000px; box-sizing: border-box; padding: 40px; display: flex; gap: 40px; background: #0B0B0F; font-family: Inter, system-ui, sans-serif; color: #F5F3EF">
+
+  <section aria-label="My profile">
+    <p class="cap">1 · My profile (what creators see)</p>
+    <div class="phone">
+      <div class="ph-head"><h2 class="h2">Profile</h2><a href="#" class="btn" style="height: 40px">Edit</a></div>
+      <div class="ph-body" style="gap: 16px">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 8px 0">
+          <span class="av" style="width: 96px; height: 96px"></span>
+          <span class="h3">Kevin O.</span>
+          <span class="sm">@kevo_254 · member since Mar 2026</span>
+          <div class="row" style="gap: 6px; flex-wrap: wrap; justify-content: center"><span class="pill ok">Age verified</span><span class="pill br">Top fan · 2 creators</span></div>
+        </div>
+        <div class="grp" style="padding: 16px; display: flex; flex-direction: column; gap: 10px">
+          <p class="lbl">Creators can see</p>
+          <p class="sm" style="color: #F5F3EF">Your photo, display name, username, member-since date and top-fan badges.</p>
+          <p class="lbl" style="margin-top: 4px">Creators never see</p>
+          <p class="sm">Your email, phone number, real name, card or wallet details, or who else you subscribe to.</p>
+        </div>
+        <div class="grp">
+          <a class="set" href="#" style="color: #F5F3EF; text-decoration: none"><span style="flex: 1">Privacy &amp; content</span><span class="sm">Adult: on</span></a>
+          <a class="set" href="#" style="color: #F5F3EF; text-decoration: none"><span style="flex: 1">Notifications</span><span class="sm">Discreet</span></a>
+          <a class="set" href="#" style="color: #F5F3EF; text-decoration: none"><span style="flex: 1">Purchases &amp; receipts</span></a>
+          <a class="set" href="#" style="color: #F5F3EF; text-decoration: none"><span style="flex: 1">Account, wallet &amp; security</span></a>
+        </div>
+      </div>
+      <nav class="tab" aria-label="Main"><a href="#">Home</a><a href="#">Explore</a><a href="#">Messages</a><a href="#">Wallet</a><a href="#" aria-current="page">Profile</a></nav>
+    </div>
+  </section>
+
+  <section aria-label="Edit profile">
+    <p class="cap">2 · Edit profile</p>
+    <div class="phone">
+      <div class="ph-head"><a href="#" style="font-weight: 600; color: #A8A6B3; text-decoration: none">Cancel</a><span style="flex: 1; text-align: center; font-weight: 600">Edit profile</span><a href="#" style="font-weight: 600">Save</a></div>
+      <div class="ph-body">
+        <div class="row" style="gap: 16px"><span class="av" style="width: 72px; height: 72px"></span><div style="display: flex; flex-direction: column; gap: 4px"><a href="#" style="font-weight: 600">Change photo</a><span class="sm">Or use an initial avatar for privacy</span></div></div>
+        <label class="fld">Display name<span class="in">Kevin O.</span><span class="sm">Doesn't have to be your real name</span></label>
+        <label class="fld">Username<span class="in">@kevo_254<span style="flex: 1"></span><span class="ok" style="font-size: 13px; font-weight: 600">Yours</span></span><span class="sm">You can change it once every 30 days</span></label>
+        <label class="fld">Bio <span class="sm" style="font-weight: 400">(optional)</span><span class="in" style="min-height: 76px; align-items: flex-start; color: #A8A6B3">Music lover. Nairobi.</span><span class="sm" style="text-align: right">20 / 160</span></label>
+        <div class="row" style="gap: 12px"><label class="fld" style="flex: 1">Country<span class="in">Kenya</span></label><label class="fld" style="flex: 1">Currency<span class="in">KES</span></label></div>
+        <div style="flex: 1"></div>
+        <a href="#" class="btn pr">Save changes</a>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Privacy and content">
+    <p class="cap">3 · Privacy &amp; content</p>
+    <div class="phone">
+      <div class="ph-head"><a href="#" aria-label="Back" style="color: #F5F3EF; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a><h2 class="h2">Privacy</h2></div>
+      <div class="ph-body">
+        <div class="grp">
+          <div class="set"><div style="flex: 1"><p style="margin: 0; font-weight: 600">Show adult content</p><p class="sm">Available because you're age verified</p></div><span class="sw" role="switch" aria-checked="true" aria-label="Show adult content"><span></span></span></div>
+          <div class="set"><div style="flex: 1"><p style="margin: 0; font-weight: 600">Discreet mode</p><p class="sm">Browser tab and home-screen icon show "Folio"</p></div><span class="sw" role="switch" aria-checked="true" aria-label="Discreet mode"><span></span></span></div>
+          <div class="set"><div style="flex: 1"><p style="margin: 0; font-weight: 600">Blur previews in my feed</p><p class="sm">Tap to reveal each post</p></div><span class="sw off" role="switch" aria-checked="false" aria-label="Blur previews"><span></span></span></div>
+        </div>
+        <p class="lbl">Who can message me</p>
+        <div class="grp">
+          <label class="set"><span class="radio on"></span><span style="flex: 1">Creators I subscribe to</span></label>
+          <label class="set"><span class="radio"></span><span style="flex: 1">Any verified creator</span></label>
+          <label class="set"><span class="radio"></span><span style="flex: 1">No one</span></label>
+        </div>
+        <div class="grp">
+          <div class="set"><div style="flex: 1"><p style="margin: 0; font-weight: 600">Appear in top-fan lists</p><p class="sm">Creators can feature your username</p></div><span class="sw off" role="switch" aria-checked="false" aria-label="Appear in top-fan lists"><span></span></span></div>
+          <a class="set" href="#" style="color: #F5F3EF; text-decoration: none"><span style="flex: 1">Blocked creators</span><span class="sm">2</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Notification settings">
+    <p class="cap">4 · Notifications</p>
+    <div class="phone">
+      <div class="ph-head"><a href="#" aria-label="Back" style="color: #F5F3EF; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a><h2 class="h2">Notifications</h2></div>
+      <div class="ph-body">
+        <div class="grp" style="border: 1px solid #E8A33D">
+          <div class="set"><div style="flex: 1"><p style="margin: 0; font-weight: 600">Discreet notifications</p><p class="sm">Lock screen shows "You have new activity" instead of names or previews</p></div><span class="sw" role="switch" aria-checked="true" aria-label="Discreet notifications"><span></span></span></div>
+        </div>
+        <div class="row" style="justify-content: flex-end; gap: 24px; padding: 0 16px"><span class="lbl">Push</span><span class="lbl">Email</span></div>
+        <div class="grp">
+          <div class="set"><span style="flex: 1">New posts from my creators</span><span class="sw"><span></span></span><span class="sw off"><span></span></span></div>
+          <div class="set"><span style="flex: 1">Messages</span><span class="sw"><span></span></span><span class="sw off"><span></span></span></div>
+          <div class="set"><span style="flex: 1">Price drops &amp; bundles</span><span class="sw off"><span></span></span><span class="sw off"><span></span></span></div>
+          <div class="set"><div style="flex: 1"><span>Payments &amp; renewals</span><p class="sm">Always on: receipts and failed renewals</p></div><span class="sw" style="opacity: .5"><span></span></span><span class="sw" style="opacity: .5"><span></span></span></div>
+        </div>
+        <p class="sm">Quiet hours: off · <a href="#">Set quiet hours</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Purchases and receipts">
+    <p class="cap">5 · Purchases &amp; receipts</p>
+    <div class="phone">
+      <div class="ph-head"><a href="#" aria-label="Back" style="color: #F5F3EF; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a><h2 class="h2">Purchases</h2></div>
+      <div class="ph-body">
+        <div class="row" style="gap: 8px; overflow: hidden"><span class="chip on">All</span><span class="chip">Top-ups</span><span class="chip">Subscriptions</span><span class="chip">Unlocks</span><span class="chip">Tips</span></div>
+        <p class="lbl">November 2026 · spent 1,050 credits</p>
+        <div class="grp">
+          <a class="set" href="#" style="color: #F5F3EF; text-decoration: none"><div style="flex: 1"><p style="margin: 0">Top-up · Visa ····4417</p><p class="sm">21 Nov · FF-8K2Q-19</p></div><span class="ok" style="font-weight: 600">+1,000</span></a>
+          <a class="set" href="#" style="color: #F5F3EF; text-decoration: none"><div style="flex: 1"><p style="margin: 0">Subscription · @amani.w</p><p class="sm">20 Nov · 3 months</p></div><span style="font-weight: 600">−1,215</span></a>
+          <a class="set" href="#" style="color: #F5F3EF; text-decoration: none"><div style="flex: 1"><p style="margin: 0">Unlocked post · @zuri.k</p><p class="sm">18 Nov · Golden hour, Diani</p></div><span style="font-weight: 600">−250</span></a>
+          <a class="set" href="#" style="color: #F5F3EF; text-decoration: none"><div style="flex: 1"><p style="margin: 0">Tip · @amani.w</p><p class="sm">16 Nov</p></div><span style="font-weight: 600">−100</span></a>
+        </div>
+        <a href="#" class="btn">Download statement (PDF)</a>
+        <p class="sm" style="text-align: center">Something wrong with a charge? <a href="#">Get help</a> before contacting your bank. It's faster.</p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Your data and account">
+    <p class="cap">6 · Your data &amp; account</p>
+    <div class="phone">
+      <div class="ph-head"><a href="#" aria-label="Back" style="color: #F5F3EF; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a><h2 class="h2">Your data</h2></div>
+      <div class="ph-body">
+        <div class="grp" style="padding: 16px; display: flex; flex-direction: column; gap: 10px">
+          <p style="margin: 0; font-weight: 600">Download my data</p>
+          <p class="sm">Profile, purchases, messages and consent records. We'll email a secure link within 24 hours.</p>
+          <a href="#" class="btn">Request download</a>
+        </div>
+        <div class="grp" style="padding: 16px; display: flex; flex-direction: column; gap: 10px">
+          <p style="margin: 0; font-weight: 600">Pause my account</p>
+          <p class="sm">Hide your profile and stop renewals without deleting anything.</p>
+          <a href="#" class="btn">Pause account</a>
+        </div>
+        <div class="grp" style="padding: 16px; display: flex; flex-direction: column; gap: 10px; border: 1px solid #F0525B">
+          <p style="margin: 0; font-weight: 600">Delete account</p>
+          <p class="sm">Subscriptions stop renewing and you lose access to unlocked posts. Unused credits: [CREDIT REFUND POLICY]. You can restore the account for 30 days.</p>
+          <a href="#" class="btn dg">Delete my account</a>
+        </div>
+        <p class="sm">Questions about your data? Contact our Data Protection Officer at <a href="#">privacy@[domain]</a>.</p>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":2620,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

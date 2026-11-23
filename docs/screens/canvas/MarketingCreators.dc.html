@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FanFolio · For creators</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Sora:wght@600;700&amp;display=swap">
+<style>
+body{margin:0;background:#0B0B0F}
+a{color:#E8A33D}a:hover{color:#F5B85A}
+.mk *{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding:0 32px}
+.nav{height:80px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.navlinks{display:flex;gap:28px;font:500 15px/20px Inter,sans-serif}
+.navlinks a{color:#A8A6B3;text-decoration:none}.navlinks a:hover{color:#F5F3EF}.navlinks a.on{color:#F5F3EF}
+.logo{font:700 22px/28px Sora,sans-serif;color:#F5F3EF;text-decoration:none;display:flex;align-items:center;gap:10px}
+.mark{width:32px;height:32px;border-radius:10px;background:#E8A33D;color:#1A1206;display:flex;align-items:center;justify-content:center;font:700 16px Sora,sans-serif}
+.btn{height:52px;padding:0 24px;border-radius:10px;font:600 16px/20px Inter,sans-serif;display:inline-flex;align-items:center;justify-content:center;border:1px solid #6B6978;background:#15151C;color:#F5F3EF;text-decoration:none;white-space:nowrap}
+.btn:hover{color:#F5F3EF;border-color:#A8A6B3}
+.btn.pr{background:#E8A33D;border-color:#E8A33D;color:#1A1206}.btn.pr:hover{background:#F5B85A;color:#1A1206}
+.btn.sm{height:44px;padding:0 18px;font-size:15px}
+.eyebrow{font:600 13px/16px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#E8A33D;margin:0}
+.d1{font:700 60px/68px Sora,sans-serif;letter-spacing:-.02em;margin:0}
+.d2{font:700 44px/52px Sora,sans-serif;letter-spacing:-.01em;margin:0}
+.h3{font:600 20px/28px Sora,sans-serif;margin:0}
+.lead{font:400 19px/30px Inter,sans-serif;color:#A8A6B3;margin:0}
+.p{font:400 16px/26px Inter,sans-serif;color:#A8A6B3;margin:0}
+.sm{font:400 13px/18px Inter,sans-serif;color:#A8A6B3;margin:0}
+.amber{color:#E8A33D}
+.ctas{display:flex;gap:12px;flex-wrap:wrap}
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;padding:64px 0 104px}
+.heroimg{height:520px;border-radius:24px;background:#1E1E28;border:1px solid #2E2E3A;display:flex;align-items:center;justify-content:center;color:#6B6978;font:500 14px Inter,sans-serif;text-align:center;padding:24px}
+.sec{padding:112px 0}
+.sechead{display:flex;flex-direction:column;gap:16px;max-width:720px;margin-bottom:56px}
+.band{background:#15151C;border-top:1px solid #2E2E3A;border-bottom:1px solid #2E2E3A}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.card{background:#15151C;border:1px solid #2E2E3A;border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:14px}
+.band .card{background:#0B0B0F}
+.ico{width:40px;height:40px;border-radius:10px;background:#1E1E28;color:#E8A33D;display:flex;align-items:center;justify-content:center;flex:none}
+.num{width:40px;height:40px;border-radius:999px;border:1px solid #E8A33D;color:#E8A33D;display:flex;align-items:center;justify-content:center;font:600 16px Sora,sans-serif}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.calc{background:#0B0B0F;border:1px solid #2E2E3A;border-radius:16px;overflow:hidden}
+.calc .row{display:flex;justify-content:space-between;align-items:center;padding:20px 24px;border-bottom:1px solid #2E2E3A;font:500 16px/24px Inter,sans-serif}
+.calc .row:last-child{border-bottom:0;background:#1E1E28}
+.val{font:600 18px/24px Sora,sans-serif}
+.pay{display:flex;align-items:center;gap:16px;padding:20px;border:1px solid #2E2E3A;border-radius:16px;background:#0B0B0F}
+.stack{display:flex;flex-direction:column;gap:12px}
+.quote{border:1px solid #2E2E3A;border-radius:16px;padding:32px;background:#15151C;display:flex;flex-direction:column;gap:20px}
+.faq{display:flex;flex-direction:column;border-top:1px solid #2E2E3A}
+.faq details{border-bottom:1px solid #2E2E3A;padding:22px 0}
+.faq summary{font:600 18px/26px Sora,sans-serif;color:#F5F3EF;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:16px}
+.faq summary::-webkit-details-marker{display:none}
+.faq details p{margin:12px 0 0}
+.cta{background:#15151C;border:1px solid #2E2E3A;border-radius:24px;padding:72px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px}
+.foot{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:32px 0 40px;border-top:1px solid #2E2E3A}
+@media (max-width:960px){
+.hero,.split{grid-template-columns:1fr}
+.grid3,.grid4{grid-template-columns:1fr 1fr}
+.d1{font-size:42px;line-height:50px}.d2{font-size:34px;line-height:42px}
+.navlinks{display:none}
+.heroimg{height:360px}
+.sec{padding:80px 0}.cta{padding:48px 24px}
+}
+@media (max-width:600px){.grid3,.grid4{grid-template-columns:1fr}.wrap{padding:0 20px}}
+</style>
+</helmet>
+<div class="mk" style="background: #0B0B0F; color: #F5F3EF; font-family: Inter, system-ui, sans-serif">
+
+  <header class="wrap nav">
+    <a href="#" class="logo"><span class="mark" aria-hidden="true">F</span>FanFolio</a>
+    <nav class="navlinks" aria-label="Main"><a href="#">For fans</a><a href="#" class="on" aria-current="page">For creators</a><a href="#">Safety</a><a href="#">FAQ</a></nav>
+    <div style="display: flex; gap: 12px; align-items: center"><a href="#" style="font: 600 15px Inter, sans-serif; color: #F5F3EF; text-decoration: none">Log in</a><a href="#" class="btn pr sm">Become a creator</a></div>
+  </header>
+
+  <section class="wrap hero" aria-label="Introduction">
+    <div style="display: flex; flex-direction: column; gap: 28px">
+      <p class="eyebrow">For creators</p>
+      <h1 class="d1">Turn your following into income <span class="amber">you control</span></h1>
+      <p class="lead">Share exclusive content with fans who pay for it. You set the prices, you own your audience, and you keep 80% of everything you earn.</p>
+      <div class="ctas"><a href="#" class="btn pr">Start your page</a><a href="#" class="btn">See how payouts work</a></div>
+      <p class="sm">Free to join. You need to be 18+ with a valid government ID.</p>
+    </div>
+    <div class="heroimg">Hero image · use carousel prompt "Creator at work"</div>
+  </section>
+
+  <section class="band" aria-labelledby="money">
+    <div class="wrap sec split">
+      <div style="display: flex; flex-direction: column; gap: 20px">
+        <p class="eyebrow">Clear, simple pricing</p>
+        <h2 id="money" class="d2">You keep 80%. Always.</h2>
+        <p class="lead">No setup fee, no monthly fee. FanFolio takes 20% of each sale to cover payments, protection and support. Here is one sale, start to finish.</p>
+      </div>
+      <div class="calc" aria-label="Example of one sale">
+        <div class="row"><span>Fan pays for your post</span><span class="val">1,000 credits · $10.00</span></div>
+        <div class="row"><span class="p">FanFolio fee (20%)</span><span class="val" style="color: #A8A6B3">− $2.00</span></div>
+        <div class="row"><span class="p">Clears after 7 days</span><span class="val" style="color: #A8A6B3">Hold</span></div>
+        <div class="row"><span style="font-weight: 600">You receive</span><span class="val amber" style="font-size: 24px">$8.00</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap sec" aria-labelledby="start">
+    <div class="sechead"><p class="eyebrow">Getting started</p><h2 id="start" class="d2">Live in four steps</h2></div>
+    <div class="grid4">
+      <div class="card"><svg width="104" height="104" viewBox="0 0 120 120" fill="none" aria-hidden="true" style="flex: none"><circle cx="60" cy="60" r="52" fill="#1E1E28"/><rect x="28" y="30" width="64" height="60" rx="10" fill="#2E2E3A" stroke="#F5F3EF" stroke-width="2.5"/><circle cx="60" cy="52" r="11" fill="#E8A33D"/><path d="M42 82c3-10 10-14 18-14s15 4 18 14" fill="#E8A33D"/><circle cx="88" cy="34" r="12" fill="#34C47C" stroke="#0B0B0F" stroke-width="3"/><path d="m83 34 3.5 3.5 6-6" stroke="#0B0B0F" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 82L23.2 84.8L26 86L23.2 87.2L22 90L20.8 87.2L18 86L20.8 84.8Z" fill="#F5C877"/></svg><span class="num">1</span><h3 class="h3">Create your account</h3><p class="p">Pick your creator name and your page link.</p></div>
+      <div class="card"><svg width="104" height="104" viewBox="0 0 120 120" fill="none" aria-hidden="true" style="flex: none"><circle cx="60" cy="60" r="52" fill="#1E1E28"/><rect x="20" y="36" width="72" height="50" rx="8" fill="#2E2E3A" stroke="#F5F3EF" stroke-width="2.5"/><rect x="28" y="46" width="22" height="28" rx="4" fill="#E8A33D"/><circle cx="39" cy="56" r="5" fill="#B97A22"/><path d="M31 72c1.5-6 5-8 8-8s6.5 2 8 8" fill="#B97A22"/><rect x="56" y="50" width="28" height="4" rx="2" fill="#F5F3EF"/><rect x="56" y="60" width="20" height="4" rx="2" fill="#6B6978"/><rect x="56" y="70" width="24" height="4" rx="2" fill="#6B6978"/><circle cx="88" cy="84" r="15" fill="#34C47C" stroke="#0B0B0F" stroke-width="3"/><path d="m81 84 5 5 9-9" stroke="#0B0B0F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M98 25L99.5 28.5L103 30L99.5 31.5L98 35L96.5 31.5L93 30L96.5 28.5Z" fill="#F5C877"/><path d="M22 25L22.9 27.1L25 28L22.9 28.9L22 31L21.1 28.9L19 28L21.1 27.1Z" fill="#E8A33D"/></svg><span class="num">2</span><h3 class="h3">Verify your ID</h3><p class="p">A quick ID and selfie check. We never keep the images.</p></div>
+      <div class="card"><svg width="104" height="104" viewBox="0 0 120 120" fill="none" aria-hidden="true" style="flex: none"><circle cx="60" cy="60" r="52" fill="#1E1E28"/><path d="M30 30h30l34 34a6 6 0 0 1 0 8.5L72.5 94a6 6 0 0 1-8.5 0L30 60Z" fill="#E8A33D"/><path d="M60 30l34 34a6 6 0 0 1 0 8.5L83 83.5 46 46Z" fill="#B97A22" opacity=".55"/><circle cx="44" cy="44" r="6" fill="#0B0B0F"/><text x="66" y="74" text-anchor="middle" font-family="Sora, sans-serif" font-weight="700" font-size="18" fill="#0B0B0F" transform="rotate(45 66 68)">$</text><path d="M96 25L97.5 28.5L101 30L97.5 31.5L96 35L94.5 31.5L91 30L94.5 28.5Z" fill="#F5C877"/><path d="M24 84L25.2 86.8L28 88L25.2 89.2L24 92L22.8 89.2L20 88L22.8 86.8Z" fill="#F5C877"/></svg><span class="num">3</span><h3 class="h3">Set your prices</h3><p class="p">Monthly price, bundles and pay-per-view. Change them any time.</p></div>
+      <div class="card"><svg width="104" height="104" viewBox="0 0 120 120" fill="none" aria-hidden="true" style="flex: none"><circle cx="60" cy="60" r="52" fill="#1E1E28"/><rect x="22" y="34" width="62" height="50" rx="8" fill="#2E2E3A" stroke="#F5F3EF" stroke-width="2.5"/><circle cx="38" cy="50" r="6" fill="#F5C877"/><path d="M26 80l18-18 12 12 8-8 18 14" fill="#E8A33D" stroke="#E8A33D" stroke-width="2" stroke-linejoin="round"/><circle cx="86" cy="80" r="16" fill="#E8A33D" stroke="#0B0B0F" stroke-width="3"/><path d="M86 88V72m-7 7 7-7 7 7" stroke="#0B0B0F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M98 25L99.5 28.5L103 30L99.5 31.5L98 35L96.5 31.5L93 30L96.5 28.5Z" fill="#F5C877"/></svg><span class="num">4</span><h3 class="h3">Post and earn</h3><p class="p">Upload, schedule and share your page link with your fans.</p></div>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="tools">
+    <div class="wrap sec">
+      <div class="sechead"><p class="eyebrow">Your studio</p><h2 id="tools" class="d2">Everything you need to run your page</h2></div>
+      <div class="grid3">
+        <div class="card"><h3 class="h3">Scheduled posts</h3><p class="p">Plan your week and let FanFolio publish on time.</p></div>
+        <div class="card"><h3 class="h3">Mass messages</h3><p class="p">Message all subscribers at once, with or without locked media.</p></div>
+        <div class="card"><h3 class="h3">Bundles and offers</h3><p class="p">Discounts for 3, 6 and 12 months, and limited-time promos.</p></div>
+        <div class="card"><h3 class="h3">Earnings insights</h3><p class="p">See what sells, who your top fans are and where income comes from.</p></div>
+        <div class="card"><h3 class="h3">Collaborations</h3><p class="p">Tag verified co-creators, agree on a split and get paid automatically.</p></div>
+        <div class="card"><h3 class="h3">Fan management</h3><p class="p">See every subscriber, reward your top fans and block anyone you choose.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap sec split" aria-labelledby="payouts">
+    <div style="display: flex; flex-direction: column; gap: 20px">
+      <p class="eyebrow">Getting paid</p>
+      <h2 id="payouts" class="d2">Withdraw the way that works for you</h2>
+      <p class="lead">Earnings become available 7 days after each sale. Large withdrawals get an extra security review to keep your money safe.</p>
+    </div>
+    <div class="stack">
+      <div class="pay"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 21h18"/><path d="M5 21V10"/><path d="M19 21V10"/><path d="M9 21V10"/><path d="M15 21V10"/><path d="m2 10 10-6 10 6"/></svg></span><div><h3 class="h3">Bank transfer</h3><p class="sm">To your local bank account</p></div></div>
+      <div class="pay"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9 8h4.5a2 2 0 0 1 0 4H9h5a2 2 0 0 1 0 4H9z"/><path d="M11 6v2"/><path d="M11 16v2"/></svg></span><div><h3 class="h3">Crypto</h3><p class="sm">Stablecoin to your own wallet</p></div></div>
+      <div class="pay"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span><div><h3 class="h3">Paxum or Payoneer</h3><p class="sm">Global e-wallets for creators</p></div></div>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="protect">
+    <div class="wrap sec">
+      <div class="sechead"><p class="eyebrow">Protection</p><h2 id="protect" class="d2">Your content, guarded</h2><p class="lead">No website can stop every screen capture. What we do is make leaks hard, traceable and quick to remove.</p></div>
+      <div class="grid3">
+        <div class="card"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><h3 class="h3">Encrypted media</h3><p class="p">Videos and photos are encrypted and play only for paying fans, through short-lived links.</p></div>
+        <div class="card"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></span><h3 class="h3">Watermarked to the viewer</h3><p class="p">Each fan sees a watermark tied to their account, so a leak points back to who shared it.</p></div>
+        <div class="card"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></span><h3 class="h3">Leak takedowns</h3><p class="p">Report a leak and our team files takedown requests and bans the account behind it.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap sec split" aria-labelledby="faqh" style="align-items: flex-start">
+    <div class="sechead" style="margin: 0"><p class="eyebrow">Creator FAQ</p><h2 id="faqh" class="d2">Before you start</h2></div>
+    <div class="faq">
+      <details open=""><summary>Do I need to show my face?<span class="amber" aria-hidden="true">−</span></summary><p class="p">No. Your ID check is private and only used to confirm you are an adult. What you post is up to you.</p></details>
+      <details><summary>Can I post adult content?<span class="amber" aria-hidden="true">+</span></summary><p class="p">Yes, if you are verified. Adult posts are shown only to fans who have also confirmed they are 18+.</p></details>
+      <details><summary>What if someone else appears in my post?<span class="amber" aria-hidden="true">+</span></summary><p class="p">Tag them. They verify their ID and approve that post before it can go live, and they can be paid a share.</p></details>
+      <details><summary>Can I change my prices later?<span class="amber" aria-hidden="true">+</span></summary><p class="p">Yes. Change your subscription price, bundles and post prices from your studio at any time.</p></details>
+    </div>
+  </section>
+
+  <section class="wrap sec" aria-label="Get started" style="padding-top: 0">
+    <div class="cta">
+      <h2 class="d2" style="max-width: 720px">Your audience is ready. <span class="amber">Your page should be too.</span></h2>
+      <p class="lead" style="max-width: 560px">Set up in minutes and keep 80% of everything you earn.</p>
+      <a href="#" class="btn pr">Become a creator</a>
+    </div>
+  </section>
+
+  <footer class="wrap foot"><a href="#" class="logo"><span class="mark" aria-hidden="true">F</span>FanFolio</a><p class="sm">© FanFolio · Terms [LEGAL TEXT] · Privacy · privacy@[domain]</p></footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":4300}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

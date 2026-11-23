@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Creator collaborations and co-performer consent</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Sora:wght@600;700&amp;display=swap">
+<style>
+body{margin:0;background:#0B0B0F}
+a{color:#E8A33D}a:hover{color:#F5B85A}
+.app *{box-sizing:border-box}
+.phone{width:390px;height:844px;background:#0B0B0F;border:1px solid #2E2E3A;border-radius:28px;overflow:hidden;display:flex;flex-direction:column;flex:none}
+.ph-head{height:56px;display:flex;align-items:center;gap:12px;padding:0 16px;flex:none}
+.ph-body{flex:1;overflow:hidden;padding:4px 16px 24px;display:flex;flex-direction:column;gap:14px}
+.cap{font:600 14px/20px Inter,sans-serif;color:#A8A6B3;margin:0 0 12px}
+.who{display:inline-block;font:600 11px/16px Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:999px;margin-left:6px}
+.lbl{font:600 12px/16px Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#A8A6B3;margin:0}
+.h2{font:600 24px/32px Sora,sans-serif;margin:0}.h3{font:600 18px/26px Sora,sans-serif;margin:0}
+.p{font:400 15px/22px Inter,sans-serif;color:#A8A6B3;margin:0}.sm{font:400 13px/18px Inter,sans-serif;color:#A8A6B3;margin:0}
+.btn{height:52px;border-radius:10px;font:600 16px/20px Inter,sans-serif;display:flex;align-items:center;justify-content:center;border:1px solid #6B6978;background:#15151C;color:#F5F3EF;text-decoration:none;width:100%;cursor:pointer}
+.btn.pr{background:#E8A33D;border-color:#E8A33D;color:#1A1206}
+.btn.off{background:#1E1E28;border-color:#2E2E3A;color:#6B6978}
+.btn.dg{background:transparent;border-color:#F0525B;color:#F0525B}
+.row{display:flex;align-items:center;gap:12px}
+.card{background:#15151C;border:1px solid #2E2E3A;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.pill{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;background:#1E1E28;font:600 12px/16px Inter,sans-serif;white-space:nowrap}
+.ok{color:#34C47C}.warn{color:#F5D06B}.bad{color:#F0525B}.br{color:#E8A33D}
+.av{border-radius:50%;background:#6B6978;flex:none}
+.in{height:48px;background:#1E1E28;border:1px solid #6B6978;border-radius:10px;color:#F5F3EF;font:400 15px Inter,sans-serif;padding:0 14px;display:flex;align-items:center;gap:8px}
+.fld{display:flex;flex-direction:column;gap:8px;font:600 15px/22px Inter,sans-serif}
+.chk{width:20px;height:20px;border-radius:5px;background:#E8A33D;color:#1A1206;display:flex;align-items:center;justify-content:center;flex:none}
+.dot{width:24px;height:24px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center}
+.thumb{background:#1E1E28;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#A8A6B3;font-size:12px}
+</style>
+</helmet>
+<div class="app" style="width: 3050px; height: 1000px; box-sizing: border-box; padding: 40px; display: flex; gap: 40px; background: #0B0B0F; font-family: Inter, system-ui, sans-serif; color: #F5F3EF">
+
+  <section aria-label="Tag people in a post">
+    <p class="cap">1 · Who's in this post?<span class="who" style="background: #1E1E28; color: #E8A33D">Creator</span></p>
+    <div class="phone">
+      <div class="ph-head"><a href="#" aria-label="Back" style="color: #F5F3EF; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a><span style="font-weight: 600">New post</span></div>
+      <div class="ph-body">
+        <div class="row" style="gap: 8px"><span class="thumb" style="width: 72px; height: 72px">Video</span><span class="thumb" style="width: 72px; height: 72px">Photo</span><span class="thumb" style="width: 72px; height: 72px">Photo</span></div>
+        <h2 class="h2">Who appears in this post?</h2>
+        <p class="p">Everyone you can see or hear must be verified 18+ and agree to this post before it can go live.</p>
+        <label class="row" style="background: #15151C; border: 2px solid #E8A33D; border-radius: 10px; padding: 14px"><span class="chk"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span style="flex: 1; font-weight: 600">Someone else appears with me</span></label>
+        <label class="in"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A8A6B3" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg><span style="color: #A8A6B3">Search verified creators</span></label>
+        <div class="card" style="gap: 0; padding: 4px 16px">
+          <div class="row" style="padding: 12px 0; border-bottom: 1px solid #2E2E3A"><span class="av" style="width: 40px; height: 40px"></span><div style="flex: 1"><p style="margin: 0; font-weight: 600">Zuri Kamau · @zuri.k</p><p class="sm ok">Verified 18+</p></div><span class="pill br">Tagged</span></div>
+          <div class="row" style="padding: 12px 0"><span class="av" style="width: 40px; height: 40px; background: #1E1E28"></span><div style="flex: 1"><p style="margin: 0; font-weight: 600">Not on FanFolio?</p><p class="sm">Invite them by phone or email</p></div><a href="#" style="font-weight: 600">Invite</a></div>
+        </div>
+        <div style="flex: 1"></div>
+        <a href="#" class="btn pr">Continue</a>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Invite co-performer">
+    <p class="cap">2 · Invite &amp; split revenue<span class="who" style="background: #1E1E28; color: #E8A33D">Creator</span></p>
+    <div class="phone">
+      <div class="ph-head"><a href="#" aria-label="Back" style="color: #F5F3EF; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a><span style="font-weight: 600">Invite co-performer</span></div>
+      <div class="ph-body">
+        <label class="fld">Their name<span class="in">Juma Ochieng</span></label>
+        <label class="fld">Phone or email<span class="in">+254 712 ••• 330</span></label>
+        <div class="card">
+          <div class="row" style="justify-content: space-between"><strong>Revenue split for this post</strong><span class="sm">Optional</span></div>
+          <div style="height: 8px; border-radius: 4px; background: #2E2E3A; position: relative"><span style="position: absolute; left: 0; top: 0; bottom: 0; width: 70%; border-radius: 4px; background: #E8A33D"></span><span style="position: absolute; left: calc(70% - 12px); top: -8px; width: 24px; height: 24px; border-radius: 50%; background: #F5F3EF; border: 3px solid #E8A33D"></span></div>
+          <div class="row" style="justify-content: space-between; font-size: 14px"><span>You · <strong>70%</strong></span><span>Juma · <strong>30%</strong></span></div>
+          <p class="sm">Shares come out of your 80% after the platform fee. Juma is paid automatically once verified.</p>
+        </div>
+        <div class="row" style="background: #15151C; border-radius: 10px; padding: 12px; align-items: flex-start"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#F5D06B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg><p class="sm">Juma will verify their ID and selfie, then review this exact post before agreeing. You can't publish until they do.</p></div>
+        <div style="flex: 1"></div>
+        <a href="#" class="btn pr">Send invite</a>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Invitation received">
+    <p class="cap">3 · Invitation received<span class="who" style="background: #1E1E28; color: #8AB4FF">Co-performer</span></p>
+    <div class="phone">
+      <div class="ph-head"><span style="font: 600 18px Sora">FanFolio</span></div>
+      <div class="ph-body" style="gap: 16px">
+        <div class="row"><span class="av" style="width: 56px; height: 56px; box-shadow: 0 0 0 2px #E8A33D"></span><div><p style="margin: 0; font-weight: 600">Amani Wanjiru</p><p class="sm ok">Verified creator</p></div></div>
+        <h2 class="h2">Amani invited you to appear in a post</h2>
+        <p class="p">You'll see the post before deciding. Nothing goes live without your agreement.</p>
+        <div class="card" style="gap: 10px">
+          <div class="row" style="justify-content: space-between; font-size: 14px"><span class="sm">Type</span><span>Pay-per-view · 250 credits</span></div>
+          <div class="row" style="justify-content: space-between; font-size: 14px"><span class="sm">Content rating</span><span>Adult (18+)</span></div>
+          <div class="row" style="justify-content: space-between; font-size: 14px"><span class="sm">Your share</span><span class="br" style="font-weight: 600">30% of Amani's earnings</span></div>
+        </div>
+        <p class="lbl">To accept · about 3 minutes</p>
+        <div class="row" style="font-size: 15px"><span class="dot" style="background: #1E1E28; color: #A8A6B3; font-size: 12px; font-weight: 600">1</span>Verify your ID and selfie</div>
+        <div class="row" style="font-size: 15px"><span class="dot" style="background: #1E1E28; color: #A8A6B3; font-size: 12px; font-weight: 600">2</span>Review the post and sign a release</div>
+        <div style="flex: 1"></div>
+        <a href="#" class="btn pr">Get started</a>
+        <a href="#" class="btn">Decline</a>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Co-performer verification">
+    <p class="cap">4 · Verify age &amp; identity<span class="who" style="background: #1E1E28; color: #8AB4FF">Co-performer</span></p>
+    <div class="phone">
+      <div class="ph-head"><a href="#" aria-label="Back" style="color: #F5F3EF; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a></div>
+      <div class="ph-body" style="gap: 16px">
+        <div style="display: flex; gap: 6px"><span style="flex: 1; height: 4px; border-radius: 2px; background: #E8A33D"></span><span style="flex: 1; height: 4px; border-radius: 2px; background: #2E2E3A"></span></div>
+        <p class="lbl">Step 1 of 2 · Identity</p>
+        <svg width="96" height="96" viewBox="0 0 120 120" fill="none" aria-hidden="true" style="flex: none"><circle cx="60" cy="60" r="52" fill="#1E1E28"/><rect x="20" y="36" width="72" height="50" rx="8" fill="#2E2E3A" stroke="#F5F3EF" stroke-width="2.5"/><rect x="28" y="46" width="22" height="28" rx="4" fill="#E8A33D"/><circle cx="39" cy="56" r="5" fill="#B97A22"/><path d="M31 72c1.5-6 5-8 8-8s6.5 2 8 8" fill="#B97A22"/><rect x="56" y="50" width="28" height="4" rx="2" fill="#F5F3EF"/><rect x="56" y="60" width="20" height="4" rx="2" fill="#6B6978"/><rect x="56" y="70" width="24" height="4" rx="2" fill="#6B6978"/><circle cx="88" cy="84" r="15" fill="#34C47C" stroke="#0B0B0F" stroke-width="3"/><path d="m81 84 5 5 9-9" stroke="#0B0B0F" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M98 25L99.5 28.5L103 30L99.5 31.5L98 35L96.5 31.5L93 30L96.5 28.5Z" fill="#F5C877"/><path d="M22 25L22.9 27.1L25 28L22.9 28.9L22 31L21.1 28.9L19 28L21.1 27.1Z" fill="#E8A33D"/></svg>
+        <h2 class="h2">Confirm you're 18+</h2>
+        <p class="p">Same check every FanFolio creator passes. Amani never sees your ID or date of birth.</p>
+        <div class="card" style="gap: 14px">
+          <div class="row"><span class="dot" style="background: #34C47C; color: #1A1206"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><div style="flex: 1"><p style="margin: 0; font-weight: 600">ID document scanned</p><p class="sm">National ID · front and back</p></div></div>
+          <div class="row"><span class="dot" style="border: 2px solid #E8A33D"></span><div style="flex: 1"><p style="margin: 0; font-weight: 600">Selfie liveness check</p><p class="sm">Matches your face to the ID</p></div><a href="#" style="font-weight: 600">Start</a></div>
+          <div class="row"><span class="dot" style="background: #1E1E28"></span><div style="flex: 1"><p style="margin: 0; font-weight: 600; color: #A8A6B3">Payout account (optional)</p><p class="sm">Only needed to receive your 30%</p></div></div>
+        </div>
+        <div class="row" style="background: #15151C; border-radius: 10px; padding: 12px"><p class="sm">Already verified on FanFolio? <a href="#" style="font-weight: 600">Log in instead</a> and skip this step.</p></div>
+        <div style="flex: 1"></div>
+        <a href="#" class="btn pr">Start selfie check</a>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Per-post consent">
+    <p class="cap">5 · Review post &amp; consent<span class="who" style="background: #1E1E28; color: #8AB4FF">Co-performer</span></p>
+    <div class="phone">
+      <div class="ph-head"><a href="#" aria-label="Back" style="color: #F5F3EF; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a></div>
+      <div class="ph-body">
+        <div style="display: flex; gap: 6px"><span style="flex: 1; height: 4px; border-radius: 2px; background: #E8A33D"></span><span style="flex: 1; height: 4px; border-radius: 2px; background: #E8A33D"></span></div>
+        <p class="lbl">Step 2 of 2 · This post</p>
+        <h2 class="h2">Review before you agree</h2>
+        <div class="row" style="gap: 8px"><span class="thumb" style="flex: 1; height: 110px">Video · 4:30 · tap to watch</span><span class="thumb" style="width: 80px; height: 110px">+2 photos</span></div>
+        <div class="card" style="gap: 8px; padding: 14px">
+          <p class="sm">Caption: "Golden hour, Diani"</p>
+          <p class="sm">Sold as pay-per-view to Amani's fans only · watermarked · never downloadable</p>
+        </div>
+        <label class="row" style="align-items: flex-start; font-size: 14px; line-height: 20px"><span class="chk" style="margin-top: 2px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>I appear in this content, I was 18 or older when it was recorded, and I agreed to be recorded.</label>
+        <label class="row" style="align-items: flex-start; font-size: 14px; line-height: 20px"><span class="chk" style="margin-top: 2px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>I agree to it being sold on FanFolio as described, with a 30% share to me.</label>
+        <div style="flex: 1"></div>
+        <a href="#" class="btn pr">Sign with passkey</a>
+        <a href="#" class="btn dg">I don't agree</a>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Post waiting for consent">
+    <p class="cap">6 · Publish gate<span class="who" style="background: #1E1E28; color: #E8A33D">Creator</span></p>
+    <div class="phone">
+      <div class="ph-head"><a href="#" aria-label="Back" style="color: #F5F3EF; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a><span style="font-weight: 600">Golden hour, Diani</span></div>
+      <div class="ph-body" style="gap: 16px">
+        <span class="pill warn" style="align-self: flex-start">Waiting for 1 person</span>
+        <h2 class="h2">Almost ready to publish</h2>
+        <div class="card" style="gap: 14px">
+          <div class="row"><span class="av" style="width: 40px; height: 40px"></span><div style="flex: 1"><p style="margin: 0; font-weight: 600">You</p><p class="sm ok">Verified · consent given</p></div></div>
+          <div class="row"><span class="av" style="width: 40px; height: 40px"></span><div style="flex: 1"><p style="margin: 0; font-weight: 600">Zuri Kamau</p><p class="sm ok">Verified · signed 12:40</p></div></div>
+          <div class="row"><span class="av" style="width: 40px; height: 40px; background: #1E1E28"></span><div style="flex: 1"><p style="margin: 0; font-weight: 600">Juma Ochieng</p><p class="sm warn">ID verified · reviewing the post</p></div><a href="#" style="font-weight: 600">Remind</a></div>
+        </div>
+        <p class="sm">Invites expire after 7 days. You can remove Juma and re-edit the post instead.</p>
+        <div style="flex: 1"></div>
+        <span class="btn off" aria-disabled="true">Publish (waiting for Juma)</span>
+        <a href="#" class="btn">Schedule for when ready</a>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="My appearances">
+    <p class="cap">7 · My appearances &amp; withdraw<span class="who" style="background: #1E1E28; color: #8AB4FF">Co-performer</span></p>
+    <div class="phone">
+      <div class="ph-head"><span class="h3">My appearances</span></div>
+      <div class="ph-body">
+        <p class="p">Posts you've agreed to. You can withdraw consent at any time.</p>
+        <div class="card">
+          <div class="row"><span class="thumb" style="width: 56px; height: 56px">Video</span><div style="flex: 1"><p style="margin: 0; font-weight: 600">Golden hour, Diani</p><p class="sm">With Amani · PPV · 214 unlocks</p></div></div>
+          <div class="row" style="justify-content: space-between; font-size: 14px"><span class="sm">Your share so far</span><span class="ok" style="font-weight: 600">$160.50</span></div>
+          <a href="#" class="btn dg" style="height: 44px; font-size: 15px">Withdraw consent</a>
+        </div>
+        <div class="card" style="border-color: #F5D06B">
+          <p style="margin: 0; font-weight: 600">If you withdraw</p>
+          <p class="sm">The post stops selling immediately and our team reviews it within 24 hours. Fans who already bought it lose access. Your earned share stays yours.</p>
+        </div>
+        <div class="card" style="gap: 6px"><p style="margin: 0; font-weight: 600">Need urgent help?</p><p class="sm">If you were recorded without consent, <a href="#">report it now</a>. These reports are handled first, 24/7.</p></div>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":3050,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

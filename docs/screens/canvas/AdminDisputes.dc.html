@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Admin disputes and chargebacks</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Sora:wght@600;700&amp;display=swap">
+<style>
+body{margin:0;background:#0B0B0F}
+a{color:#E8A33D}a:hover{color:#F5B85A}
+.app *{box-sizing:border-box}
+.side{flex:1 1 248px;max-width:100%;background:#15151C;border-right:1px solid #2E2E3A;padding:24px 12px;display:flex;flex-direction:column;gap:4px}
+.wm{font:600 18px/26px Sora,sans-serif;padding:0 12px 20px;display:flex;gap:8px;align-items:baseline}
+.side a{display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:10px;color:#A8A6B3;text-decoration:none;font-size:15px}
+.side a[aria-current]{background:#1E1E28;color:#F5F3EF;font-weight:600}
+.n{margin-left:auto;min-width:24px;height:22px;border-radius:999px;background:#0B0B0F;color:#F5F3EF;font:600 12px/22px Inter,sans-serif;text-align:center;padding:0 8px}
+.h1{font:700 32px/40px Sora,sans-serif;margin:0}.h3{font:600 18px/26px Sora,sans-serif;margin:0}
+.p{font:400 15px/22px Inter,sans-serif;color:#A8A6B3;margin:0}.sm{font:400 13px/18px Inter,sans-serif;color:#A8A6B3;margin:0}
+.lbl{font:600 12px/16px Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#A8A6B3}
+.btn{height:44px;border-radius:10px;font:600 15px/20px Inter,sans-serif;display:inline-flex;align-items:center;justify-content:center;border:1px solid #6B6978;background:#15151C;color:#F5F3EF;text-decoration:none;padding:0 18px;cursor:pointer}
+.btn.pr{background:#E8A33D;border-color:#E8A33D;color:#1A1206}
+.pill{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;background:#1E1E28;font:600 12px/16px Inter,sans-serif;color:#F5F3EF;white-space:nowrap}
+.ok{color:#34C47C}.warn{color:#F5D06B}.bad{color:#F0525B}.br{color:#E8A33D}
+.card{background:#15151C;border:1px solid #2E2E3A;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:8px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}.v{font:700 28px/36px Sora,sans-serif}
+table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;font:600 12px/16px Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#A8A6B3;padding:10px 12px;border-bottom:1px solid #2E2E3A;white-space:nowrap}td{padding:12px;border-bottom:1px solid #2E2E3A;white-space:nowrap}
+tr.sel td{background:#1E1E28}
+.ev{display:flex;gap:10px;align-items:center;font-size:14px;padding:10px 0;border-bottom:1px solid #2E2E3A}
+.box{width:20px;height:20px;border-radius:5px;background:#E8A33D;color:#1A1206;display:flex;align-items:center;justify-content:center;font-size:12px;flex:none}
+</style>
+</helmet>
+<div class="app" style="min-height: 960px; display: flex; flex-wrap: wrap; background: #0B0B0F; font-family: Inter, system-ui, sans-serif; color: #F5F3EF">
+  <nav class="side" aria-label="Admin">
+    <div class="wm">FanFolio <span class="lbl bad">Admin</span></div>
+    <a href="#">Overview</a><a href="#">Creator approvals<span class="n">5</span></a><a href="#">Moderation queue<span class="n">12</span></a><a href="#">Payout reviews<span class="n">3</span></a><a href="#" aria-current="page">Disputes</a><a href="#">Leak takedowns<span class="n">4</span></a><a href="#">Users &amp; bans</a><a href="#">Audit log</a><a href="#">Fees &amp; settings</a>
+  </nav>
+  <main style="flex: 999 1 560px; min-width: 0; padding: 32px; display: flex; flex-direction: column; gap: 24px">
+    <div><h1 class="h1">Disputes &amp; chargebacks</h1><p class="p">Answer before the card network deadline. Evidence is gathered automatically from logs.</p></div>
+    <div class="kpis">
+      <div class="card"><span class="sm">Chargeback rate (30d)</span><span class="v ok">0.42%</span><span class="sm">Processors act near 1%</span></div>
+      <div class="card"><span class="sm">Open disputes</span><span class="v">7</span><span class="sm warn">2 due in 48h</span></div>
+      <div class="card"><span class="sm">Won (90d)</span><span class="v">71%</span><span class="sm">24 of 34</span></div>
+      <div class="card"><span class="sm">Fans frozen</span><span class="v">7</span><span class="sm">Wallets locked during dispute</span></div>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start">
+      <section style="flex: 2 1 520px; background: #15151C; border: 1px solid #2E2E3A; border-radius: 16px; padding: 8px 12px; overflow-x: auto">
+        <table>
+          <thead><tr><th>Case</th><th>Fan</th><th>Amount</th><th>Reason</th><th>Respond by</th></tr></thead>
+          <tbody>
+            <tr class="sel"><td>CB-2291</td><td>@user_8841</td><td>$50</td><td>Not recognised</td><td><span class="pill warn">23 Nov</span></td></tr>
+            <tr><td>CB-2290</td><td>@musa.t</td><td>$25</td><td>Not as described</td><td><span class="pill warn">24 Nov</span></td></tr>
+            <tr><td>CB-2287</td><td>@jo_k</td><td>$10</td><td>Fraudulent card</td><td><span class="pill">2 Dec</span></td></tr>
+            <tr><td>CB-2281</td><td>@ama.k</td><td>$25</td><td>Duplicate charge</td><td><span class="pill">4 Dec</span></td></tr>
+          </tbody>
+        </table>
+      </section>
+      <section class="card" style="flex: 1 1 300px; padding: 24px; gap: 12px" aria-label="Dispute detail">
+        <h2 class="h3">CB-2291 · $50 top-up</h2>
+        <p class="sm">Visa ····9012 · 5,000 credits · 3 Nov · reason: cardholder doesn't recognise it</p>
+        <p class="lbl" style="margin: 8px 0 0">Evidence to send</p>
+        <div class="ev"><span class="box">✓</span>3-D Secure authentication passed</div>
+        <div class="ev"><span class="box">✓</span>Same device and IP as 14 earlier logins</div>
+        <div class="ev"><span class="box">✓</span>4,750 credits spent after top-up (unlock log)</div>
+        <div class="ev" style="border-bottom: 0"><span class="box">✓</span>Statement descriptor FF*DIGITAL shown at checkout</div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap"><a href="#" class="btn pr">Submit evidence</a><a href="#" class="btn">Accept &amp; refund</a></div>
+      </section>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

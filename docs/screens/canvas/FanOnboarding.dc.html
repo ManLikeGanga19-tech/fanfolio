@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Fan PWA onboarding</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Sora:wght@600;700&amp;display=swap">
+<style>
+body{margin:0;background:#0B0B0F}
+a{color:#E8A33D}a:hover{color:#F5B85A}
+.app *{box-sizing:border-box}
+.phone{width:390px;height:844px;background:#0B0B0F;border:1px solid #2E2E3A;border-radius:28px;overflow:hidden;display:flex;flex-direction:column;flex:none}
+.ph-head{height:56px;display:flex;align-items:center;gap:12px;padding:0 16px;flex:none}
+.ph-body{flex:1;overflow:hidden;padding:8px 16px 24px;display:flex;flex-direction:column;gap:16px}
+.cap{font:600 14px/20px Inter,sans-serif;color:#A8A6B3;margin:0 0 12px}
+.lbl{font:600 12px/16px Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#A8A6B3;margin:0}
+.h1{font:700 32px/40px Sora,sans-serif;margin:0}.h2{font:600 24px/32px Sora,sans-serif;margin:0}.h3{font:600 18px/26px Sora,sans-serif;margin:0}
+.p{font:400 15px/22px Inter,sans-serif;color:#A8A6B3;margin:0}.sm{font:400 13px/18px Inter,sans-serif;color:#A8A6B3;margin:0}
+.btn{height:52px;border-radius:10px;font:600 16px/20px Inter,sans-serif;display:flex;align-items:center;justify-content:center;border:1px solid #6B6978;background:#15151C;color:#F5F3EF;text-decoration:none;width:100%}
+.btn.pr{background:#E8A33D;border-color:#E8A33D;color:#1A1206}
+.fld{display:flex;flex-direction:column;gap:8px;font:600 15px/22px Inter,sans-serif}
+.in{height:48px;background:#1E1E28;border:1px solid #6B6978;border-radius:10px;color:#F5F3EF;font:400 15px Inter,sans-serif;padding:0 14px;display:flex;align-items:center}
+.steps{display:flex;gap:6px}.steps span{flex:1;height:4px;border-radius:2px;background:#2E2E3A}.steps span.on{background:#E8A33D}
+.or{display:flex;align-items:center;gap:12px;color:#A8A6B3;font-size:13px}.or::before,.or::after{content:"";flex:1;height:1px;background:#2E2E3A}
+.row{display:flex;align-items:center;gap:12px}
+.opt{display:flex;align-items:center;gap:12px;padding:14px;background:#15151C;border:1px solid #2E2E3A;border-radius:10px}.opt.sel{border:2px solid #E8A33D}
+.radio{width:20px;height:20px;border-radius:50%;border:2px solid #6B6978;flex:none}.radio.on{border-color:#E8A33D;box-shadow:inset 0 0 0 4px #15151C;background:#E8A33D}
+.pill{display:inline-flex;align-items:center;height:22px;padding:0 8px;border-radius:999px;background:#1E1E28;font:600 11px/16px Inter,sans-serif;color:#34C47C}
+.digit{flex:1;height:60px;border-radius:10px;background:#1E1E28;border:1px solid #6B6978;display:flex;align-items:center;justify-content:center;font:600 24px Sora,sans-serif}
+.media{background:#1E1E28;display:flex;align-items:center;justify-content:center;color:#A8A6B3;font-size:13px}
+</style>
+</helmet>
+<div class="app" style="width: 2190px; height: 1000px; box-sizing: border-box; padding: 40px; display: flex; gap: 40px; background: #0B0B0F; font-family: Inter, system-ui, sans-serif; color: #F5F3EF">
+
+  <section aria-label="Landing">
+    <p class="cap">Landing (logged out)</p>
+    <div class="phone">
+      <div class="ph-head" style="justify-content: space-between"><span class="h3">FanFolio</span><a href="#" style="font-weight: 600">Log in</a></div>
+      <div class="ph-body" style="gap: 18px; padding-top: 20px">
+        <h1 class="h1">Support the creators you love, directly.</h1>
+        <p class="p">Subscribe, unlock exclusive posts and message creators. Pay by card or crypto; creators get paid fast.</p>
+        <a href="#" class="btn pr">Create free account</a>
+        <a href="#" class="btn">I am a creator</a>
+        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 15px"><div class="row"><span class="br" style="color: #E8A33D">✓</span>Every creator is ID-verified and 18+</div><div class="row"><span style="color: #E8A33D">✓</span>Content is encrypted and watermarked</div><div class="row"><span style="color: #E8A33D">✓</span>Discreet billing on your statement</div></div>
+        <h3 class="h3">Featured creators</h3>
+        <div class="row"><div style="flex: 1; background: #15151C; border-radius: 16px; overflow: hidden"><div class="media" style="height: 120px">Cover</div><div style="padding: 10px 12px"><strong>Amani Wanjiru</strong><p class="sm">Music · 450 cr/mo</p></div></div><div style="flex: 1; background: #15151C; border-radius: 16px; overflow: hidden"><div class="media" style="height: 120px">Cover</div><div style="padding: 10px 12px"><strong>Kofi Mensah</strong><p class="sm">Comedy · 300 cr/mo</p></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Sign up">
+    <p class="cap">Sign up</p>
+    <div class="phone">
+      <div class="ph-head"><a href="#" aria-label="Back" style="color: #F5F3EF; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a></div>
+      <div class="ph-body">
+        <div class="steps"><span class="on"></span><span></span><span></span></div>
+        <p class="lbl">Step 1 of 3 · Account</p>
+        <h2 class="h2">Create your account</h2>
+        <p class="p">Takes under a minute. Creators only see your username.</p>
+        <label class="fld">Email<span class="in">kevin@example.com</span></label>
+        <label class="fld">Username<span class="in">@kevo_254</span><span class="sm">Shown to creators instead of your name</span></label>
+        <label class="fld">Password<span class="in">••••••••••••</span><span class="sm">At least 12 characters</span></label>
+        <label class="row" style="font-size: 13px; align-items: flex-start"><span style="width: 20px; height: 20px; border-radius: 5px; background: #E8A33D; color: #1A1206; display: flex; align-items: center; justify-content: center; flex: none; font-size: 12px">✓</span>I am 18 or older and agree to the Terms and Privacy Policy</label>
+        <a href="#" class="btn pr">Continue</a>
+        <div class="or">or</div>
+        <a href="#" class="btn">Continue with a passkey</a>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Verify phone">
+    <p class="cap">Verify phone (OTP)</p>
+    <div class="phone">
+      <div class="ph-head"><a href="#" aria-label="Back" style="color: #F5F3EF; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a></div>
+      <div class="ph-body" style="gap: 20px">
+        <div class="steps"><span class="on"></span><span class="on"></span><span></span></div>
+        <p class="lbl">Step 2 of 3 · Phone</p>
+        <svg width="104" height="104" viewBox="0 0 120 120" fill="none" aria-hidden="true" style="flex: none"><circle cx="60" cy="60" r="52" fill="#1E1E28"/><rect x="38" y="20" width="44" height="80" rx="10" fill="#2E2E3A" stroke="#F5F3EF" stroke-width="2.5"/><rect x="52" y="25" width="16" height="4" rx="2" fill="#F5F3EF"/><path d="M58 44h40a8 8 0 0 1 8 8v14a8 8 0 0 1-8 8H74l-9 8v-8h-7a8 8 0 0 1-8-8V52a8 8 0 0 1 8-8Z" fill="#E8A33D"/><circle cx="66" cy="59" r="3" fill="#0B0B0F"/><circle cx="78" cy="59" r="3" fill="#0B0B0F"/><circle cx="90" cy="59" r="3" fill="#0B0B0F"/><path d="M24 35L25.5 38.5L29 40L25.5 41.5L24 45L22.5 41.5L19 40L22.5 38.5Z" fill="#F5C877"/><path d="M28 85L28.9 87.1L31 88L28.9 88.9L28 91L27.1 88.9L25 88L27.1 87.1Z" fill="#E8A33D"/></svg>
+        <h2 class="h2">Verify your phone</h2>
+        <p class="p">Enter the 6-digit code we sent to +254 7•• ••• 412.</p>
+        <div style="display: flex; gap: 8px" role="group" aria-label="Verification code"><span class="digit">4</span><span class="digit">8</span><span class="digit">1</span><span class="digit">9</span><span class="digit" style="border: 2px solid #E8A33D"></span><span class="digit"></span></div>
+        <p class="sm">Resend code in 0:42</p>
+        <a href="#" class="btn pr">Verify</a>
+        <p class="sm" style="text-align: center">Wrong number? <a href="#">Change it</a></p>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Age verification">
+    <p class="cap">Age verification (18+, optional)</p>
+    <div class="phone">
+      <div class="ph-head"><a href="#" aria-label="Back" style="color: #F5F3EF; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a></div>
+      <div class="ph-body">
+        <div class="steps"><span class="on"></span><span class="on"></span><span class="on"></span></div>
+        <p class="lbl">Step 3 of 3 · Age check</p>
+        <svg width="100" height="100" viewBox="0 0 120 120" fill="none" aria-hidden="true" style="flex: none"><circle cx="60" cy="60" r="52" fill="#1E1E28"/><path d="M60 18c9 7 20 10 30 10v26c0 23-15 37-30 44-15-7-30-21-30-44V28c10 0 21-3 30-10Z" fill="#E8A33D"/><path d="M60 18c9 7 20 10 30 10v26c0 23-15 37-30 44V18Z" fill="#B97A22"/><text x="60" y="66" text-anchor="middle" font-family="Sora, sans-serif" font-weight="700" font-size="26" fill="#0B0B0F">18+</text><path d="M24 25L25.5 28.5L29 30L25.5 31.5L24 35L22.5 31.5L19 30L22.5 28.5Z" fill="#F5C877"/><path d="M98 86L99.2 88.8L102 90L99.2 91.2L98 94L96.8 91.2L94 90L96.8 88.8Z" fill="#F5C877"/></svg>
+        <h2 class="h2">Confirm you are 18+</h2>
+        <p class="p">Some creators share adult content. Verify once to see it. Our verification partner checks your ID; creators never see it and we never store the image.</p>
+        <label class="opt sel"><span class="radio on"></span><span style="flex: 1"><strong>Verify with ID</strong> <span class="pill">Recommended</span><br><span class="sm">Passport, national ID or licence · about 2 min</span></span></label>
+        <label class="opt"><span class="radio"></span><span style="flex: 1"><strong>Selfie age check</strong><br><span class="sm">No document needed · about 30 sec</span></span></label>
+        <a href="#" class="btn pr">Verify my age</a>
+        <a href="#" class="btn">Not now, show safe content only</a>
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="Log in">
+    <p class="cap">Log in</p>
+    <div class="phone">
+      <div class="ph-head" style="justify-content: center"><span class="h3">FanFolio</span></div>
+      <div class="ph-body" style="padding-top: 32px">
+        <h1 class="h1">Welcome back</h1>
+        <p class="p">Log in with the passkey on this phone. No password needed.</p>
+        <a href="#" class="btn pr">Log in with passkey</a>
+        <div class="or">or use email</div>
+        <label class="fld">Email<span class="in">kevin@example.com</span></label>
+        <label class="fld">Password<span class="in">••••••••••••</span></label>
+        <a href="#" style="font-weight: 600">Forgot password?</a>
+        <a href="#" class="btn">Log in</a>
+        <p class="sm" style="text-align: center">New to FanFolio? <a href="#">Create an account</a></p>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":2190,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
