@@ -79,6 +79,44 @@
             </div>
         </section>
 
+        <section aria-labelledby="devices-heading" class="flex flex-col gap-2">
+            <h2 id="devices-heading" class="text-label text-ink-muted">ACTIVE DEVICES <span class="tabular">{{ $devices->count() }} of {{ $deviceLimit }}</span> allowed</h2>
+
+            <ul class="flex flex-col divide-y divide-border rounded-lg bg-surface">
+                @foreach ($devices as $device)
+                    <li class="flex items-center justify-between gap-4 p-4">
+                        <div>
+                            <p class="font-semibold">{{ $device->label }}</p>
+                            <p class="text-small text-ink-muted">
+                                @if ($device->last_city){{ $device->last_city }} · @endif
+                                @if ($device->id === $currentDeviceId) active now @else {{ $device->last_seen_at->diffForHumans() }} @endif
+                            </p>
+                        </div>
+                        @if ($device->id === $currentDeviceId)
+                            <span class="text-small text-success">This device</span>
+                        @else
+                            <form method="POST" action="{{ route('account.security.devices.destroy', $device->id) }}">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="min-h-11 px-2 text-small font-semibold text-danger">Sign out</button>
+                            </form>
+                        @endif
+                    </li>
+                @endforeach
+            </ul>
+
+            @if ($devices->count() > 1)
+                <form method="POST" action="{{ route('account.security.devices.others') }}">
+                    @csrf
+                    <x-ui.button type="submit">Sign out of all other devices</x-ui.button>
+                </form>
+            @endif
+
+            <p class="text-small text-ink-muted">
+                Your subscriptions work on up to {{ $deviceLimit }} devices. Everything you watch is watermarked to your account on every device.
+            </p>
+        </section>
+
         <a href="{{ route('account') }}" class="text-small text-ink-muted underline">Back to account</a>
     </div>
 </x-layouts.app>

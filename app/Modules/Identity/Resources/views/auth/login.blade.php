@@ -6,6 +6,10 @@
             <p class="text-ink-muted">Log in with the passkey on this phone. No password needed.</p>
         </div>
 
+        @if (session('status'))
+            <p class="rounded-md bg-surface-raised p-4 text-small" role="status">{{ session('status') }}</p>
+        @endif
+
         <div class="flex flex-col gap-2">
             <x-ui.button variant="brand" data-passkey="get"
                 data-options-url="{{ route('login.passkey.options') }}"

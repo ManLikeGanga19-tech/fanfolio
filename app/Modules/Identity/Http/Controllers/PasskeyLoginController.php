@@ -32,7 +32,12 @@ final class PasskeyLoginController
             return response()->json(['message' => $e->getMessage()], 422);
         }
 
-        $this->signIn($request, $user, 'passkey', $complete);
+        if (! $this->signIn($request, $user, 'passkey', $complete)) {
+            return response()->json([
+                'message' => 'This account is already signed in on the maximum number of devices.',
+                'redirect' => route('login.devices'),
+            ], 409);
+        }
 
         return response()->json(['redirect' => redirect()->intended(route('account'))->getTargetUrl()]);
     }

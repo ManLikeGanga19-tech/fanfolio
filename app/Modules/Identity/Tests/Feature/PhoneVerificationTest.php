@@ -117,7 +117,7 @@ it('refuses a number already linked to another account', function (): void {
     $this->post('/signup/phone/send', ['phone' => TEST_PHONE]);
     $this->post('/signup/phone/verify', ['code' => lastCodeSentTo(TEST_PHONE)]);
 
-    $this->actingAs(User::factory()->create());
+    actAs(User::factory()->create());
 
     $this->post('/signup/phone/send', ['phone' => TEST_PHONE])
         ->assertSessionHasErrors(['phone' => 'This number is already linked to another account.']);

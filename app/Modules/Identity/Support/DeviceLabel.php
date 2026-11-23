@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Modules\Identity\Http;
+namespace App\Modules\Identity\Support;
 
 /**
  * A readable label such as "Chrome on Android" from a user agent. Used for passkeys

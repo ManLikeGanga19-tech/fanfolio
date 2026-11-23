@@ -6,6 +6,7 @@ namespace App\Modules\Identity\Http\Controllers;
 
 use App\Modules\Audit\Contracts\AuditLog;
 use App\Modules\Identity\Actions\CompleteLogin;
+use App\Modules\Identity\Actions\Devices;
 use App\Modules\Identity\Actions\LoginWithPassword;
 use App\Modules\Identity\Actions\PendingLogin;
 use App\Modules\Identity\Exceptions\IdentityException;
@@ -45,14 +46,22 @@ final class LoginController
             return redirect()->route('login.mfa');
         }
 
-        $this->signIn($request, $user, 'password', $complete);
+        if (! $this->signIn($request, $user, 'password', $complete)) {
+            return redirect()->route('login.devices');
+        }
 
         return redirect()->intended(route('account'));
     }
 
-    public function destroy(Request $request, AuditLog $audit): RedirectResponse
+    public function destroy(Request $request, AuditLog $audit, Devices $devices): RedirectResponse
     {
         $user = $request->user();
+        $deviceId = $request->session()->get(Devices::SESSION_KEY);
+
+        // Logging out frees this device's slot.
+        if ($user instanceof User && is_string($deviceId) && $devices->isActiveFor($user, $deviceId)) {
+            $devices->revoke($user, $deviceId);
+        }
 
         Auth::guard('web')->logout();
         $request->session()->invalidate();
