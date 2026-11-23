@@ -48,6 +48,13 @@ return [
     'identity' => [
         'max_active_devices' => 3,
         'password_min_length' => 12,
+        // Phone one-time codes: screen "Verify phone (OTP)".
+        'phone_code' => [
+            'digits' => 6,
+            'ttl_minutes' => 10,
+            'max_attempts' => 5,
+            'resend_seconds' => 60,
+        ],
         'username_change_days' => 30,
     ],
 
@@ -84,6 +91,8 @@ return [
         'fx' => env('FANFOLIO_FX_DRIVER', 'fake'),
         'kyc' => env('FANFOLIO_KYC_DRIVER', 'fake'),
         'sms' => env('FANFOLIO_SMS_DRIVER', 'fake'),
+        // "hibp" is the Pwned Passwords range API (k-anonymity, no account or key).
+        'breached_passwords' => env('FANFOLIO_BREACHED_PASSWORDS_DRIVER', 'fake'),
         'drm' => env('FANFOLIO_DRM_DRIVER', 'fake'),
         'malware' => env('FANFOLIO_MALWARE_DRIVER', 'fake'),
         'abuse_hash' => env('FANFOLIO_ABUSE_HASH_DRIVER', 'fake'),

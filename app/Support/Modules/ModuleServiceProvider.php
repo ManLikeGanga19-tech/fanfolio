@@ -7,6 +7,7 @@ namespace App\Support\Modules;
 use App\Support\Gateways\FakeDriver;
 use App\Support\Gateways\GatewayDriverException;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 
 /**
@@ -29,6 +30,20 @@ abstract class ModuleServiceProvider extends ServiceProvider
 
         if (is_dir($migrations)) {
             $this->loadMigrationsFrom($migrations);
+        }
+
+        // Views are namespaced by module: view('identity::auth.login').
+        $views = $this->modulePath('Resources/views');
+
+        if (is_dir($views)) {
+            $this->loadViewsFrom($views, strtolower(static::moduleName()));
+        }
+
+        // Browser routes for the fan PWA, inside the "web" middleware group.
+        $routes = $this->modulePath('Http/routes.php');
+
+        if (is_file($routes) && ! $this->app->routesAreCached()) {
+            Route::middleware('web')->group($routes);
         }
     }
 

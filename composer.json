@@ -10,7 +10,8 @@
         "laravel/horizon": "^5.30",
         "laravel/octane": "^2.6",
         "laravel/tinker": "^2.10.1",
-        "league/flysystem-aws-s3-v3": "^3.29"
+        "league/flysystem-aws-s3-v3": "^3.29",
+        "livewire/livewire": "^3.6"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.0",
