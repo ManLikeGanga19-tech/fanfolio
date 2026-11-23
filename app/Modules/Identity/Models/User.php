@@ -10,8 +10,13 @@ use App\Modules\Identity\Enums\Role;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laragear\WebAuthn\Contracts\WebAuthnAuthenticatable;
+use Laragear\WebAuthn\WebAuthnAuthentication;
+use Laragear\WebAuthn\WebAuthnData;
 
 /**
  * @property string $id
@@ -28,13 +33,14 @@ use Illuminate\Notifications\Notifiable;
  * @property CarbonImmutable|null $last_login_at
  * @property CarbonImmutable $created_at
  */
-final class User extends Authenticatable
+final class User extends Authenticatable implements WebAuthnAuthenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory;
 
     use HasUlids;
     use Notifiable;
+    use WebAuthnAuthentication;
 
     /**
      * Role, status, MFA and verification flags are never mass-assigned.
@@ -61,6 +67,40 @@ final class User extends Authenticatable
         'status' => 'active',
         'mfa_enabled' => false,
     ];
+
+    /**
+     * Passkeys show the username, never the email or legal name.
+     */
+    public function webAuthnData(): WebAuthnData
+    {
+        return WebAuthnData::make('@'.$this->username, '@'.$this->username);
+    }
+
+    /**
+     * @return HasOne<TotpSecret, $this>
+     */
+    public function totp(): HasOne
+    {
+        return $this->hasOne(TotpSecret::class);
+    }
+
+    /**
+     * @return HasMany<RecoveryCode, $this>
+     */
+    public function recoveryCodes(): HasMany
+    {
+        return $this->hasMany(RecoveryCode::class);
+    }
+
+    public function hasPasskey(): bool
+    {
+        return $this->webAuthnCredentials()->whereNull('disabled_at')->exists();
+    }
+
+    public function hasConfirmedTotp(): bool
+    {
+        return $this->totp()->whereNotNull('confirmed_at')->exists();
+    }
 
     public function isAgeVerified(): bool
     {

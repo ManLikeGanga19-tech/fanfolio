@@ -11,11 +11,14 @@ use App\Modules\Identity\Gateways\Fake\FakeBreachedPasswordChecker;
 use App\Modules\Identity\Gateways\Fake\FakeIdentityVerifier;
 use App\Modules\Identity\Gateways\Fake\FakeSmsSender;
 use App\Modules\Identity\Gateways\Hibp\HibpBreachedPasswordChecker;
+use App\Modules\Identity\Http\Middleware\EnsureMfaEnrolled;
+use App\Modules\Identity\Http\Middleware\EnsureRecentStepUp;
 use App\Modules\Identity\Models\User;
 use App\Support\Modules\ModuleServiceProvider;
 use App\Support\Security\KeyedHash;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\RateLimiter;
 
 final class IdentityServiceProvider extends ModuleServiceProvider
@@ -26,6 +29,9 @@ final class IdentityServiceProvider extends ModuleServiceProvider
         'sessions',
         'password_reset_tokens',
         'phone_verifications',
+        'webauthn_credentials',
+        'mfa_totp',
+        'mfa_recovery_codes',
         'age_verifications',
     ];
 
@@ -48,6 +54,12 @@ final class IdentityServiceProvider extends ModuleServiceProvider
 
     public function boot(): void
     {
+        // Registered before the module routes load in parent::boot().
+        $router = $this->app->make(Router::class);
+        $router->aliasMiddleware('step-up', EnsureRecentStepUp::class);
+        // SEC-04 applies to every browser page, whichever module serves it.
+        $router->pushMiddlewareToGroup('web', EnsureMfaEnrolled::class);
+
         parent::boot();
 
         $this->rateLimits();
@@ -71,7 +83,26 @@ final class IdentityServiceProvider extends ModuleServiceProvider
             Limit::perHour(20)->by('otp-send-ip:'.$request->ip()),
         ]);
 
+        RateLimiter::for('passkey', static fn (Request $request): Limit => Limit::perMinute(20)->by('passkey:'.$request->ip()));
+
+        // Second factor at login and step-up: per pending or signed-in account, and per address.
+        RateLimiter::for('mfa', static fn (Request $request): array => [
+            Limit::perMinute(5)->by('mfa:'.self::mfaKey($request)),
+            Limit::perMinute(20)->by('mfa-ip:'.$request->ip()),
+        ]);
+
         RateLimiter::for('otp-verify', static fn (Request $request): Limit => Limit::perMinute(10)->by('otp-verify:'.self::userKey($request)));
+    }
+
+    private static function mfaKey(Request $request): string
+    {
+        $pending = $request->session()->get('identity.mfa_pending');
+
+        if (is_array($pending) && is_string($pending['user'] ?? null)) {
+            return $pending['user'];
+        }
+
+        return self::userKey($request);
     }
 
     private static function userKey(Request $request): string

@@ -17,3 +17,8 @@ pest()->extend(TestCase::class)
 // Unit and architecture tests boot the app but never touch the database.
 pest()->extend(TestCase::class)
     ->in('Unit', 'Architecture', '../app/Modules/*/Tests/Unit');
+
+// Shared helpers that module tests provide for their own feature tests.
+foreach (glob(__DIR__.'/../app/Modules/*/Tests/Helpers.php') ?: [] as $helpers) {
+    require_once $helpers;
+}

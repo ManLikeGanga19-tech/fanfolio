@@ -10,11 +10,12 @@ use App\Modules\Identity\Exceptions\IdentityException;
 use App\Modules\Identity\Http\Requests\SignUpRequest;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 
 final class SignUpController
 {
+    use SignsIn;
+
     public function show(): View
     {
         return view('identity::auth.signup');
@@ -32,9 +33,7 @@ final class SignUpController
             throw ValidationException::withMessages([$e->field => $e->getMessage()]);
         }
 
-        Auth::login($user);
-        $request->session()->regenerate();
-        $complete->handle($user, 'signup');
+        $this->signIn($request, $user, 'signup', $complete);
 
         return redirect()->route('signup.phone');
     }
