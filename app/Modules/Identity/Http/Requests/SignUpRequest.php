@@ -17,7 +17,7 @@ final class SignUpRequest extends FormRequest
     {
         return [
             ...$this->accountRules(),
-            'password' => ['required', 'string', 'max:200'],
+            'password' => ['required', 'string', 'max:200', 'confirmed'],
         ];
     }
 }

@@ -29,6 +29,7 @@ trait AccountFields
         return [
             'email.unique' => 'This email already has an account. Log in instead.',
             'username.unique' => 'This username is taken.',
+            'password.confirmed' => 'The two passwords do not match.',
             'username.regex' => 'Use letters, numbers and underscores only.',
             'adult_and_terms.accepted' => 'Confirm you are 18 or older and agree to the Terms and Privacy Policy.',
         ];

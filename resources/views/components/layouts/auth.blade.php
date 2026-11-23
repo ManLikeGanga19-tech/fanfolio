@@ -1,7 +1,6 @@
 @props(['title' => null])
 @php
-    // Decorative photos for the carousel beside the form (owner-supplied, no real creators).
-    $slides = ['creator-studio', 'fan-evening', 'phone-glow'];
+    $slides = \App\Support\View\PhotoSlides::for('auth');
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="dark">
@@ -11,7 +10,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $title ? $title.' · ' : '' }}{{ config('fanfolio.brand.name') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="preload" as="image" href="{{ Vite::asset('resources/images/auth/'.$slides[0].'.webp') }}" media="(min-width: 64rem)">
+    <link rel="preload" as="image" href="{{ Vite::asset($slides[0]) }}" media="(min-width: 64rem)">
     {{ $head ?? '' }}
 </head>
 <body class="min-h-dvh bg-bg text-ink antialiased">
@@ -46,13 +45,7 @@
 
         {{-- Photo side: large screens only, pinned while the form scrolls. Decorative. --}}
         <aside class="relative hidden overflow-hidden bg-surface lg:sticky lg:top-0 lg:block lg:h-dvh" aria-hidden="true">
-            <div class="absolute inset-0">
-                @foreach ($slides as $slide)
-                    <img src="{{ Vite::asset('resources/images/auth/'.$slide.'.webp') }}" alt=""
-                        class="auth-slide absolute inset-0 size-full object-cover"
-                        width="1122" height="1402" decoding="async" @if (! $loop->first) loading="lazy" @endif>
-                @endforeach
-            </div>
+            <x-ui.photo-carousel folder="auth" class="absolute inset-0" />
 
             {{-- Blends the photos into the dark theme so the tagline stays readable. --}}
             <div class="absolute inset-0 bg-linear-to-t from-bg via-bg/20 to-bg/10"></div>

@@ -11,7 +11,7 @@
             <input type="hidden" name="token" value="{{ $token }}">
             <x-ui.input name="email" label="Email" type="email" autocomplete="username" :value="$email" required />
             <x-ui.input name="password" label="New password" type="password" autocomplete="new-password" hint="At least 12 characters" minlength="12" required />
-            <x-ui.input name="password_confirmation" label="Repeat new password" type="password" autocomplete="new-password" required />
+            <x-ui.input name="password_confirmation" label="Confirm new password" type="password" autocomplete="new-password" required />
             <x-ui.button variant="brand" type="submit">Change password</x-ui.button>
         </form>
     </div>

@@ -11,13 +11,18 @@ use Tests\Support\RecordingAuditLog;
 
 function signUpData(array $overrides = []): array
 {
-    return [
+    $data = [
         'email' => 'new-fan@example.test',
         'username' => 'new_fan',
         'password' => 'a-long-unique-passphrase',
         'adult_and_terms' => '1',
         ...$overrides,
     ];
+
+    // The confirmation matches unless a test sets it.
+    $data['password_confirmation'] ??= $data['password'];
+
+    return $data;
 }
 
 it('shows step 1 of sign up', function (): void {
@@ -106,4 +111,21 @@ it('never lets a sign-up choose its own role or flags', function (): void {
 
 it('sends signed-in users away from sign up', function (): void {
     $this->actingAs(User::factory()->create())->get('/signup')->assertRedirect(route('account'));
+});
+
+it('asks for the password twice', function (): void {
+    $this->post('/signup', signUpData(['password_confirmation' => 'a-different-passphrase']))
+        ->assertSessionHasErrors(['password' => 'The two passwords do not match.']);
+
+    expect(User::query()->count())->toBe(0);
+    $this->assertGuest();
+});
+
+it('gives every password field a show or hide button', function (): void {
+    $this->get('/signup')
+        ->assertSee('data-password-toggle="field-password"', false)
+        ->assertSee('data-password-toggle="field-password_confirmation"', false)
+        ->assertSee('aria-label="Show confirm password"', false);
+
+    $this->get('/login')->assertSee('aria-label="Show password"', false);
 });

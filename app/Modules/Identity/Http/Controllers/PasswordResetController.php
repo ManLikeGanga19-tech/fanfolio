@@ -48,7 +48,7 @@ final class PasswordResetController
             'token' => ['required', 'string'],
             'email' => ['required', 'string', 'email', 'max:254'],
             'password' => ['required', 'string', 'max:200', 'confirmed'],
-        ]);
+        ], ['password.confirmed' => 'The two passwords do not match.']);
 
         try {
             $reset->reset($input['email'], $input['token'], $input['password']);

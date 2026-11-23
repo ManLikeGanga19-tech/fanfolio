@@ -12,7 +12,8 @@ test('signed-in pages pass axe and keep a visible focus ring', async ({ page }) 
     await page.goto('/signup');
     await page.getByLabel('Email').fill(account.email);
     await page.getByLabel('Username').fill(account.username);
-    await page.getByLabel('Password').fill(account.password);
+    await page.getByLabel('Password', { exact: true }).fill(account.password);
+    await page.getByLabel('Confirm password', { exact: true }).fill(account.password);
     await page.getByRole('checkbox').check();
     await page.getByRole('button', { name: 'Continue', exact: true }).click();
 
@@ -55,7 +56,7 @@ test('signed-in pages pass axe and keep a visible focus ring', async ({ page }) 
     await page.getByRole('button', { name: 'Log out' }).click();
     await page.goto('/login');
     await page.getByLabel('Email').fill(account.email);
-    await page.getByLabel('Password').fill(account.password);
+    await page.getByLabel('Password', { exact: true }).fill(account.password);
     await page.getByRole('button', { name: 'Log in', exact: true }).click();
 
     await expect(page).toHaveURL(/\/login\/mfa$/);
