@@ -8,9 +8,11 @@ use App\Modules\Identity\Actions\CompleteLogin;
 use App\Modules\Identity\Actions\RecoveryCodes;
 use App\Modules\Identity\Actions\RegisterFan;
 use App\Modules\Identity\Actions\RegisterFanWithPasskey;
+use App\Modules\Identity\Actions\SendEmailCode;
 use App\Modules\Identity\Exceptions\IdentityException;
 use App\Modules\Identity\Http\Requests\PasskeySignUpRequest;
 use App\Modules\Identity\Http\Requests\SignUpRequest;
+use App\Modules\Identity\Models\User;
 use App\Modules\Identity\Support\DeviceLabel;
 use Illuminate\Contracts\Support\Responsable;
 use Illuminate\Contracts\View\View;
@@ -23,7 +25,7 @@ final class SignUpController
 {
     use SignsIn;
 
-    /** Session flag: the recovery codes page continues to the phone step. */
+    /** Session flag: the recovery codes page continues to the email step. */
     public const string CONTINUE_SIGNUP = 'identity.signup_continues';
 
     public function show(): View
@@ -31,7 +33,7 @@ final class SignUpController
         return view('identity::auth.signup');
     }
 
-    public function store(SignUpRequest $request, RegisterFan $register, CompleteLogin $complete): RedirectResponse
+    public function store(SignUpRequest $request, RegisterFan $register, CompleteLogin $complete, SendEmailCode $codes): RedirectResponse
     {
         try {
             $user = $register->handle(
@@ -44,8 +46,9 @@ final class SignUpController
         }
 
         $this->signIn($request, $user, 'signup', $complete);
+        $this->sendFirstCode($user, $codes);
 
-        return redirect()->route('signup.phone');
+        return redirect()->route('signup.email');
     }
 
     /**
@@ -63,9 +66,9 @@ final class SignUpController
 
     /**
      * Step two: the device returns the new passkey. The account is created, signed in,
-     * and shown its recovery codes before the phone step, since it has no password.
+     * and shown its recovery codes before the email step, since it has no password.
      */
-    public function storePasskey(Request $request, RegisterFanWithPasskey $register, RecoveryCodes $recoveryCodes, CompleteLogin $complete): JsonResponse
+    public function storePasskey(Request $request, RegisterFanWithPasskey $register, RecoveryCodes $recoveryCodes, CompleteLogin $complete, SendEmailCode $emailCodes): JsonResponse
     {
         /** @var array<string, mixed> $attestation */
         $attestation = $request->validate([
@@ -87,10 +90,21 @@ final class SignUpController
 
         // A brand-new account has no other devices, so this always signs in.
         $this->signIn($request, $user, 'signup_passkey', $complete);
+        $this->sendFirstCode($user, $emailCodes);
 
         $request->session()->flash('recovery_codes', $codes);
         $request->session()->put(self::CONTINUE_SIGNUP, true);
 
         return response()->json(['redirect' => route('account.security.recovery-codes')]);
+    }
+
+    /** Step 2's code goes out with the sign-up, so it is waiting when the page opens. */
+    private function sendFirstCode(User $user, SendEmailCode $codes): void
+    {
+        try {
+            $codes->handle($user);
+        } catch (IdentityException) {
+            // Already verified or sent moments ago: the step 2 page offers a resend.
+        }
     }
 }

@@ -138,11 +138,6 @@ final class User extends Authenticatable implements FilamentUser, HasName, WebAu
         return $this->age_verified_at !== null;
     }
 
-    public function hasVerifiedPhone(): bool
-    {
-        return $this->phone_verified_at !== null;
-    }
-
     protected static function newFactory(): UserFactory
     {
         return UserFactory::new();

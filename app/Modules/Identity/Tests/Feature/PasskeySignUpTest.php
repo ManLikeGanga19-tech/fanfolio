@@ -53,10 +53,10 @@ it('creates a passwordless account with a passkey, MFA on, and shows recovery co
 
     $this->assertAuthenticatedAs($user);
 
-    // Recovery codes, then on to the phone step.
+    // Recovery codes, then on to the email step.
     $this->get(route('account.security.recovery-codes'))
         ->assertOk()
-        ->assertSee(route('signup.phone'), false);
+        ->assertSee(route('signup.email'), false);
 
     // The new passkey signs in.
     auth()->logout();

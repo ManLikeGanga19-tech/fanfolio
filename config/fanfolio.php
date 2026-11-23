@@ -53,8 +53,8 @@ return [
         // Time allowed between the password and the second factor at login.
         'mfa_challenge_minutes' => 5,
         'recovery_codes' => 10,
-        // Phone one-time codes: screen "Verify phone (OTP)".
-        'phone_code' => [
+        // Sign-up email one-time codes (decision D-12, in place of the phone code).
+        'email_code' => [
             'digits' => 6,
             'ttl_minutes' => 10,
             'max_attempts' => 5,

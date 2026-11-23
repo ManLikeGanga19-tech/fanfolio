@@ -5,8 +5,10 @@ declare(strict_types=1);
 use App\Modules\Identity\Enums\Role;
 use App\Modules\Identity\Events\UserRegistered;
 use App\Modules\Identity\Models\User;
+use App\Modules\Identity\Notifications\EmailVerificationCode;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Notification;
 use Tests\Support\RecordingAuditLog;
 
 function signUpData(array $overrides = []): array
@@ -34,10 +36,11 @@ it('shows step 1 of sign up', function (): void {
         ->assertSee('At least 12 characters');
 });
 
-it('registers a fan, signs them in and moves to the phone step', function (): void {
+it('registers a fan, signs them in, emails a code and moves to the email step', function (): void {
     $audit = RecordingAuditLog::swap();
+    Notification::fake();
 
-    $this->post('/signup', signUpData())->assertRedirect(route('signup.phone'));
+    $this->post('/signup', signUpData())->assertRedirect(route('signup.email'));
 
     $user = User::query()->where('email', 'new-fan@example.test')->sole();
 
@@ -46,7 +49,9 @@ it('registers a fan, signs them in and moves to the phone step', function (): vo
         ->and(password_get_info($user->password)['algoName'])->toBe('argon2id');
 
     $this->assertAuthenticatedAs($user);
-    expect($audit->has('identity.registered', $user->id))->toBeTrue();
+    expect($audit->has('identity.registered', $user->id))->toBeTrue()
+        ->and($user->hasVerifiedEmail())->toBeFalse();
+    Notification::assertSentTo($user, EmailVerificationCode::class);
 });
 
 it('dispatches UserRegistered only after the transaction commits', function (): void {
