@@ -10,6 +10,7 @@ use App\Modules\Creators\Filament\Admin\CreatorApprovals;
 use App\Modules\Creators\Models\Creator;
 use Filament\Actions\Testing\TestAction;
 use Filament\Facades\Filament;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 use Tests\Support\RecordingAuditLog;
@@ -104,6 +105,20 @@ it('streams the ID image from the provider to staff, uncached and audited (D-01)
         ->and($this->audit->of('kyc.document_viewed')[0]['context'])->toBe(['side' => 'front']);
 
     $this->get(route('creator.kyc-document', ['creator' => $creator->id, 'side' => 'tattoo']))->assertNotFound();
+});
+
+it('tells staff when the provider cannot return the ID image, without a server error or audit entry', function (): void {
+    $creator = approvedCreator();
+    signedInStaff('moderator');
+    // The provider no longer knows the session (the fake keeps it in the cache).
+    Cache::flush();
+
+    $response = $this->get(route('creator.kyc-document', ['creator' => $creator->id, 'side' => 'front']))
+        ->assertStatus(502)
+        ->assertSee('could not return this document');
+
+    expect((string) $response->headers->get('Cache-Control'))->toContain('no-store')
+        ->and($this->audit->of('kyc.document_viewed'))->toHaveCount(0);
 });
 
 it('refuses the ID viewer to anyone but staff', function (): void {
