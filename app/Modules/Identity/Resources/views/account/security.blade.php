@@ -1,7 +1,10 @@
-{{-- Screen: Devices & security. Sign-in section; active devices join in the next PR. --}}
+{{-- Screen: Devices & security (canvas board FanMore · Devices & security). --}}
 <x-layouts.app title="Devices & security">
     <div class="mx-auto flex max-w-md flex-col gap-6 py-8">
-        <h1 class="text-h1">Security</h1>
+        <div class="flex items-center gap-3">
+            <a href="{{ route('account') }}" class="-ml-2 flex size-11 items-center justify-center text-ink" aria-label="Back to account"><x-ui.icon name="arrow-left" :size="24" /></a>
+            <h1 class="text-h2">Security</h1>
+        </div>
 
         @if (session('status'))
             <p class="rounded-md bg-surface-raised p-4 text-small" role="status">{{ session('status') }}</p>
@@ -15,8 +18,9 @@
 
             <div class="flex flex-col divide-y divide-border rounded-lg bg-surface">
                 @forelse ($passkeys as $passkey)
-                    <div class="flex items-center justify-between gap-4 p-4">
-                        <div>
+                    <div class="flex items-center gap-3 px-4 py-3.5">
+                        <x-ui.icon-circle name="key" tone="text-success" />
+                        <div class="flex-1">
                             <p class="font-semibold">Passkey · {{ $passkey->alias ?? 'This device' }}</p>
                             <p class="text-small text-ink-muted">
                                 Added {{ $passkey->created_at?->format('j M') }}@if ($passkey->last_used_at) · used {{ \Illuminate\Support\Carbon::parse($passkey->last_used_at)->diffForHumans() }}@endif
@@ -27,10 +31,12 @@
                             @method('DELETE')
                             <button type="submit" class="min-h-11 px-2 text-small text-danger">Remove</button>
                         </form>
+                        <span class="inline-flex h-6 items-center rounded-full bg-surface-raised px-2.5 text-label text-success">On</span>
                     </div>
                 @empty
-                    <div class="flex items-center justify-between gap-4 p-4">
-                        <div>
+                    <div class="flex items-center gap-3 px-4 py-3.5">
+                        <x-ui.icon-circle name="key" tone="text-ink-muted" />
+                        <div class="flex-1">
                             <p class="font-semibold">Passkey</p>
                             <p class="text-small text-ink-muted">Log in with your fingerprint, face or screen lock.</p>
                         </div>
@@ -45,8 +51,9 @@
                     <p id="passkey-status" class="text-small text-danger" role="status" aria-live="polite"></p>
                 </div>
 
-                <div class="flex items-center justify-between gap-4 p-4">
-                    <div>
+                <div class="flex items-center gap-3 px-4 py-3.5">
+                    <x-ui.icon-circle name="smartphone" :tone="$hasTotp ? 'text-success' : 'text-ink-muted'" />
+                    <div class="flex-1">
                         <p class="font-semibold">Authenticator app</p>
                         <p class="text-small text-ink-muted">Backup sign-in method</p>
                     </div>
@@ -93,7 +100,7 @@
                             </p>
                         </div>
                         @if ($device->id === $currentDeviceId)
-                            <span class="text-small text-success">This device</span>
+                            <span class="inline-flex h-6 items-center rounded-full bg-surface-raised px-2.5 text-label">This device</span>
                         @else
                             <form method="POST" action="{{ route('account.security.devices.destroy', $device->id) }}">
                                 @csrf
@@ -117,6 +124,5 @@
             </p>
         </section>
 
-        <a href="{{ route('account') }}" class="text-small text-ink-muted underline">Back to account</a>
     </div>
 </x-layouts.app>

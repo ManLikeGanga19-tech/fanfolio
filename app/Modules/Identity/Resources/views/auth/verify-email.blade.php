@@ -1,10 +1,9 @@
-{{-- Screen: sign up step 2 of 3. Laid out like the "Verify phone (OTP)" board, by email instead (decision D-12). --}}
+{{-- Screen: sign up step 2 of 3, laid out like canvas board FanOnboarding · "Verify phone (OTP)", by email instead (decision D-12). --}}
 <x-layouts.auth title="Verify your email">
-    <div class="flex flex-col gap-8">
-        <div class="flex flex-col gap-2">
-            <p class="text-label text-ink-muted">STEP 2 OF 3 · EMAIL</p>
-            <h1 class="text-h1">Verify your email</h1>
-        </div>
+    <div class="flex flex-col gap-5">
+        <x-ui.progress-steps :total="3" :current="2" label="EMAIL" />
+        <x-ui.illustration name="code-message" :size="104" />
+        <h1 class="text-h2">Verify your email</h1>
 
         @if (session('status'))
             <p class="rounded-md bg-surface-raised p-4 text-small" role="status">{{ session('status') }}</p>
