@@ -110,3 +110,15 @@ function signedInFan(): User
 
     return $user;
 }
+
+/** "Confirm it's you" just happened, for other modules' step-up routes. */
+function confirmedStepUp(): void
+{
+    RequireStepUp::confirm(session()->driver());
+}
+
+/** The step-up has lapsed. */
+function staleStepUp(): void
+{
+    RequireStepUp::forget(session()->driver());
+}

@@ -66,6 +66,32 @@ final class Creator extends Model
         return $this->kycChecks()->latest('created_at')->latest('id')->first();
     }
 
+    /**
+     * @return HasMany<PayoutMethod, $this>
+     */
+    public function payoutMethods(): HasMany
+    {
+        return $this->hasMany(PayoutMethod::class);
+    }
+
+    /** Where payouts go: the active default method. */
+    public function payoutMethod(): ?PayoutMethod
+    {
+        return $this->payoutMethods()->whereNull('revoked_at')->where('is_default', true)->first();
+    }
+
+    /** The legal name from the last check the provider passed, for the payout name match. */
+    public function verifiedLegalName(): ?string
+    {
+        $check = $this->kycChecks()
+            ->whereIn('status', ['passed', 'review'])
+            ->whereNotNull('legal_name')
+            ->latest('checked_at')
+            ->first();
+
+        return $check?->legal_name;
+    }
+
     /** Initials shown until profile photos arrive with media scanning in M4 (decision D-08). */
     public function initials(): string
     {

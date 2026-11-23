@@ -76,6 +76,25 @@ test('signed-in pages pass axe and keep a visible focus ring', async ({ page }) 
 
     await expect(page.getByRole('heading', { name: 'ID and selfie matched' })).toBeVisible();
     await expectNoAxeViolations(page);
+    await page.getByRole('link', { name: 'Continue' }).click();
+
+    // Step 4: payout method (the sign-in a few minutes ago counts as the step-up).
+    await expect(page.getByRole('heading', { name: 'Where should we send your money?' })).toBeVisible();
+    await expectNoAxeViolations(page);
+    await expectVisibleFocusOnTab(page);
+    await page.getByLabel('Bank', { exact: true }).fill('Test Bank');
+    await page.getByLabel('Account number').fill('000011112222');
+    await page.getByRole('button', { name: 'Review and submit' }).click();
+
+    // Review & submit.
+    await expect(page.getByRole('heading', { name: 'Check everything' })).toBeVisible();
+    await expectNoAxeViolations(page);
+    await expectVisibleFocusOnTab(page);
+    await page.getByLabel(/I agree to the/).check();
+    await page.getByLabel(/Everyone in my content is 18\+/).check();
+    await page.getByRole('button', { name: 'Submit for review' }).click();
+    await expect(page.getByRole('heading', { name: "We're reviewing your account" })).toBeVisible();
+    await expectNoAxeViolations(page);
 
     // Log out, log back in: the second-factor screen.
     await page.goto('/account');

@@ -24,6 +24,8 @@ See `docs/backend-spec.md` for the module's rules and `docs/plans/M2.md` for the
 | GET | `/creator/kyc` | Steps 2–3 of 4: ID document and selfie liveness, "Action needed" (board 8), or the result | none |
 | POST | `/creator/kyc` | Opens a session with the KYC provider and sends the creator to its hosted page (D-11) | 10 per hour per account (each start is a paid provider session) |
 | GET | `/creator/kyc/return?ref=` | The provider sends the creator back here. The result is fetched from the provider for a check that belongs to this creator; nothing in the URL but the reference is read | 20 per minute per account |
+| GET, POST | `/creator/payout` | Step 4 of 4: bank account, USDT (TRC-20) wallet or Paxum. Needs a step-up in the last 10 minutes (SEC-04) and a passed ID check | 20 per minute per account |
+| GET, POST | `/creator/review` | Review & submit (board 6). Needs the page, a passed ID check, a payout method and both statements; then "We're reviewing your account" | 20 per minute per account |
 
 The routes act only on the signed-in account's own application; no ids appear in URLs.
 
@@ -49,6 +51,22 @@ A reload of the return page, or a reference replaced by a newer check, changes n
 
 The email goes through `Identity\Contracts\Accounts::notify`, so Creators never sees the email address.
 
+## Payout methods
+
+One active method at a time. Saving a new one revokes the old one (`revoked_at`); rows are never deleted, so every payout can be traced to the method it used. A partial unique index keeps one active default per creator. Both the add and the revoke are audited (rule 12).
+
+| Rail | Checked | Hint |
+|---|---|---|
+| `bank` | bank name (2–60 characters) and a 6–20 digit account number (spaces and dashes ignored) | `<bank> ····<last 4>` |
+| `usdt` | TRC-20 address: `T` and 33 base58 characters | `USDT wallet ····<last 4>` |
+| `paxum` | email address | `Paxum <first letter>····@<domain>` |
+
+**Name match.** The name on the account is compared with the legal name from the last passed ID check, ignoring case, punctuation and word order. A mismatch is saved with `name_matches_kyc = false` and the creator is told our team will check it before the first payout; it is not refused. Payout rules that use the flag arrive with payouts in M3.
+
+## Submitting
+
+`SubmitApplication` moves `onboarding` to `submitted` and records `submitted_at` and `terms_accepted_at`, audited as `creator.submitted`. Submitting twice is harmless. It never grants publishing or earning: only staff approval does (next PR).
+
 ## Decisions
 
 - D-08: initials instead of a profile photo until the M4 scanning pipeline.
@@ -58,4 +76,4 @@ The email goes through `Identity\Contracts\Accounts::notify`, so Creators never 
 
 ## Data protection
 
-No ID images, selfies or full document numbers are stored (rule 10); only the provider reference, the result, the date, the document type, its last 4 characters and its expiry date. Tests check the `creators` and `creator_kyc` columns. The legal name and date of birth in `creator_kyc` are encrypted at the field level (rule 11); a test reads the raw row. Payout details (`payout_methods`) arrive in the next PR.
+No ID images, selfies or full document numbers are stored (rule 10); only the provider reference, the result, the date, the document type, its last 4 characters and its expiry date. Tests check the `creators` and `creator_kyc` columns. The legal name and date of birth in `creator_kyc` are encrypted at the field level (rule 11); a test reads the raw row. In `payout_methods`, the rail details and the name on the account are encrypted too; screens, staff and audit entries see only `display_hint` (for example `Test Bank ····2222`). Tests read the raw rows.
