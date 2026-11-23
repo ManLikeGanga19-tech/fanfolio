@@ -175,6 +175,25 @@ it('shows the stand-in capture page in development mode, which accepts anything 
     expect($fan->refresh()->isAgeVerified())->toBeTrue();
 });
 
+it('keeps the check pending in development mode until the stand-in capture page is submitted', function (): void {
+    $fan = User::factory()->create();
+    actAs($fan);
+    asLocalDevMode();
+
+    $this->post('/signup/age', ['method' => 'document', 'device' => 'computer']);
+    $handoff = session('identity.age_handoff');
+    $ref = is_array($handoff) && is_string($handoff['ref'] ?? null) ? $handoff['ref'] : '';
+    expect($ref)->toStartWith('fake_kyc_');
+
+    // "I've finished on my phone" before anything was captured: still pending.
+    $this->get(route('signup.age.return', ['ref' => $ref]));
+    expect($fan->refresh()->isAgeVerified())->toBeFalse();
+
+    $this->post('/_fake/kyc/'.$ref, ['outcome' => 'pass']);
+    $this->get(route('signup.age.return', ['ref' => $ref]));
+    expect($fan->refresh()->isAgeVerified())->toBeTrue();
+});
+
 it('offers "continue on this computer" only in development mode', function (): void {
     actAs(User::factory()->create());
     asLocalDevMode();

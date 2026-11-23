@@ -38,7 +38,7 @@
             @csrf
             <x-ui.button variant="brand" type="submit">Start verification</x-ui.button>
             {{-- Decision D-01: ID images are never stored by us; the provider holds them. --}}
-            <p class="text-small text-ink-muted">You must be 18 or older. Your ID is checked by our verification partner and stored encrypted.</p>
+            <p class="text-small text-ink-muted">You must be 18 or older. Your ID is checked by our verification partner. We never store the image.</p>
         </form>
     </div>
 </x-layouts.auth>

@@ -172,3 +172,26 @@ it('gives every inline script in the panels the CSP nonce, so Filament works und
         expect($tag)->toContain('nonce="'.$nonce[1].'"');
     }
 })->with(['/admin/creator-approvals', '/studio']);
+
+it('points creators past onboarding to their status, and the account hub to Studio once approved', function (): void {
+    $creator = approvedCreator();
+    // A fresh request loads the account again, with the creator role from the approval.
+    actAsUserId($creator->user_id);
+
+    $this->get('/creator/start')->assertRedirect(route('creator.status'));
+    $this->get('/account')->assertOk()
+        ->assertSee('Creator Studio')
+        ->assertSee(url('/studio'), false)
+        ->assertDontSee('Become a creator');
+
+    $creator->forceFill(['status' => CreatorStatus::Submitted])->save();
+    $this->get('/creator/start')->assertRedirect(route('creator.status'));
+});
+
+it('shows staff a link to Admin on the account hub', function (): void {
+    signedInStaff();
+
+    $this->get('/account')->assertOk()
+        ->assertSee(url('/admin'), false)
+        ->assertDontSee('Become a creator');
+});

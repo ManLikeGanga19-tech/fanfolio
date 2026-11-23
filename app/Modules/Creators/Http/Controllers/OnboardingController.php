@@ -6,6 +6,7 @@ namespace App\Modules\Creators\Http\Controllers;
 
 use App\Modules\Creators\Actions\SaveProfileBasics;
 use App\Modules\Creators\Actions\StartCreatorApplication;
+use App\Modules\Creators\Enums\CreatorStatus;
 use App\Modules\Creators\Exceptions\CreatorException;
 use App\Modules\Creators\Http\Requests\ProfileBasicsRequest;
 use App\Modules\Creators\Models\Creator;
@@ -25,8 +26,11 @@ final class OnboardingController
 {
     public function start(Request $request): View|RedirectResponse
     {
-        if ($this->creator($request) instanceof Creator) {
-            return redirect()->route('creator.profile');
+        $creator = $this->creator($request);
+
+        if ($creator instanceof Creator) {
+            // Past onboarding (submitted, approved, suspended): the status page says where they stand.
+            return redirect()->route($creator->status === CreatorStatus::Onboarding ? 'creator.profile' : 'creator.status');
         }
 
         return view('creators::start');
