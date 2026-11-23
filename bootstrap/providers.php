@@ -13,6 +13,7 @@ use App\Modules\Subscriptions\Providers\SubscriptionsServiceProvider;
 use App\Modules\TrustSafety\Providers\TrustSafetyServiceProvider;
 use App\Modules\Wallet\Providers\WalletServiceProvider;
 use App\Providers\AppServiceProvider;
+use App\Providers\Filament\AdminPanelProvider;
 
 return [
     AppServiceProvider::class,
@@ -27,4 +28,5 @@ return [
     NotificationsServiceProvider::class,
     AuditServiceProvider::class,
     CollaborationsServiceProvider::class,
+    AdminPanelProvider::class,
 ];

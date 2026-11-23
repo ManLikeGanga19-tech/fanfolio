@@ -63,6 +63,25 @@ return [
         'username_change_days' => 30,
     ],
 
+    // Filament panel colours (Studio and Admin, dark theme). Must equal docs/design-system/tokens.json;
+    // an architecture test checks this. Views never hard-code colours.
+    'design' => [
+        'brand' => '#e8a33d',
+        'danger' => '#f0525b',
+        'warning' => '#f5d06b',
+        'success' => '#34c47c',
+    ],
+
+    // SEC-15: the /admin panel. Staff only, MFA always, from allowed addresses only.
+    'admin' => [
+        'path' => 'admin',
+        // Comma-separated IPs or CIDR ranges. Empty means no address is allowed, except in local and testing.
+        'ip_allowlist' => array_values(array_filter(array_map(trim(...), explode(',', (string) env('FANFOLIO_ADMIN_IP_ALLOWLIST', ''))))),
+        // SSO provider is undecided (CLAUDE.md open decisions). When switched on, the panel stays
+        // closed until an SSO driver confirms the session.
+        'sso_required' => (bool) env('FANFOLIO_ADMIN_SSO_REQUIRED', false),
+    ],
+
     // SEC-01: two years, the minimum for the HSTS preload list.
     'security' => [
         'hsts_max_age' => 63072000,

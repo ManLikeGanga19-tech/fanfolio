@@ -27,7 +27,7 @@ final class SecurityHeaders
         $response = $next($request);
 
         $headers = $response->headers;
-        $headers->set('Content-Security-Policy', $this->contentSecurityPolicy($nonce));
+        $headers->set('Content-Security-Policy', $this->contentSecurityPolicy($nonce, $this->isAdmin($request)));
         $headers->set('X-Frame-Options', 'DENY');
         $headers->set('X-Content-Type-Options', 'nosniff');
         $headers->set('Referrer-Policy', 'strict-origin');
@@ -42,12 +42,24 @@ final class SecurityHeaders
         return $response;
     }
 
-    private function contentSecurityPolicy(string $nonce): string
+    /**
+     * Decision D-07: the admin panel (Filament on Livewire and Alpine) needs runtime
+     * evaluation and inline styles. Only /admin and the Livewire endpoints it calls get
+     * them; every fan page keeps the strict policy.
+     */
+    private function isAdmin(Request $request): bool
+    {
+        $path = config()->string('fanfolio.admin.path');
+
+        return $request->is($path, $path.'/*', 'livewire/*');
+    }
+
+    private function contentSecurityPolicy(string $nonce, bool $admin): string
     {
         $directives = [
             'default-src' => "'self'",
-            'script-src' => "'self' 'nonce-{$nonce}'",
-            'style-src' => "'self' 'nonce-{$nonce}'",
+            'script-src' => $admin ? "'self' 'nonce-{$nonce}' 'unsafe-eval'" : "'self' 'nonce-{$nonce}'",
+            'style-src' => $admin ? "'self' 'unsafe-inline'" : "'self' 'nonce-{$nonce}'",
             'img-src' => "'self' data: blob:",
             'font-src' => "'self'",
             'connect-src' => "'self'",

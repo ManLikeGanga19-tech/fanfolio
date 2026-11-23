@@ -38,3 +38,13 @@ it('keeps resources/css/tokens.css in sync with tokens.json', function (): void 
             ->and($css)->toContain("--color-{$name}: var(--ff-{$name});");
     }
 });
+
+it('uses the token colours for the Filament panels', function (): void {
+    /** @var array{color: array{tokens: list<array{name: string, value: array{dark: string, light: string}}>}} $tokens */
+    $tokens = json_decode((string) file_get_contents(base_path('docs/design-system/tokens.json')), true, flags: JSON_THROW_ON_ERROR);
+    $dark = array_column(array_map(static fn (array $t): array => ['name' => $t['name'], 'dark' => strtolower($t['value']['dark'])], $tokens['color']['tokens']), 'dark', 'name');
+
+    foreach (config('fanfolio.design') as $name => $hex) {
+        expect($hex)->toBe($dark[$name], "fanfolio.design.{$name} differs from tokens.json");
+    }
+});

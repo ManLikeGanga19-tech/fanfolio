@@ -40,6 +40,14 @@ Other modules must not read or write these tables or use this module's models; a
 - TOTP codes are single use (last accepted time step is stored). Recovery codes: 10, single use, keyed hashes, shown once.
 - Passkey browser code: `resources/js/passkeys.js` (no inline script, CSP-safe). Tests use `Tests\Support\VirtualAuthenticator` for full ceremonies.
 
+## Admin panel access (SEC-15, rule 13)
+
+- `/admin` (Filament, `App\Providers\Filament\AdminPanelProvider`) has no login page: staff sign in on the main log in screen.
+- `EnsureAdminAccess` admits moderators and admins only, with MFA on, from an address in `FANFOLIO_ADMIN_IP_ALLOWLIST` (IPs or CIDR; empty means closed outside local and testing). With `FANFOLIO_ADMIN_SSO_REQUIRED=true` the panel stays closed until an SSO driver exists (provider undecided).
+- Every refusal writes `admin.access_denied` with a reason; each new admin session writes `admin.panel_opened`.
+- Decision D-07: `/admin` and the Livewire endpoints it calls use a relaxed CSP (`unsafe-eval`, inline styles). Fan pages keep the strict CSP.
+- Behind a load balancer or Cloudflare, trusted proxies must be configured so the allow-list sees the real client address (infrastructure, M9).
+
 ## Age verification
 
 - `AgeVerifications::start()` opens a provider session (`IdentityVerifier`, purpose `fan_age`, method document or selfie age estimate) and records a pending row.
