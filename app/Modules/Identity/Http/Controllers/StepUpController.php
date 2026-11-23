@@ -54,7 +54,7 @@ final class StepUpController
         $passed = match (true) {
             $code !== '' => $totp->verify($user, $code),
             $recovery !== '' => $recoveryCodes->use($user, $recovery),
-            $password !== '' && ! $user->mfa_enabled => $hasher->check($password, $user->password),
+            $password !== '' && ! $user->mfa_enabled && $user->password !== null => $hasher->check($password, $user->password),
             default => false,
         };
 

@@ -23,6 +23,7 @@
             @csrf
             <x-ui.input name="email" label="Email" type="email" autocomplete="username webauthn" required />
             <x-ui.input name="password" label="Password" type="password" autocomplete="current-password" required />
+            <a class="self-end text-small text-brand underline" href="{{ route('password.request') }}">Forgot password?</a>
             <x-ui.button type="submit">Log in</x-ui.button>
         </form>
 

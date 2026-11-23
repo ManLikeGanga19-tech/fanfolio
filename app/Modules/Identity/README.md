@@ -14,10 +14,13 @@ Other modules must not read or write these tables or use this module's models; a
 |---|---|---|---|
 | GET | `/` | Landing (guests) | |
 | GET, POST | `/signup` | Sign up step 1 | 10 per hour per address |
+| POST | `/signup/passkey/options`, `/signup/passkey` | Sign up step 1 with a passkey instead of a password: the account is created only after the passkey checks out, then recovery codes are shown | 10 per hour per address (options), 20 per minute (passkey) |
 | GET | `/signup/phone` | Step 2: phone number, then code | |
 | POST | `/signup/phone/send` | Send or resend a 6-digit code (60 s between sends) | 5 per hour per account, 20 per address |
 | POST | `/signup/phone/verify` | Check the code (5 attempts, 10 minutes) | 10 per minute per account |
 | GET, POST | `/login` | Email and password | 5 per minute per email and address, 30 per address |
+| GET, POST | `/forgot-password` | Ask for a reset link; the same reply whether or not the email has an account | 5 per hour per email, 20 per address |
+| GET, POST | `/reset-password/{token}`, `/reset-password` | Choose a new password (token hashed, single use, 60 minutes); signs out every device | as above |
 | POST | `/logout` | Sign out | |
 | GET, POST | `/signup/age` | Sign up step 3 (optional): 18+ check with ID or selfie age estimate | 5 starts per hour per account |
 | GET | `/signup/age/return?ref=` | Back from the provider; the result is fetched from the provider, never read from the browser | |
@@ -30,6 +33,13 @@ Other modules must not read or write these tables or use this module's models; a
 | GET | `/account/security` | Devices & security: passkeys, authenticator app, recovery codes | |
 | GET, POST | `/account/confirm` (+ `/passkey`) | Step-up "Confirm it's you" | as `/login/mfa` |
 | POST, DELETE | `/account/passkeys…`, `/account/security/totp…`, `/account/security/recovery-codes` | Add or remove sign-in methods; need a step-up in the last 10 minutes | |
+
+## Passwordless accounts and password reset
+
+- "Continue with a passkey" makes an account with no password (`users.password` is null). It starts with MFA on and gets 10 recovery codes before the phone step.
+- A password log in for a passkey-only account gets the same answer and the same hashing work as a wrong password.
+- "Forgot password?" (`ResetPassword`) is also how a passkey-only account adds a password. A reset never skips MFA: with a passkey or authenticator app, the next login still asks for it. Reset uses the sign-up password rules (`PasswordPolicy`), rotates the remember token, signs out every device and is audited.
+- The reset email (`PasswordResetLink`) is queued and sent from Identity, like phone codes; it can move to the Notifications module once that module exists.
 
 ## MFA and step-up (SEC-04)
 

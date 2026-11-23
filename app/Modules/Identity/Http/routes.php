@@ -8,6 +8,7 @@ use App\Modules\Identity\Http\Controllers\DeviceLimitController;
 use App\Modules\Identity\Http\Controllers\LoginController;
 use App\Modules\Identity\Http\Controllers\MfaChallengeController;
 use App\Modules\Identity\Http\Controllers\PasskeyLoginController;
+use App\Modules\Identity\Http\Controllers\PasswordResetController;
 use App\Modules\Identity\Http\Controllers\PhoneController;
 use App\Modules\Identity\Http\Controllers\SecurityController;
 use App\Modules\Identity\Http\Controllers\SignUpController;
@@ -19,6 +20,8 @@ Route::middleware('guest')->group(function (): void {
 
     Route::get('/signup', [SignUpController::class, 'show'])->name('signup');
     Route::post('/signup', [SignUpController::class, 'store'])->middleware('throttle:signup');
+    Route::post('/signup/passkey/options', [SignUpController::class, 'passkeyOptions'])->middleware('throttle:signup')->name('signup.passkey.options');
+    Route::post('/signup/passkey', [SignUpController::class, 'storePasskey'])->middleware('throttle:passkey')->name('signup.passkey');
 
     Route::get('/login', [LoginController::class, 'show'])->name('login');
     Route::post('/login', [LoginController::class, 'store'])->middleware('throttle:login');
@@ -28,6 +31,12 @@ Route::middleware('guest')->group(function (): void {
 
     Route::get('/login/mfa', [MfaChallengeController::class, 'show'])->name('login.mfa');
     Route::post('/login/mfa', [MfaChallengeController::class, 'store'])->middleware('throttle:mfa');
+
+    // "Forgot password?"
+    Route::get('/forgot-password', [PasswordResetController::class, 'create'])->name('password.request');
+    Route::post('/forgot-password', [PasswordResetController::class, 'store'])->middleware('throttle:password-reset')->name('password.email');
+    Route::get('/reset-password/{token}', [PasswordResetController::class, 'edit'])->name('password.reset');
+    Route::post('/reset-password', [PasswordResetController::class, 'update'])->middleware('throttle:password-reset')->name('password.update');
 
     // D-03: device limit reached at sign-in.
     Route::get('/login/devices', [DeviceLimitController::class, 'show'])->name('login.devices');

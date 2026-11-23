@@ -145,6 +145,26 @@ final readonly class Devices
         });
     }
 
+    /**
+     * Signs the account out everywhere (after a password reset).
+     */
+    public function revokeAll(User $user): int
+    {
+        return DB::transaction(function () use ($user): int {
+            $devices = UserDevice::query()
+                ->where('user_id', $user->id)
+                ->active()
+                ->lockForUpdate()
+                ->get();
+
+            foreach ($devices as $device) {
+                $this->markRevoked($user, $device);
+            }
+
+            return $devices->count();
+        });
+    }
+
     public function isActiveFor(User $user, string $deviceId): bool
     {
         return UserDevice::query()->where('user_id', $user->id)->whereKey($deviceId)->active()->exists();

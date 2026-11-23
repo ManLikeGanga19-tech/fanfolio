@@ -7,6 +7,7 @@ namespace App\Modules\Identity\Models;
 use App\Modules\Identity\Database\Factories\UserFactory;
 use App\Modules\Identity\Enums\AccountStatus;
 use App\Modules\Identity\Enums\Role;
+use App\Modules\Identity\Notifications\PasswordResetLink;
 use Carbon\CarbonImmutable;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
@@ -25,7 +26,7 @@ use Laragear\WebAuthn\WebAuthnData;
  * @property string $id
  * @property string $email
  * @property string $username
- * @property string $password
+ * @property string|null $password null for passkey-only accounts
  * @property string|null $phone_e164
  * @property string|null $phone_hash
  * @property CarbonImmutable|null $phone_verified_at
@@ -78,6 +79,16 @@ final class User extends Authenticatable implements FilamentUser, HasName, WebAu
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->role->isStaff() && $this->mfa_enabled && $this->status->canSignIn();
+    }
+
+    /**
+     * "Forgot password?" email, queued (see PasswordResetLink).
+     *
+     * @param  string  $token
+     */
+    public function sendPasswordResetNotification($token): void
+    {
+        $this->notify(new PasswordResetLink($token));
     }
 
     /**

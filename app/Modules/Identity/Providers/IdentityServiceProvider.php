@@ -100,6 +100,11 @@ final class IdentityServiceProvider extends ModuleServiceProvider
 
         RateLimiter::for('age-check', static fn (Request $request): Limit => Limit::perHour(5)->by('age-check:'.self::userKey($request)));
 
+        RateLimiter::for('password-reset', static fn (Request $request): array => [
+            Limit::perHour(5)->by('password-reset:'.mb_strtolower($request->string('email')->toString())),
+            Limit::perHour(20)->by('password-reset-ip:'.$request->ip()),
+        ]);
+
         RateLimiter::for('otp-verify', static fn (Request $request): Limit => Limit::perMinute(10)->by('otp-verify:'.self::userKey($request)));
     }
 
