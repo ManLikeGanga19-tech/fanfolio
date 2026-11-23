@@ -32,7 +32,7 @@ it('shows step 1 of sign up', function (): void {
         ->assertOk()
         ->assertSee('STEP 1 OF 3 · ACCOUNT')
         ->assertSee('Create your account')
-        ->assertSee('Shown to creators instead of your name')
+        ->assertSee('Creators see this instead of your real name')
         ->assertSee('At least 12 characters');
 });
 
