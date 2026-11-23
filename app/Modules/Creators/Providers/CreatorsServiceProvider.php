@@ -4,7 +4,12 @@ declare(strict_types=1);
 
 namespace App\Modules\Creators\Providers;
 
+use App\Modules\Creators\Actions\Eligibility;
+use App\Modules\Creators\Contracts\CreatorEligibility;
 use App\Support\Modules\ModuleServiceProvider;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 
 final class CreatorsServiceProvider extends ModuleServiceProvider
 {
@@ -17,5 +22,26 @@ final class CreatorsServiceProvider extends ModuleServiceProvider
     public static function moduleName(): string
     {
         return 'Creators';
+    }
+
+    public function register(): void
+    {
+        $this->app->bind(CreatorEligibility::class, Eligibility::class);
+    }
+
+    public function boot(): void
+    {
+        parent::boot();
+
+        // SEC-14.
+        RateLimiter::for('creator-onboarding', static fn (Request $request): Limit => Limit::perMinute(20)->by('creator-onboarding:'.self::key($request)));
+        RateLimiter::for('handle-check', static fn (Request $request): Limit => Limit::perMinute(60)->by('handle-check:'.self::key($request)));
+    }
+
+    private static function key(Request $request): string
+    {
+        $id = $request->user()?->getAuthIdentifier();
+
+        return is_string($id) ? $id : (string) $request->ip();
     }
 }

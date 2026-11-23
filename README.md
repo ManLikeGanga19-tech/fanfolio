@@ -35,6 +35,14 @@ npm run watch                                            # rebuild CSS and JS on
 
 This needs PHP 8.4 with `extension=pdo_pgsql` on in `php.ini`. Sessions, cache and the queue use files, and mail goes to `storage/logs/laravel.log`. Use the full Docker stack for Horizon, Redis, MinIO and Mailpit.
 
+To run the tests the same way (Postgres in Docker, PHP on Windows):
+
+```powershell
+$env:DB_HOST="127.0.0.1"; $env:DB_READ_HOSTS="127.0.0.1"; $env:DB_PORT="15432"
+$env:OPENSSL_CONF="<php folder>xtras\ssl\openssl.cnf"   # the passkey tests make real P-256 keys
+vendor/bin/pest
+```
+
 ## Checks
 
 ```sh

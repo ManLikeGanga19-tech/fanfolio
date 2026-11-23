@@ -51,6 +51,24 @@ test('signed-in pages pass axe and keep a visible focus ring', async ({ page }) 
     await expect(page.getByRole('heading', { name: 'Save your recovery codes' })).toBeVisible();
     await expectNoAxeViolations(page);
 
+    // Creator onboarding (needs MFA, which the account now has).
+    await page.goto('/creator/start');
+    await expectNoAxeViolations(page);
+    await expectVisibleFocusOnTab(page);
+    await page.getByRole('button', { name: 'Start verification' }).click();
+
+    await expect(page.getByRole('heading', { name: 'Set up your page' })).toBeVisible();
+    await expectNoAxeViolations(page);
+    await expectVisibleFocusOnTab(page);
+
+    await page.getByLabel('Display name').fill('Test Creator');
+    await page.getByLabel('Handle').fill(account.username.replace('_', '.'));
+    await expect(page.getByText('Available')).toBeVisible();
+    await page.getByLabel('Category').selectOption('music');
+    await page.getByRole('button', { name: 'Continue' }).click();
+    await expect(page.getByText('Saved. Next: verify your identity.')).toBeVisible();
+    await expectNoAxeViolations(page);
+
     // Log out, log back in: the second-factor screen.
     await page.goto('/account');
     await page.getByRole('button', { name: 'Log out' }).click();
