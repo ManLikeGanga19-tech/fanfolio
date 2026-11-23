@@ -84,6 +84,29 @@ Each step-up is audited as `identity.step_up` with `second_factor` true or false
 
 `Contracts\Accounts` answers what other modules may ask about an account by user id: `hasMfa`, `isStaff` (moderator or admin with MFA, allowed to sign in; for staff checks inside other modules' Actions), `username`, and `notify`, which sends a notification to the account without giving the caller its email address or phone number (rule 13).
 
+## ID and face scan on a phone (D-14)
+
+`Contracts\PhoneHandoff` (used by the 18+ check here and by Creators' KYC):
+
+- `returnUrl($userId, $next)`: a signed "All done" URL to give the provider for a session finished on a phone. The phone sees "Go back to your computer". The same browser, signed in as the same account, is sent on to `$next` with the provider's `ref`.
+- `issue($userId, $providerUrl)`: a `HandoffLink` for the QR code. The token is random, stored as a SHA-256 hash in the cache, works once and lives 10 minutes. Issuing and opening are audited (`identity.phone_handoff_issued`, `identity.phone_handoff_opened`).
+
+| Method | Path | What | Limit (SEC-14) |
+|---|---|---|---|
+| GET | `/verify/on-phone/{token}` | The phone opens the provider's capture (no sign-in; the link is the proof). Used or expired: 410 | 20 per minute per address |
+| GET | `/verify/on-phone-done` | Signed; "All done, go back to your computer" | 20 per minute per address |
+
+Forms that start a check send `device` (`phone` or `computer`), set by `resources/js/kyc-capture.js`. Without it, the server assumes a computer. The shared view is `<x-ui.phone-handoff>`, with an inline SVG QR code made on the server (`App\Support\View\QrCode`, chillerlan/php-qrcode).
+
+## Development mode (D-14)
+
+`FANFOLIO_DEV_MODE=true` (on in `.env.example` and `scripts/dev.ps1`) is honoured only with `APP_ENV=local`. `App\Support\DevMode::assertSafe()` stops the app booting in production with it on. When on:
+
+- any 6-digit email code verifies (audited with `dev_mode: true`);
+- the Fake KYC provider opens `/_fake/kyc/{ref}`, a stand-in capture page with an ID photo, a live camera selfie (or the camera app over plain http) and the result to return. The image fields have no `name`, so nothing leaves the device (rule 10);
+- the QR page shows "Continue on this computer (development only)";
+- `php artisan fanfolio:dev-staff <email> --role=admin|moderator` turns an existing account into staff (audited). Staff still need MFA to open `/admin`.
+
 ## Roles and panels
 
 - `Listeners\GrantCreatorRole` gives an account the creator role when it hears `Creators\Events\CreatorApproved`. It is idempotent and audited as `identity.role_changed`.

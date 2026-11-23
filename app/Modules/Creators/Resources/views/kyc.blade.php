@@ -36,6 +36,7 @@
             </x-ui.card>
             <form method="POST" action="{{ route('creator.kyc') }}">
                 @csrf
+                <input type="hidden" name="device" value="computer" data-detect>
                 <x-ui.button variant="brand" type="submit" class="w-full">Retake ID photo</x-ui.button>
             </form>
         @elseif ($checked && ! $canStart)
@@ -64,6 +65,13 @@
             @else
                 <a href="{{ route('account') }}" class="inline-flex min-h-11 items-center justify-center rounded-md border border-border-strong px-4 font-semibold">Back to your account</a>
             @endif
+        @elseif ($handoff)
+            {{-- Decision D-14: on a computer, the capture continues on a phone. --}}
+            <div class="flex flex-col gap-2">
+                <p class="text-label text-ink-muted">STEPS 2–3 OF 4 · ID AND SELFIE</p>
+                <h1 class="text-h1">Continue on your phone</h1>
+            </div>
+            <x-ui.phone-handoff :link="$handoff" :continue="route('creator.kyc.return', ['ref' => $latest->provider_ref])" :restart="route('creator.kyc')" :dev-mode="$devMode" />
         @else
             @if ($status === KycStatus::Pending && $latest?->status->value === 'pending')
                 <div class="flex flex-col gap-3 rounded-md bg-surface p-4">
@@ -94,7 +102,9 @@
 
             <form method="POST" action="{{ route('creator.kyc') }}" class="flex flex-col gap-3">
                 @csrf
+                <input type="hidden" name="device" value="computer" data-detect>
                 <x-ui.button variant="brand" type="submit">Start ID check</x-ui.button>
+                <p class="text-small text-ink-muted">On a computer we'll show a QR code: the ID photo and face scan need a phone camera.</p>
                 {{-- Decision D-01 and D-11: the provider takes and keeps the images; we never store them. --}}
                 <p class="text-small text-ink-muted">You must be 18 or older. The photos are taken by our verification partner, not stored by FanFolio.</p>
             </form>

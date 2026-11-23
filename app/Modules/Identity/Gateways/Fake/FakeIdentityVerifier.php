@@ -11,6 +11,7 @@ use App\Modules\Identity\Contracts\Data\VerificationResult;
 use App\Modules\Identity\Contracts\Data\VerificationSession;
 use App\Modules\Identity\Contracts\Data\VerificationStatus;
 use App\Modules\Identity\Contracts\IdentityVerifier;
+use App\Support\DevMode;
 use App\Support\Gateways\FakeDriver;
 use DateTimeImmutable;
 use Illuminate\Contracts\Cache\Repository as Cache;
@@ -23,6 +24,9 @@ use RuntimeException;
  *
  * The outcome of each new session is the scripted one (willReturn) or else config
  * fanfolio.fake.kyc_outcome: pass, fail, review, underage or fraud.
+ * In development mode (D-14) the session opens a stand-in capture page that accepts
+ * any ID photo and any selfie, and lets the developer pick the outcome; otherwise it
+ * returns straight to the return URL.
  * State lives in the cache so it survives across requests and Octane workers.
  */
 final class FakeIdentityVerifier implements FakeDriver, IdentityVerifier
@@ -62,7 +66,37 @@ final class FakeIdentityVerifier implements FakeDriver, IdentityVerifier
 
         $this->cache->put($this->key($ref), $outcome, now()->addDay());
 
-        return new VerificationSession($ref, $request->returnUrl.(str_contains($request->returnUrl, '?') ? '&' : '?').'ref='.$ref);
+        $return = $request->returnUrl.(str_contains($request->returnUrl, '?') ? '&' : '?').'ref='.$ref;
+
+        if (DevMode::enabled()) {
+            $this->cache->put($this->key($ref).':return', $return, now()->addDay());
+
+            return new VerificationSession($ref, route('fake.kyc.capture', ['ref' => $ref]));
+        }
+
+        return new VerificationSession($ref, $return);
+    }
+
+    /**
+     * The stand-in capture page was submitted: record the chosen outcome and give back
+     * where the real provider would send the user. Null for an unknown session.
+     */
+    public function finishCapture(string $providerRef, string $outcome): ?string
+    {
+        $return = $this->cache->get($this->key($providerRef).':return');
+
+        if (! is_string($return) || ! in_array($outcome, self::OUTCOMES, true)) {
+            return null;
+        }
+
+        $this->cache->put($this->key($providerRef), $outcome, now()->addDay());
+
+        return $return;
+    }
+
+    public function hasCapture(string $providerRef): bool
+    {
+        return is_string($this->cache->get($this->key($providerRef).':return'));
     }
 
     public function result(string $providerRef): VerificationResult

@@ -14,8 +14,13 @@
             <p class="rounded-md bg-surface-raised p-4 text-small text-danger" role="alert">{{ $message }}</p>
         @enderror
 
+        @if ($handoff)
+            {{-- Decision D-14: on a computer, the check continues on a phone. --}}
+            <x-ui.phone-handoff :link="$handoff" :continue="route('signup.age.return', ['ref' => $pending->provider_ref])" :restart="route('signup.age.start')" :restart-fields="['method' => $pending->method->value]" :dev-mode="$devMode" />
+        @else
         <form method="POST" action="{{ route('signup.age.start') }}" class="flex flex-col gap-4">
             @csrf
+            <input type="hidden" name="device" value="computer" data-detect>
             <fieldset class="flex flex-col gap-2">
                 <legend class="sr-only">How to verify</legend>
 
@@ -37,7 +42,9 @@
             </fieldset>
 
             <x-ui.button variant="brand" type="submit">Verify my age</x-ui.button>
+            <p class="text-small text-ink-muted">On a computer we'll show a QR code: the photo is taken with a phone camera.</p>
         </form>
+        @endif
 
         <x-ui.button variant="ghost" :href="route('account')">Not now, show safe content only</x-ui.button>
     </div>

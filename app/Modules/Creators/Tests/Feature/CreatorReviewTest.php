@@ -39,7 +39,7 @@ function submittedApplicant(): Creator
     $creator = Creator::factory()->create(['user_id' => $user->id, 'display_name' => 'Test Creator', 'handle' => 'test.creator']);
 
     config(['fanfolio.fake.kyc_outcome' => 'pass']);
-    test()->get((string) test()->post('/creator/kyc')->headers->get('Location'));
+    test()->get((string) test()->post('/creator/kyc', ['device' => 'phone'])->headers->get('Location'));
     confirmedSecondFactor();
     test()->post('/creator/payout', ['rail' => 'bank', 'bank_name' => 'Test Bank', 'account_number' => '000011112222', 'account_name' => 'Test Person']);
     test()->post('/creator/review', ['terms' => '1', 'co_performers' => '1'])->assertRedirect(route('creator.status'));
@@ -146,7 +146,7 @@ it('rejects: final, audited with the reason, Trust & Safety told, neutral messag
     Event::assertDispatched(CreatorKycFailed::class, static fn (CreatorKycFailed $e): bool => $e->reason === 'suspected_minor');
 
     $this->get('/creator/status')->assertSee('We could not approve your account')->assertDontSee('minor');
-    $this->post('/creator/kyc')->assertSessionHasErrors('kyc');
+    $this->post('/creator/kyc', ['device' => 'phone'])->assertSessionHasErrors('kyc');
     $this->post('/creator/review', ['terms' => '1', 'co_performers' => '1'])->assertRedirect(route('creator.kyc'));
     expect(app(CreatorEligibility::class)->canPublish($creator->user_id))->toBeFalse();
 });
@@ -176,7 +176,7 @@ it('sends an application back for a new ID photo (board 8), then takes it again'
     $this->get('/creator/kyc')->assertSee('One thing to fix')->assertSee('Retake ID photo');
 
     // Retake passes, submit again: the fix is cleared.
-    $this->get((string) $this->post('/creator/kyc')->headers->get('Location'));
+    $this->get((string) $this->post('/creator/kyc', ['device' => 'phone'])->headers->get('Location'));
     expect($creator->refresh()->kyc_status)->toBe(KycStatus::Review);
 
     $this->post('/creator/review', ['terms' => '1', 'co_performers' => '1'])->assertRedirect(route('creator.status'));

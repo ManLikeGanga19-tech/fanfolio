@@ -10,7 +10,12 @@
             <p class="rounded-md bg-surface-raised p-4 text-small" role="status">{{ session('status') }}</p>
         @endif
 
-        @if ($pending)
+        @if ($devMode)
+            {{-- Decision D-14: local development only. --}}
+            <p class="rounded-md border border-warning p-4 text-small" role="note">Development mode: any 6-digit code works.</p>
+        @endif
+
+        @if ($pending || $devMode)
             <p class="text-ink-muted">Enter the 6-digit code we sent to <span class="break-all text-ink">{{ $email }}</span>. Check your spam folder if it is not there.</p>
 
             <form method="POST" action="{{ route('signup.email.verify') }}" class="flex flex-col gap-4" novalidate>

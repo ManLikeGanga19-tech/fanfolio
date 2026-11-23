@@ -62,7 +62,8 @@ final class CreatorApprovals extends Page implements HasTable
             ->defaultSort('submitted_at')
             ->emptyStateHeading('No applications waiting')
             ->columns([
-                TextColumn::make('display_name')->label('Page')->description(static fn (Creator $record): string => '@'.$record->handle),
+                TextColumn::make('display_name')->label('Page')->description(static fn (Creator $record): string => '@'.$record->handle)
+                    ->searchable(['display_name', 'handle']),
                 TextColumn::make('category')->formatStateUsing(static fn (string $state): string => self::categoryLabel($state)),
                 IconColumn::make('is_adult')->label('18+ content')->boolean(),
                 TextColumn::make('document')->label('ID')->state(static fn (Creator $record): string => self::documentLabel($record->latestKyc())),

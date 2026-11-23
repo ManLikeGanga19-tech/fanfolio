@@ -26,7 +26,7 @@ function fakeVerifier(): FakeIdentityVerifier
  */
 function runAgeCheck(string $method = 'document'): TestResponse
 {
-    $start = test()->post('/signup/age', ['method' => $method]);
+    $start = test()->post('/signup/age', ['method' => $method, 'device' => 'phone']);
     $location = (string) $start->headers->get('Location');
 
     expect($location)->toStartWith(route('signup.age.return'));
@@ -100,7 +100,7 @@ it('never trusts the browser: an unknown or someone else\'s reference does nothi
 
     $other = User::factory()->create();
     actAs($other);
-    $start = $this->post('/signup/age', ['method' => 'document']);
+    $start = $this->post('/signup/age', ['method' => 'document', 'device' => 'phone']);
     parse_str((string) parse_url((string) $start->headers->get('Location'), PHP_URL_QUERY), $query);
 
     actAs($this->user);

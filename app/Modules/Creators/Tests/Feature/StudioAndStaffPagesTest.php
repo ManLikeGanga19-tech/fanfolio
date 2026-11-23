@@ -30,7 +30,7 @@ function approvedCreator(): Creator
     $creator = Creator::factory()->create(['user_id' => $user->id]);
 
     config(['fanfolio.fake.kyc_outcome' => 'pass']);
-    test()->get((string) test()->post('/creator/kyc')->headers->get('Location'));
+    test()->get((string) test()->post('/creator/kyc', ['device' => 'phone'])->headers->get('Location'));
     confirmedSecondFactor();
     test()->post('/creator/payout', ['rail' => 'bank', 'bank_name' => 'Test Bank', 'account_number' => '000011112222', 'account_name' => 'Test Person']);
     test()->post('/creator/review', ['terms' => '1', 'co_performers' => '1']);
@@ -123,7 +123,7 @@ it('lists submitted applications for staff with masked details only, and approve
     $user = signedInFanWithMfa();
     $creator = Creator::factory()->create(['user_id' => $user->id, 'display_name' => 'Waiting Creator', 'handle' => 'waiting.creator']);
     config(['fanfolio.fake.kyc_outcome' => 'pass']);
-    $this->get((string) $this->post('/creator/kyc')->headers->get('Location'));
+    $this->get((string) $this->post('/creator/kyc', ['device' => 'phone'])->headers->get('Location'));
     confirmedSecondFactor();
     $this->post('/creator/payout', ['rail' => 'bank', 'bank_name' => 'Test Bank', 'account_number' => '000011112222', 'account_name' => 'Test Person']);
     $this->post('/creator/review', ['terms' => '1', 'co_performers' => '1']);
@@ -153,3 +153,22 @@ it('keeps fans and creators out of the staff page', function (): void {
 
     $this->get('/admin/creator-approvals')->assertForbidden();
 });
+
+it('gives every inline script in the panels the CSP nonce, so Filament works under the policy (D-07)', function (string $path): void {
+    $creator = approvedCreator();
+    if ($path === '/admin/creator-approvals') {
+        signedInStaff();
+    } else {
+        actAsUserId($creator->user_id);
+    }
+
+    $response = $this->get($path)->assertOk();
+    preg_match("/'nonce-([^']+)'/", (string) $response->headers->get('Content-Security-Policy'), $nonce);
+    preg_match_all('/<script(?![^>]*\bsrc=)[^>]*>/', (string) $response->getContent(), $inline);
+
+    expect($nonce[1] ?? null)->not->toBeNull()
+        ->and($inline[0])->not->toBeEmpty();
+    foreach ($inline[0] as $tag) {
+        expect($tag)->toContain('nonce="'.$nonce[1].'"');
+    }
+})->with(['/admin/creator-approvals', '/studio']);

@@ -9,6 +9,7 @@ use App\Modules\Identity\Actions\VerifyEmail;
 use App\Modules\Identity\Exceptions\IdentityException;
 use App\Modules\Identity\Models\EmailVerification;
 use App\Modules\Identity\Models\User;
+use App\Support\DevMode;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -41,6 +42,7 @@ final class EmailVerificationController
             'pending' => $pending,
             'resendIn' => SendEmailCode::clock($wait),
             'canResend' => $wait === 0,
+            'devMode' => DevMode::enabled(),
         ]);
     }
 

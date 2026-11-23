@@ -25,7 +25,7 @@ function kycPassedApplicant(): Creator
     $creator = Creator::factory()->create(['user_id' => $user->id, 'display_name' => 'Test Creator', 'handle' => 'test.creator']);
 
     config(['fanfolio.fake.kyc_outcome' => 'pass']);
-    test()->get((string) test()->post('/creator/kyc')->headers->get('Location'));
+    test()->get((string) test()->post('/creator/kyc', ['device' => 'phone'])->headers->get('Location'));
 
     expect($creator->refresh()->kyc_status)->toBe(KycStatus::Review);
     confirmedSecondFactor();
