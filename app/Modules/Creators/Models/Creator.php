@@ -11,6 +11,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * A creator application and, once approved, the creator page.
@@ -27,6 +28,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property CarbonImmutable|null $submitted_at
  * @property CarbonImmutable|null $approved_at
  * @property CarbonImmutable|null $suspended_at
+ * @property CarbonImmutable|null $id_expires_at
+ * @property CarbonImmutable|null $id_expiry_reminded_at
  */
 final class Creator extends Model
 {
@@ -48,6 +51,19 @@ final class Creator extends Model
     public function hasProfile(): bool
     {
         return $this->handle !== null && $this->display_name !== null && $this->category !== null;
+    }
+
+    /**
+     * @return HasMany<CreatorKyc, $this>
+     */
+    public function kycChecks(): HasMany
+    {
+        return $this->hasMany(CreatorKyc::class);
+    }
+
+    public function latestKyc(): ?CreatorKyc
+    {
+        return $this->kycChecks()->latest('created_at')->latest('id')->first();
     }
 
     /** Initials shown until profile photos arrive with media scanning in M4 (decision D-08). */
@@ -77,6 +93,8 @@ final class Creator extends Model
             'submitted_at' => 'immutable_datetime',
             'approved_at' => 'immutable_datetime',
             'suspended_at' => 'immutable_datetime',
+            'id_expires_at' => 'immutable_datetime',
+            'id_expiry_reminded_at' => 'immutable_datetime',
         ];
     }
 }

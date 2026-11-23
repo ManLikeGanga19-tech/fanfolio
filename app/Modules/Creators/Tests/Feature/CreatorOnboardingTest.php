@@ -81,7 +81,7 @@ it('saves profile basics', function (): void {
     $this->get('/creator/profile')->assertOk()->assertSee('STEP 1 OF 4 · YOUR PAGE')->assertSee('[domain]/');
 
     $this->post('/creator/profile', profileData(['handle' => '@Test.Creator', 'is_adult' => '1']))
-        ->assertRedirect(route('creator.profile'))
+        ->assertRedirect(route('creator.kyc'))
         ->assertSessionHas('status', 'Saved. Next: verify your identity.');
 
     $creator = Creator::query()->sole();

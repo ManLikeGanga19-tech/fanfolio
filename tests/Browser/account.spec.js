@@ -67,6 +67,14 @@ test('signed-in pages pass axe and keep a visible focus ring', async ({ page }) 
     await page.getByLabel('Category').selectOption('music');
     await page.getByRole('button', { name: 'Continue' }).click();
     await expect(page.getByText('Saved. Next: verify your identity.')).toBeVisible();
+
+    // Steps 2–3: ID and selfie. The fake provider sends the creator straight back.
+    await expect(page.getByRole('heading', { name: 'Scan your ID' })).toBeVisible();
+    await expectNoAxeViolations(page);
+    await expectVisibleFocusOnTab(page);
+    await page.getByRole('button', { name: 'Start ID check' }).click();
+
+    await expect(page.getByRole('heading', { name: 'ID and selfie matched' })).toBeVisible();
     await expectNoAxeViolations(page);
 
     // Log out, log back in: the second-factor screen.
