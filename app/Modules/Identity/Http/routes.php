@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Modules\Identity\Http\Controllers\AccountController;
+use App\Modules\Identity\Http\Controllers\AgeVerificationController;
 use App\Modules\Identity\Http\Controllers\DeviceLimitController;
 use App\Modules\Identity\Http\Controllers\LoginController;
 use App\Modules\Identity\Http\Controllers\MfaChallengeController;
@@ -38,6 +39,11 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/signup/phone', [PhoneController::class, 'show'])->name('signup.phone');
     Route::post('/signup/phone/send', [PhoneController::class, 'send'])->middleware('throttle:otp-send')->name('signup.phone.send');
     Route::post('/signup/phone/verify', [PhoneController::class, 'verify'])->middleware('throttle:otp-verify')->name('signup.phone.verify');
+
+    // Sign up step 3 (optional): 18+ check through the KYC provider.
+    Route::get('/signup/age', [AgeVerificationController::class, 'show'])->name('signup.age');
+    Route::post('/signup/age', [AgeVerificationController::class, 'start'])->middleware('throttle:age-check')->name('signup.age.start');
+    Route::get('/signup/age/return', [AgeVerificationController::class, 'return'])->name('signup.age.return');
 
     Route::get('/account', [AccountController::class, 'show'])->name('account');
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');

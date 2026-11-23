@@ -58,7 +58,7 @@ it('sends a 6-digit code by SMS and stores only its hash', function (): void {
 it('verifies the right code and links the number, encrypted', function (): void {
     $this->post('/signup/phone/send', ['phone' => TEST_PHONE]);
 
-    $this->post('/signup/phone/verify', ['code' => lastCodeSentTo(TEST_PHONE)])->assertRedirect(route('account'));
+    $this->post('/signup/phone/verify', ['code' => lastCodeSentTo(TEST_PHONE)])->assertRedirect(route('signup.age'));
 
     $user = $this->user->refresh();
     expect($user->hasVerifiedPhone())->toBeTrue()

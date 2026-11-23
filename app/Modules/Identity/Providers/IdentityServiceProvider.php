@@ -98,6 +98,8 @@ final class IdentityServiceProvider extends ModuleServiceProvider
             Limit::perMinute(20)->by('mfa-ip:'.$request->ip()),
         ]);
 
+        RateLimiter::for('age-check', static fn (Request $request): Limit => Limit::perHour(5)->by('age-check:'.self::userKey($request)));
+
         RateLimiter::for('otp-verify', static fn (Request $request): Limit => Limit::perMinute(10)->by('otp-verify:'.self::userKey($request)));
     }
 
