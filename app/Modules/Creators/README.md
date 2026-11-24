@@ -32,7 +32,9 @@ The routes act only on the signed-in account's own application; no ids appear in
 
 ## Staff review (decision D-10)
 
-`/admin/creator-approvals` (Filament, admin panel) lists submitted applications: page, category, 18+ flag, document type and last 4, whether the selfie matched, the payout hint, whether the payout name matches the ID, and when it was submitted. No legal name, date of birth or full numbers (rule 13). The full approvals board replaces it in M8.
+`/admin/creator-approvals` (Filament, admin panel) lists submitted applications: page, category, 18+ flag, document type and last 4, whether the selfie matched, the payout hint, whether the payout name matches the ID, and when it was submitted. No legal name, date of birth or full numbers (rule 13). The full approvals board replaces it in M8a PR 3. It opens for staff with `StaffAbility::ReviewCreators`, and its sidebar item shows how many applications wait.
+
+`Contracts\ApprovalQueue` gives the admin Overview the number waiting, when the oldest was sent, and how many were approved in a range.
 
 | Action | Needs | Result | Audit | Event / email |
 |---|---|---|---|---|

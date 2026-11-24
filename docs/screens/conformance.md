@@ -26,6 +26,7 @@ Status: **to do**, **done**, or **later** (the screen arrives with its milestone
 | In review | Main · 7 | "FanFolio" + "Studio" pill header; hourglass illustration; timeline dots with check icons | done |
 | One thing to fix | Main · 8 | ID-card warning illustration; warning-bordered card with "Needed" pill; checklist of what is already fine; "Contact support" | done |
 | Studio shell | StudioDashboard | Studio sidebar and dashboard per board | later (with Studio features) |
+| Admin shell and Overview | AdminOverview | Wordmark with red "Admin" label; text sidebar with counts; Today / 7 / 30 days; KPI cards; bar chart; System health with coloured dots. Money tiles and the sales chart wait for M3 (sign-ups chart until then); other sidebar items join as their boards are built | done (M8a PR 1) |
 | Admin: creator approvals | AdminApprovals | Sidebar with counts; list + detail pane with checks | to do (M8a PR 3) |
 | Admin: other boards | Admin* | Built to the board in M8a and their milestones | later |
 

@@ -1,0 +1,69 @@
+/* Filament panels (/admin, /studio): Filament's theme plus the FanFolio design tokens,
+   so panel pages can use the same utilities as the fan PWA (bg-surface, text-ink-muted…).
+   Fonts are self-hosted, so no outside font CDN is called. */
+@import '../../../vendor/filament/filament/resources/css/theme.css';
+@import '../tokens.css';
+
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/inter/700.css';
+@import '@fontsource/sora/600.css';
+@import '@fontsource/sora/700.css';
+
+@source '../../../app/Filament';
+@source '../../../app/Modules/*/Filament';
+@source '../../../resources/views/filament';
+
+/* Canvas board AdminOverview: the shell. */
+.fi-body {
+    background-color: var(--ff-bg);
+    color: var(--ff-ink);
+}
+
+.fi-sidebar.fi-main-sidebar,
+.fi-topbar {
+    background-color: var(--ff-surface);
+}
+
+.fi-sidebar.fi-main-sidebar {
+    border-inline-end: 1px solid var(--ff-border);
+}
+
+.fi-sidebar-item-btn {
+    min-height: 44px;
+    border-radius: var(--radius-md);
+    color: var(--ff-ink-muted);
+}
+
+.fi-sidebar-item-label {
+    color: inherit;
+    font-size: var(--text-body);
+}
+
+.fi-sidebar-item-btn:hover,
+.fi-sidebar-item.fi-active > .fi-sidebar-item-btn {
+    background-color: var(--ff-surface-raised);
+    color: var(--ff-ink);
+}
+
+.fi-sidebar-item.fi-active .fi-sidebar-item-label {
+    font-weight: 600;
+}
+
+.fi-sidebar-item-badge-ctn .fi-badge {
+    border-radius: var(--radius-pill);
+    background-color: var(--ff-bg);
+    color: var(--ff-ink);
+}
+
+.fi-header-heading,
+.ff-brand {
+    font-family: var(--font-display);
+}
+
+/* Design system: a visible 2px focus ring on every control. */
+.fi-body :focus-visible {
+    outline: 2px solid var(--ff-focus);
+    outline-offset: 2px;
+}

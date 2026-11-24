@@ -3,7 +3,8 @@
      "While you wait" items stay text until those Studio features exist (M4, M5). --}}
 @php
     $steps = [
-        ['Submitted', $creator->submitted_at?->format('j M, H:i') ?? '', 'done'],
+        // D-15: in the creator's own time zone.
+        ['Submitted', $creator->submitted_at?->setTimezone(\Filament\Support\Facades\FilamentTimezone::get())->format('j M, H:i') ?? '', 'done'],
         ['ID and selfie matched', 'Automatic check passed', 'done'],
         ['Manual review', 'In progress', 'current'],
         ['Approved · start earning', '', 'next'],

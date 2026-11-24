@@ -15,6 +15,7 @@ use App\Modules\Identity\Http\Controllers\PhoneHandoffController;
 use App\Modules\Identity\Http\Controllers\SecurityController;
 use App\Modules\Identity\Http\Controllers\SignUpController;
 use App\Modules\Identity\Http\Controllers\StepUpController;
+use App\Modules\Identity\Http\Controllers\TimezoneController;
 use Illuminate\Support\Facades\Route;
 
 // Decision D-14: the phone side of the ID and face scan. The phone is usually not signed
@@ -71,6 +72,9 @@ Route::middleware('auth')->group(function (): void {
 
     Route::get('/account', [AccountController::class, 'show'])->name('account');
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
+
+    // D-15: the browser's time zone, sent by resources/js/timezone.js.
+    Route::post('/account/timezone', [TimezoneController::class, 'update'])->middleware('throttle:timezone')->name('account.timezone');
 
     // Step-up: "Confirm it's you".
     Route::get('/account/confirm', [StepUpController::class, 'show'])->name('account.confirm');

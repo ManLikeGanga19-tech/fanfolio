@@ -21,6 +21,9 @@ interface Accounts
      */
     public function isStaff(string $userId): bool;
 
+    /** SEC-15: whether this staff account may do this (role matrix, MFA, not restricted). */
+    public function can(string $userId, StaffAbility $ability): bool;
+
     /** The handle shown to creators and fans, without the @. */
     public function username(string $userId): ?string;
 

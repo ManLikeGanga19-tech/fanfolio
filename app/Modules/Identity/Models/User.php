@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Identity\Models;
 
+use App\Modules\Identity\Contracts\StaffAbility;
 use App\Modules\Identity\Database\Factories\UserFactory;
 use App\Modules\Identity\Enums\AccountStatus;
 use App\Modules\Identity\Enums\Role;
@@ -35,6 +36,7 @@ use Laragear\WebAuthn\WebAuthnData;
  * @property bool $mfa_enabled
  * @property CarbonImmutable|null $age_verified_at
  * @property CarbonImmutable|null $last_login_at
+ * @property string|null $timezone IANA zone from the browser, for showing times (D-15)
  * @property CarbonImmutable $created_at
  */
 final class User extends Authenticatable implements FilamentUser, HasName, WebAuthnAuthenticatable
@@ -84,6 +86,15 @@ final class User extends Authenticatable implements FilamentUser, HasName, WebAu
 
         // Studio: creators (and the creator's eligibility is checked by EnsureStudioAccess).
         return $panel->getId() === 'studio' ? $this->role === Role::Creator : $this->role->isStaff();
+    }
+
+    /**
+     * SEC-15: a staff ability needs the role, MFA on and an account allowed to sign in.
+     * Also registered as a Gate of the same name (IdentityServiceProvider).
+     */
+    public function canStaff(StaffAbility $ability): bool
+    {
+        return $this->mfa_enabled && $this->status->canSignIn() && $this->role->allows($ability);
     }
 
     /**

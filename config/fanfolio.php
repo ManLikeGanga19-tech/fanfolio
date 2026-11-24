@@ -90,6 +90,9 @@ return [
         'danger' => '#f0525b',
         'warning' => '#f5d06b',
         'success' => '#34c47c',
+        // The panels' initials avatar (no outside avatar service).
+        'surface-raised' => '#1e1e28',
+        'ink' => '#f5f3ef',
     ],
 
     // The creator /studio panel (Filament). Approved creators with MFA only.

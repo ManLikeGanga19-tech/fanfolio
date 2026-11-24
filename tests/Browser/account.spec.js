@@ -116,6 +116,12 @@ test('signed-in pages pass axe and keep a visible focus ring', async ({ page, br
     makeStaff(staff.email);
     await setUpAuthenticator(staffPage);
 
+    // The admin home (canvas AdminOverview).
+    await staffPage.goto('/admin');
+    await expect(staffPage.getByRole('heading', { name: 'Overview' })).toBeVisible();
+    await expectNoAxeViolations(staffPage);
+    await expectVisibleFocusOnTab(staffPage);
+
     await staffPage.goto('/admin/creator-approvals');
     await expect(staffPage.getByRole('heading', { name: 'Creators awaiting review' })).toBeVisible();
     await expectNoAxeViolations(staffPage);

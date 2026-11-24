@@ -7,6 +7,7 @@ namespace App\Modules\Creators\Filament\Admin;
 use App\Modules\Creators\Actions\ApproveCreator;
 use App\Modules\Creators\Actions\RejectCreator;
 use App\Modules\Creators\Actions\RequestCreatorFix;
+use App\Modules\Creators\Contracts\ApprovalQueue;
 use App\Modules\Creators\Enums\CreatorStatus;
 use App\Modules\Creators\Enums\FixKind;
 use App\Modules\Creators\Exceptions\CreatorException;
@@ -14,6 +15,7 @@ use App\Modules\Creators\Models\Creator;
 use App\Modules\Creators\Models\CreatorKyc;
 use App\Modules\Creators\Models\PayoutMethod;
 use App\Modules\Identity\Contracts\Data\DocumentSide;
+use App\Modules\Identity\Contracts\StaffAbility;
 use BackedEnum;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -28,6 +30,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * Decision D-10: the minimal "Creators awaiting review" page, so onboarding can
@@ -42,13 +45,34 @@ final class CreatorApprovals extends Page implements HasTable
 {
     use InteractsWithTable;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedIdentification;
+    // Canvas AdminOverview sidebar: text items, no icons, a count of what is waiting.
+    protected static string|BackedEnum|null $navigationIcon = null;
 
-    protected static ?string $navigationLabel = 'Creators awaiting review';
+    protected static ?string $navigationLabel = 'Creator approvals';
+
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $title = 'Creators awaiting review';
 
     protected static ?string $slug = 'creator-approvals';
+
+    /** SEC-15: moderators and admins (StaffAbility::ReviewCreators). */
+    public static function canAccess(): bool
+    {
+        return Gate::allows(StaffAbility::ReviewCreators->value);
+    }
+
+    public static function getNavigationBadge(): ?string
+    {
+        $waiting = app(ApprovalQueue::class)->waiting();
+
+        return $waiting > 0 ? (string) $waiting : null;
+    }
+
+    public static function getNavigationBadgeTooltip(): string
+    {
+        return 'Waiting for review';
+    }
 
     public function content(Schema $schema): Schema
     {
