@@ -17,6 +17,8 @@
     --ff-warning: #f5d06b;
     --ff-danger: #f0525b;
     --ff-overlay: rgba(0, 0, 0, 0.72);
+    --ff-illustration-shade: #b97a22;
+    --ff-illustration-highlight: #f5c877;
 }
 
 [data-theme="light"] {
@@ -35,6 +37,8 @@
     --ff-warning: #7a5600;
     --ff-danger: #c62f3a;
     --ff-overlay: rgba(22, 20, 26, 0.56);
+    --ff-illustration-shade: #b97a22;
+    --ff-illustration-highlight: #e8a33d;
 }
 
 @theme inline {
@@ -53,6 +57,8 @@
     --color-warning: var(--ff-warning);
     --color-danger: var(--ff-danger);
     --color-overlay: var(--ff-overlay);
+    --color-illustration-shade: var(--ff-illustration-shade);
+    --color-illustration-highlight: var(--ff-illustration-highlight);
 }
 
 @theme {
