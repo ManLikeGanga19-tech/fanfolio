@@ -28,6 +28,8 @@ return [
         'payout_manual_review_above_minor' => 100000,
         'idempotency_ttl_hours' => 24,
         'wallet_lock_ttl_seconds' => 2,
+        // How long a payment waits for another on the same wallet before answering "busy".
+        'wallet_lock_wait_seconds' => 3,
     ],
 
     // Top-up packs (decision D-04): the paid amount is in USD cents; the bonus is in basis points of the credits bought.

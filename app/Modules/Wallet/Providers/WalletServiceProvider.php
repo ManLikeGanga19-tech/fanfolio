@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace App\Modules\Wallet\Providers;
 
+use App\Modules\Wallet\Actions\LedgerService;
+use App\Modules\Wallet\Console\CreateLedgerPartitions;
+use App\Modules\Wallet\Console\VerifyLedger;
 use App\Modules\Wallet\Contracts\FxRateProvider;
+use App\Modules\Wallet\Contracts\Ledger;
 use App\Modules\Wallet\Contracts\PayoutGateways;
 use App\Modules\Wallet\Contracts\TopUpGateway;
 use App\Modules\Wallet\Gateways\ConfiguredPayoutGateways;
@@ -12,6 +16,7 @@ use App\Modules\Wallet\Gateways\Fake\FakeFxRateProvider;
 use App\Modules\Wallet\Gateways\Fake\FakePayoutGateway;
 use App\Modules\Wallet\Gateways\Fake\FakeTopUpGateway;
 use App\Support\Modules\ModuleServiceProvider;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Contracts\Foundation\Application;
 
 final class WalletServiceProvider extends ModuleServiceProvider
@@ -20,6 +25,7 @@ final class WalletServiceProvider extends ModuleServiceProvider
         'ledger_accounts',
         'ledger_transactions',
         'ledger_entries',
+        'ledger_entries_default',
         'ledger_balances',
         'topups',
         'payouts',
@@ -38,5 +44,20 @@ final class WalletServiceProvider extends ModuleServiceProvider
         $this->app->singleton(PayoutGateways::class, static fn (Application $app): PayoutGateways => new ConfiguredPayoutGateways($app, [
             'fake' => FakePayoutGateway::class,
         ]));
+        $this->app->singleton(Ledger::class, LedgerService::class);
+    }
+
+    public function boot(): void
+    {
+        parent::boot();
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([VerifyLedger::class, CreateLedgerPartitions::class]);
+        }
+
+        $this->callAfterResolving(Schedule::class, static function (Schedule $schedule): void {
+            $schedule->command('wallet:ledger-partitions')->dailyAt('01:00')->onOneServer()->withoutOverlapping();
+            $schedule->command('wallet:verify-ledger')->dailyAt('02:30')->onOneServer()->withoutOverlapping();
+        });
     }
 }
