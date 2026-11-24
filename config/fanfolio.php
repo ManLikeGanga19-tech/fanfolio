@@ -63,6 +63,24 @@ return [
         'username_change_days' => 30,
     ],
 
+    'creators' => [
+        // Decision D-09: the categories shown on the screens. Editable; stored as the key.
+        'categories' => [
+            'music' => 'Music',
+            'comedy' => 'Comedy',
+            'fitness' => 'Fitness',
+            'art' => 'Art',
+            'lifestyle' => 'Lifestyle',
+        ],
+        // Handles that would clash with app paths or impersonate the platform.
+        'reserved_handles' => [
+            'about', 'account', 'admin', 'api', 'app', 'billing', 'creator', 'creators',
+            'explore', 'fanfolio', 'feed', 'help', 'login', 'logout', 'messages',
+            'moderator', 'privacy', 'records-notice', 'root', 'security', 'settings',
+            'signup', 'staff', 'studio', 'support', 'system', 'terms', 'wallet', 'webhooks',
+        ],
+    ],
+
     // Filament panel colours (Studio and Admin, dark theme). Must equal docs/design-system/tokens.json;
     // an architecture test checks this. Views never hard-code colours.
     'design' => [

@@ -89,3 +89,24 @@ function actAs(User $user): void
     session()->forget(Devices::SESSION_KEY);
     test()->actingAs($user);
 }
+
+/**
+ * A fan signed in with an authenticator app, for other modules' tests (they call this
+ * instead of using Identity's model).
+ */
+function signedInFanWithMfa(): User
+{
+    $user = User::factory()->create();
+    enableTotp($user);
+
+    return $user;
+}
+
+/** A fan signed in without any second factor. */
+function signedInFan(): User
+{
+    $user = User::factory()->create();
+    actAs($user);
+
+    return $user;
+}

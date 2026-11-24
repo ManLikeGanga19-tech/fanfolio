@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Identity\Providers;
 
+use App\Modules\Identity\Actions\AccountLookup;
+use App\Modules\Identity\Contracts\Accounts;
 use App\Modules\Identity\Contracts\BreachedPasswordChecker;
 use App\Modules\Identity\Contracts\IdentityVerifier;
 use App\Modules\Identity\Contracts\SmsSender;
@@ -53,6 +55,7 @@ final class IdentityServiceProvider extends ModuleServiceProvider
             'hibp' => HibpBreachedPasswordChecker::class,
         ]);
 
+        $this->app->bind(Accounts::class, AccountLookup::class);
         $this->app->singleton(KeyedHash::class, static fn (): KeyedHash => KeyedHash::fromConfig());
     }
 
