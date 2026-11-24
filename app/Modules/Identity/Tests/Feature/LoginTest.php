@@ -76,7 +76,7 @@ it('logs out and records it', function (): void {
 });
 
 it('shows the landing page to guests and the account hub to members', function (): void {
-    $this->get('/')->assertOk()->assertSee('Support the creators you love, directly.')->assertSee('Create free account');
+    $this->get('/')->assertOk()->assertSee('Your fans. Your content.')->assertSee('Join as a fan');
 
     $user = User::factory()->create(['username' => 'hub_fan']);
     $this->actingAs($user)->get('/')->assertRedirect(route('account'));

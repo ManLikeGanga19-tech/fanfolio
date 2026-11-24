@@ -35,8 +35,8 @@
                         @error('adult_and_terms') aria-invalid="true" aria-describedby="adult-error" @enderror>
                     <span>
                         I am 18 or older and agree to the
-                        <a class="text-brand" href="{{ route('legal.terms') }}">Terms</a> and
-                        <a class="text-brand" href="{{ route('legal.privacy') }}">Privacy Policy</a>
+                        <a class="text-brand underline" href="{{ route('legal.terms') }}">Terms</a> and
+                        <a class="text-brand underline" href="{{ route('legal.privacy') }}">Privacy Policy</a>
                     </span>
                 </label>
                 @error('adult_and_terms')

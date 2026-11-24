@@ -85,7 +85,7 @@ vendor/bin/pest --testsuite=Architecture,Unit           # fast, no database
 npx playwright install chromium && npm run test:a11y   # axe, keyboard and focus checks against the running app
 ```
 
-The accessibility checks (`tests/Browser`) open every fan page in Chromium, phone and desktop sizes. They fail on any WCAG 2.2 A/AA axe violation, on a control without a visible focus ring, or on a broken keyboard path. The signed-in pages are reached by signing up a fresh fake account through the real screens. The walk-through also makes a second account staff with `fanfolio:dev-staff`, approves the creator in `/admin` and opens `/studio`, so it needs development mode on and the same database settings as the app. Point them at another address with `A11Y_BASE_URL`.
+The accessibility checks (`tests/Browser`) open every fan page in Chromium, phone and desktop sizes. They fail on any WCAG 2.2 A/AA axe violation, on a control without a visible focus ring, or on a broken keyboard path. The signed-in pages are reached by signing up a fresh fake account through the real screens. The walk-through also makes a second account staff with `fanfolio:dev-staff`, approves the creator in `/admin` and opens `/studio`, so it needs development mode on and the same database settings as the app. With the Docker stack, run artisan in the container: `A11Y_ARTISAN="docker compose exec -T app php artisan" npm run test:a11y`. Point them at another address with `A11Y_BASE_URL`.
 
 CI (`.github/workflows/ci.yml`) also runs:
 - migrate → rollback → migrate

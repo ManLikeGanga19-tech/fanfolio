@@ -29,7 +29,8 @@ if (app()->environment('local', 'testing') && config('fanfolio.drivers.kyc') ===
 }
 
 Route::middleware('guest')->group(function (): void {
-    Route::view('/', 'identity::landing')->name('landing');
+    // Canvas MarketingHome; members go to their account.
+    Route::view('/', 'marketing.home')->name('landing');
 
     Route::get('/signup', [SignUpController::class, 'show'])->name('signup');
     Route::post('/signup', [SignUpController::class, 'store'])->middleware('throttle:signup');
