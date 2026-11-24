@@ -38,8 +38,8 @@ export const initAuthCarousels = () => {
                 } else {
                     dot.removeAttribute('aria-current');
                 }
-                dot.firstElementChild?.classList.toggle('bg-brand', i === current);
-                dot.firstElementChild?.classList.toggle('bg-border-strong', i !== current);
+                dot.lastElementChild?.classList.toggle('bg-brand', i === current);
+                dot.lastElementChild?.classList.toggle('bg-border-strong', i !== current);
             });
         };
 
