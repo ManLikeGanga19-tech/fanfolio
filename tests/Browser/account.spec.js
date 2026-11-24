@@ -124,7 +124,8 @@ test('signed-in pages pass axe and keep a visible focus ring', async ({ page, br
     await staffPage.getByRole('searchbox').fill(handle);
     const row = staffPage.getByRole('row').filter({ hasText: `@${handle}` });
     await row.getByRole('button', { name: 'Approve' }).click();
-    await staffPage.getByRole('dialog').getByRole('button', { name: 'Confirm' }).click();
+    // Filament's confirmation modal is an alertdialog (a plain dialog on older versions).
+    await staffPage.getByRole('alertdialog').or(staffPage.getByRole('dialog')).getByRole('button', { name: 'Confirm' }).click();
     await expect(staffPage.getByText('Approved.')).toBeVisible();
     await staffContext.close();
 
