@@ -12,7 +12,9 @@ declare(strict_types=1);
  *
  * Xdebug counts some compiler paths no test can take (a loop that always runs at least
  * once, enum constant fetches), so branches are gated where money moves, not on data
- * objects and fake drivers.
+ * objects and fake drivers. In the money paths, import global functions (`use function
+ * trim;`): PHP 8.4 otherwise compiles calls such as trim() or in_array() inside a
+ * namespace with a check for a namespaced function of that name, a branch no test can take.
  *
  * Usage: php scripts/check-branch-coverage.php storage/wallet-coverage.xml [prefix ...]
  */

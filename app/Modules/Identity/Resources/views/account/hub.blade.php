@@ -1,5 +1,5 @@
-{{-- Screen: Account hub (canvas board FanMore · Account). The wallet card, Subscriptions, Purchases,
-     Notifications, Privacy, Currency and Help rows join as their milestones land; profile photos with M4 (D-08). --}}
+{{-- Screen: Account hub (canvas board FanMore · Account). The wallet card, Purchases and Currency arrive with M3;
+     Subscriptions, Notifications, Privacy and Help rows join as their milestones land; profile photos with M4 (D-08). --}}
 @php
     $row = 'flex min-h-[52px] items-center gap-3 border-b border-border pr-3 pl-4 last:border-b-0 hover:bg-surface-raised';
 @endphp
@@ -21,7 +21,20 @@
             </div>
         </div>
 
+        <div class="flex items-center gap-3 rounded-lg border border-border bg-surface py-3.5 pr-3 pl-4">
+            <x-ui.icon name="wallet" class="size-6 flex-none text-brand" />
+            <div class="flex-1">
+                <p class="font-semibold">{{ number_format($credits) }} credits</p>
+                @if ($approximate !== null)<p class="text-small text-ink-muted">{{ $approximate }}</p>@endif
+            </div>
+            <a href="{{ route('wallet') }}" class="inline-flex h-10 items-center rounded-md bg-brand px-4 font-semibold text-on-brand hover:bg-brand-hover">Top up</a>
+        </div>
+
         <nav aria-label="Account" class="flex flex-col gap-4">
+            <div class="overflow-hidden rounded-lg bg-surface">
+                <a href="{{ route('account.purchases') }}" class="{{ $row }}"><span class="flex-1">Purchases</span><span class="text-ink-muted" aria-hidden="true">›</span></a>
+            </div>
+
             <div class="overflow-hidden rounded-lg bg-surface">
                 <a href="{{ route('account.security') }}" class="{{ $row }}">
                     <span class="flex-1">Devices &amp; security</span>
@@ -33,6 +46,10 @@
                         <span class="text-small text-ink-muted">Adult: off</span>
                     </a>
                 @endunless
+                <a href="{{ route('account.currency') }}" class="{{ $row }}">
+                    <span class="flex-1">Currency</span>
+                    <span class="text-small text-ink-muted">{{ $currency }}</span>
+                </a>
                 @if ($user->role->isStaff())
                     <a href="{{ url('/admin') }}" class="{{ $row }}"><span class="flex-1">Admin</span><span class="text-ink-muted" aria-hidden="true">›</span></a>
                 @elseif ($user->role === \App\Modules\Identity\Enums\Role::Creator)

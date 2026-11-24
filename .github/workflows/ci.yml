@@ -206,6 +206,8 @@ jobs:
       - name: Start the app
         run: |
           php artisan serve --host=127.0.0.1 --port=8000 > storage/logs/serve.log 2>&1 &
+          # Applies top-up webhooks during the wallet walk-through (spec: the "payments" queue).
+          php artisan queue:work redis --queue=payments --sleep=1 > storage/logs/queue.log 2>&1 &
           for i in $(seq 1 30); do curl -fs http://localhost:8000/up && break; sleep 1; done
       - run: npx playwright install --with-deps chromium
       - name: axe, keyboard and focus checks
