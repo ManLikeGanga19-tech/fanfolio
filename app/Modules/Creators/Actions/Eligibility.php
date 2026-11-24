@@ -22,6 +22,9 @@ final readonly class Eligibility implements CreatorEligibility
             ->where('status', CreatorStatus::Active)
             ->where('kyc_status', KycStatus::Approved)
             ->whereNotNull('approved_at')
+            // An expired ID stops publishing and earning until a new one is verified.
+            // Null: the document has no expiry date.
+            ->where(static fn ($q) => $q->whereNull('id_expires_at')->orWhere('id_expires_at', '>', now()))
             ->exists();
     }
 

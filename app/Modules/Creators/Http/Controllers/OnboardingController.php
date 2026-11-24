@@ -18,6 +18,7 @@ use Illuminate\Validation\ValidationException;
 
 /**
  * Creator onboarding boards 1–2: Become a creator, Profile basics (step 1 of 4).
+ * Steps 2–3 (ID and selfie) are in KycController.
  * The signed-in account is the only creator these routes ever touch.
  */
 final class OnboardingController
@@ -83,7 +84,7 @@ final class OnboardingController
             return redirect()->route('account')->with('status', 'Saved. Come back any time to finish becoming a creator.');
         }
 
-        return redirect()->route('creator.profile')->with('status', 'Saved. Next: verify your identity.');
+        return redirect()->route('creator.kyc')->with('status', 'Saved. Next: verify your identity.');
     }
 
     /**

@@ -73,6 +73,10 @@ Other modules must not read or write these tables or use this module's models; a
 - `last_city` stays empty until a location provider is chosen.
 - `DeviceRevoked` is published after commit (playback sessions bound to the device stop in M4).
 
+## For other modules
+
+`Contracts\Accounts` answers what other modules may ask about an account by user id: `hasMfa`, `username`, and `notify`, which sends a notification to the account without giving the caller its email address or phone number (rule 13).
+
 ## Gateways
 
 - `SmsSender`: `fake` (logs the message locally).

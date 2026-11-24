@@ -2,16 +2,22 @@
 
 declare(strict_types=1);
 
+use App\Modules\Creators\Http\Controllers\KycController;
 use App\Modules\Creators\Http\Controllers\OnboardingController;
 use Illuminate\Support\Facades\Route;
 
-// Creator onboarding (screens: Become a creator, Profile basics). Signed-in accounts only.
+// Creator onboarding (screens: Become a creator, Profile basics, ID and selfie). Signed-in accounts only.
 Route::middleware('auth')->prefix('creator')->name('creator.')->group(function (): void {
     Route::get('/start', [OnboardingController::class, 'start'])->name('start');
     Route::post('/start', [OnboardingController::class, 'begin'])->middleware('throttle:creator-onboarding');
 
     Route::get('/profile', [OnboardingController::class, 'profile'])->name('profile');
     Route::post('/profile', [OnboardingController::class, 'saveProfile'])->middleware('throttle:creator-onboarding');
+
+    Route::get('/kyc', [KycController::class, 'show'])->name('kyc');
+    Route::post('/kyc', [KycController::class, 'start'])->middleware('throttle:creator-kyc');
+    // The provider sends the creator back here; the result is fetched from the provider.
+    Route::get('/kyc/return', [KycController::class, 'return'])->middleware('throttle:creator-onboarding')->name('kyc.return');
 
     Route::get('/handle-check', [OnboardingController::class, 'handleCheck'])->middleware('throttle:handle-check')->name('handle-check');
 });
