@@ -52,6 +52,10 @@ enum StaffAbility: string
     case ViewSettings = 'admin.settings.view';
     case ProposeSettings = 'admin.settings.propose';
 
+    // Money (M3)
+    /** Spec postings "Refund (admin)": an admin returns a sale to the fan's credits. */
+    case RefundPurchase = 'admin.wallet.refund';
+
     /** Abilities moderators do not have. */
     public function adminOnly(): bool
     {
@@ -69,7 +73,8 @@ enum StaffAbility: string
             self::ExportAuditLog,
             self::ManageStaff,
             self::ViewSettings,
-            self::ProposeSettings => true,
+            self::ProposeSettings,
+            self::RefundPurchase => true,
             default => false,
         };
     }

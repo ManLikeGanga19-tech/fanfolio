@@ -4,13 +4,16 @@ declare(strict_types=1);
 
 namespace App\Modules\Wallet\Providers;
 
+use App\Modules\Wallet\Actions\ChargePurchase;
 use App\Modules\Wallet\Actions\LedgerService;
 use App\Modules\Wallet\Actions\WalletDisplayService;
 use App\Modules\Wallet\Console\CreateLedgerPartitions;
+use App\Modules\Wallet\Console\ReleaseEarnings;
 use App\Modules\Wallet\Console\VerifyLedger;
 use App\Modules\Wallet\Contracts\FxRateProvider;
 use App\Modules\Wallet\Contracts\Ledger;
 use App\Modules\Wallet\Contracts\PayoutGateways;
+use App\Modules\Wallet\Contracts\Purchases;
 use App\Modules\Wallet\Contracts\TopUpGateway;
 use App\Modules\Wallet\Contracts\WalletDisplay;
 use App\Modules\Wallet\Gateways\ConfiguredPayoutGateways;
@@ -37,6 +40,7 @@ final class WalletServiceProvider extends ModuleServiceProvider
         'gateway_webhooks',
         'wallet_freezes',
         'wallet_preferences',
+        'earning_holds',
     ];
 
     public static function moduleName(): string
@@ -53,6 +57,7 @@ final class WalletServiceProvider extends ModuleServiceProvider
         ]));
         $this->app->singleton(Ledger::class, LedgerService::class);
         $this->app->bind(WalletDisplay::class, WalletDisplayService::class);
+        $this->app->bind(Purchases::class, ChargePurchase::class);
     }
 
     public function boot(): void
@@ -68,12 +73,13 @@ final class WalletServiceProvider extends ModuleServiceProvider
         RateLimiter::for('webhooks', static fn (Request $request): Limit => Limit::perMinute(600)->by('webhooks:'.$request->ip()));
 
         if ($this->app->runningInConsole()) {
-            $this->commands([VerifyLedger::class, CreateLedgerPartitions::class]);
+            $this->commands([VerifyLedger::class, CreateLedgerPartitions::class, ReleaseEarnings::class]);
         }
 
         $this->callAfterResolving(Schedule::class, static function (Schedule $schedule): void {
             $schedule->command('wallet:ledger-partitions')->dailyAt('01:00')->onOneServer()->withoutOverlapping();
             $schedule->command('wallet:verify-ledger')->dailyAt('02:30')->onOneServer()->withoutOverlapping();
+            $schedule->command('wallet:release-earnings')->dailyAt('03:00')->onOneServer()->withoutOverlapping();
         });
     }
 }
