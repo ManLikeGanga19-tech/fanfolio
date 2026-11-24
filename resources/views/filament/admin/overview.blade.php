@@ -35,6 +35,12 @@
                 <span @class(['text-small', 'text-warning' => $oldestIsLate, 'text-ink-muted' => ! $oldestIsLate])>{{ $oldestWaiting === null ? 'None waiting' : 'Oldest '.$oldestWaiting }}</span>
             </a>
 
+            <a href="{{ $moderationUrl }}" class="flex flex-col gap-2 rounded-lg border border-border bg-surface p-5 text-ink hover:border-border-strong">
+                <span class="text-small text-ink-muted">Open cases</span>
+                <span class="font-display text-h1">{{ number_format($cases) }}</span>
+                <span @class(['text-small', 'text-danger' => $urgentCases > 0, 'text-ink-muted' => $urgentCases === 0])>{{ $urgentCases > 0 ? $urgentCases.' may involve a minor' : ($oldestCase === null ? 'None open' : 'Oldest '.$oldestCase) }}</span>
+            </a>
+
             <div class="flex flex-col gap-2 rounded-lg border border-border bg-surface p-5">
                 <span class="text-small text-ink-muted">Creators approved</span>
                 <span class="font-display text-h1">{{ number_format($approved) }}</span>
