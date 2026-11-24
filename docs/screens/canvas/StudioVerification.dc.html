@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Studio verification and tax</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Sora:wght@600;700&amp;display=swap">
+<style>
+body{margin:0;background:#0B0B0F}
+a{color:#E8A33D}a:hover{color:#F5B85A}
+.app *{box-sizing:border-box}
+.side{flex:1 1 248px;max-width:100%;background:#15151C;border-right:1px solid #2E2E3A;padding:24px 12px;display:flex;flex-direction:column;gap:4px}
+.wm{font:600 18px/26px Sora,sans-serif;padding:0 12px 20px;display:flex;gap:8px;align-items:baseline}
+.side a{display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:10px;color:#A8A6B3;text-decoration:none;font-size:15px}
+.side a[aria-current]{background:#1E1E28;color:#F5F3EF;font-weight:600}
+.h1{font:700 32px/40px Sora,sans-serif;margin:0}.h3{font:600 18px/26px Sora,sans-serif;margin:0}
+.p{font:400 15px/22px Inter,sans-serif;color:#A8A6B3;margin:0}.sm{font:400 13px/18px Inter,sans-serif;color:#A8A6B3;margin:0}
+.lbl{font:600 12px/16px Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#A8A6B3}
+.btn{height:44px;border-radius:10px;font:600 15px/20px Inter,sans-serif;display:inline-flex;align-items:center;justify-content:center;border:1px solid #6B6978;background:#15151C;color:#F5F3EF;text-decoration:none;padding:0 18px;cursor:pointer}
+.btn.pr{background:#E8A33D;border-color:#E8A33D;color:#1A1206}
+.btn.sm{height:36px;font-size:13px;padding:0 12px}
+.pill{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;background:#1E1E28;font:600 12px/16px Inter,sans-serif;color:#F5F3EF}
+.ok{color:#34C47C}.warn{color:#F5D06B}.bad{color:#F0525B}.br{color:#E8A33D}
+.card{background:#15151C;border:1px solid #2E2E3A;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:14px}
+.chk{display:flex;align-items:center;gap:12px;font-size:15px}
+.dot{width:24px;height:24px;border-radius:50%;background:#34C47C;color:#1A1206;display:flex;align-items:center;justify-content:center;flex:none}
+.fld{display:flex;flex-direction:column;gap:8px;font-weight:600;font-size:15px}
+.in{height:48px;background:#1E1E28;border:1px solid #6B6978;border-radius:10px;padding:0 14px;display:flex;align-items:center;color:#F5F3EF;font-size:15px;font-weight:400}
+table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;font:600 12px/16px Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#A8A6B3;padding:10px 12px;border-bottom:1px solid #2E2E3A}td{padding:12px;border-bottom:1px solid #2E2E3A}
+</style>
+</helmet>
+<div class="app" style="min-height: 960px; display: flex; flex-wrap: wrap; background: #0B0B0F; font-family: Inter, system-ui, sans-serif; color: #F5F3EF">
+  <nav class="side" aria-label="Studio">
+    <div class="wm">FanFolio <span class="lbl br">Studio</span></div>
+    <a href="#">Dashboard</a><a href="#">Upload &amp; schedule</a><a href="#">Content library</a><a href="#">Prices &amp; bundles</a><a href="#">Fans</a><a href="#">Messages</a><a href="#">Earnings &amp; withdrawals</a><a href="#" aria-current="page">Verification</a>
+  </nav>
+  <main style="flex: 999 1 560px; min-width: 0; padding: 32px; display: flex; flex-direction: column; gap: 24px">
+    <div><h1 class="h1">Verification &amp; tax</h1><p class="p">Your account is fully verified. Keep co-performer records up to date before you post.</p></div>
+    <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start">
+      <section class="card" style="flex: 1 1 320px">
+        <div style="display: flex; justify-content: space-between; align-items: center"><h2 class="h3">Your verification</h2><span class="pill ok">Verified</span></div>
+        <div class="chk"><span class="dot"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span style="flex: 1">Identity document</span><span class="sm">National ID · 19 Nov</span></div>
+        <div class="chk"><span class="dot"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span style="flex: 1">Selfie liveness</span><span class="sm">19 Nov</span></div>
+        <div class="chk"><span class="dot"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span style="flex: 1">Payout account name match</span><span class="sm">Equity ····4821</span></div>
+        <div class="chk"><span class="dot"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span style="flex: 1">Passkey sign-in</span><span class="sm">On this phone</span></div>
+        <p class="sm">Your ID expires Aug 2031. We'll remind you 30 days before.</p>
+      </section>
+      <section class="card" style="flex: 1 1 320px">
+        <div style="display: flex; justify-content: space-between; align-items: center"><h2 class="h3">Tax details</h2><span class="pill warn">Needed before payout</span></div>
+        <label class="fld">KRA PIN<span class="in">A0•••••••••Z</span></label>
+        <label class="fld">Legal name<span class="in">Amani W. Wanjiru</span></label>
+        <p class="sm">Used for withholding and annual statements. Ask an accountant if you're unsure what applies to you.</p>
+        <a href="#" class="btn pr">Save tax details</a>
+      </section>
+    </div>
+    <section class="card" style="gap: 8px">
+      <div style="display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center"><div><h2 class="h3">Co-performers</h2><p class="sm">Anyone else who appears in your content must be verified before you can tag or post them.</p></div><a href="#" class="btn">Invite co-performer</a></div>
+      <div style="overflow-x: auto">
+        <table>
+          <thead><tr><th>Name</th><th>ID check</th><th>Release form</th><th>Posts tagged</th><th></th></tr></thead>
+          <tbody>
+            <tr><td>Zuri Kamau · @zuri.k</td><td><span class="pill ok">Verified</span></td><td><span class="pill ok">Signed 12 Nov</span></td><td>4</td><td><a href="#">View</a></td></tr>
+            <tr><td>Juma Ochieng</td><td><span class="pill warn">Invite sent 18 Nov</span></td><td><span class="pill">Not signed</span></td><td>0</td><td><a href="#" class="btn sm">Resend invite</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

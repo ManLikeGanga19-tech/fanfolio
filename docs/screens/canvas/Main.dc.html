@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Creator onboarding and KYC</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Sora:wght@600;700&amp;display=swap">
+<style>
+body{margin:0;background:#0B0B0F}
+a{color:#E8A33D}a:hover{color:#F5B85A}
+.app *{box-sizing:border-box}
+.phone{width:390px;height:844px;background:#0B0B0F;border:1px solid #2E2E3A;border-radius:28px;overflow:hidden;display:flex;flex-direction:column;flex:none}
+.ph-head{height:56px;display:flex;align-items:center;gap:12px;padding:0 16px;flex:none}
+.ph-body{flex:1;overflow:hidden;padding:4px 16px 24px;display:flex;flex-direction:column;gap:16px}
+.cap{font:600 14px/20px Inter,sans-serif;color:#A8A6B3;margin:0 0 12px}
+.steps{display:flex;gap:6px}.steps span{flex:1;height:4px;border-radius:2px;background:#2E2E3A}.steps span.on{background:#E8A33D}
+.lbl{font:600 12px/16px Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#A8A6B3;margin:0}
+.h1{font:700 30px/38px Sora,sans-serif;margin:0}.h2{font:600 24px/32px Sora,sans-serif;margin:0}.h3{font:600 18px/26px Sora,sans-serif;margin:0}
+.p{font:400 15px/22px Inter,sans-serif;color:#A8A6B3;margin:0}.sm{font:400 13px/18px Inter,sans-serif;color:#A8A6B3;margin:0}
+.btn{height:52px;border-radius:10px;font:600 16px/20px Inter,sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid #6B6978;background:#15151C;color:#F5F3EF;text-decoration:none;width:100%;cursor:pointer}
+.btn.pr{background:#E8A33D;border-color:#E8A33D;color:#1A1206}
+.opt{display:flex;align-items:center;gap:12px;padding:14px;background:#15151C;border:1px solid #2E2E3A;border-radius:10px}.opt.sel{border:2px solid #E8A33D}
+.radio{width:20px;height:20px;border-radius:50%;border:2px solid #6B6978;flex:none}.radio.on{border-color:#E8A33D;box-shadow:inset 0 0 0 4px #15151C;background:#E8A33D}
+.chk{width:20px;height:20px;border-radius:5px;background:#E8A33D;color:#1A1206;display:flex;align-items:center;justify-content:center;flex:none}
+.fld{display:flex;flex-direction:column;gap:8px;font:600 15px/22px Inter,sans-serif;color:#F5F3EF}
+.in{height:48px;background:#1E1E28;border:1px solid #6B6978;border-radius:10px;color:#F5F3EF;font:400 15px Inter,sans-serif;padding:0 14px;display:flex;align-items:center;gap:8px}
+.ic{width:56px;height:56px;border-radius:50%;background:#1E1E28;display:flex;align-items:center;justify-content:center;color:#E8A33D;flex:none}
+.row{display:flex;align-items:center;gap:12px}
+.card{background:#15151C;border:1px solid #2E2E3A;border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px}
+.pill{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;background:#1E1E28;font:600 12px/16px Inter,sans-serif}
+.ok{color:#34C47C}.warn{color:#F5D06B}.bad{color:#F0525B}.br{color:#E8A33D}
+.cam{flex:1;min-height:360px;background:#000;border-radius:16px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.tl{display:flex;gap:12px}.tl .dot{width:24px;height:24px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;background:#1E1E28;color:#A8A6B3}
+</style>
+</helmet>
+<div class="app" style="width: 3480px; height: 1000px; box-sizing: border-box; padding: 40px; display: flex; gap: 40px; background: #0B0B0F; font-family: Inter, system-ui, sans-serif; color: #F5F3EF">
+
+  <!-- 1 Intro -->
+  <section aria-label="Become a creator">
+    <p class="cap">1 · Become a creator</p>
+    <div class="phone">
+      <div class="ph-head"><a href="#" aria-label="Back" style="color: #F5F3EF"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a></div>
+      <div class="ph-body" style="gap: 20px">
+        <h1 class="h1">Get paid by the fans who love your work</h1>
+        <p class="p">Set your own prices, keep 80% of every sale and withdraw to your bank or crypto wallet.</p>
+        <div class="card" style="gap: 14px">
+          <div class="row"><span class="ic" style="width: 40px; height: 40px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/></svg></span><div><p style="margin: 0; font-weight: 600">Keep 80% of every sale</p><p class="sm">Subscriptions, pay-per-view, tips and messages</p></div></div>
+          <div class="row"><span class="ic" style="width: 40px; height: 40px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span><div><p style="margin: 0; font-weight: 600">Withdraw 7 days after each sale</p><p class="sm">Bank, USDT or Paxum</p></div></div>
+          <div class="row"><span class="ic" style="width: 40px; height: 40px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><div><p style="margin: 0; font-weight: 600">Your content is protected</p><p class="sm">Encrypted, watermarked and leak-tracked</p></div></div>
+        </div>
+        <p class="lbl">What you'll need · about 5 minutes</p>
+        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 15px">
+          <div class="row"><span class="chk"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>A national ID, passport or driving licence</div>
+          <div class="row"><span class="chk"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>A quick selfie video to prove it's you</div>
+          <div class="row"><span class="chk"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>A bank account or crypto wallet in your name</div>
+        </div>
+        <div style="flex: 1"></div>
+        <a href="#" class="btn pr">Start verification</a>
+        <p class="sm" style="text-align: center">You must be 18 or older. Your ID is checked by our verification partner and stored encrypted.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 Profile -->
+  <section aria-label="Profile basics">
+    <p class="cap">2 · Profile basics</p>
+    <div class="phone">
+      <div class="ph-head"><a href="#" aria-label="Back" style="color: #F5F3EF"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a><span style="flex: 1"></span><a href="#" style="font-size: 14px; font-weight: 600">Save &amp; exit</a></div>
+      <div class="ph-body">
+        <div class="steps"><span class="on"></span><span></span><span></span><span></span></div>
+        <p class="lbl">Step 1 of 4 · Your page</p>
+        <h2 class="h2">Set up your page</h2>
+        <div class="row" style="gap: 16px">
+          <button type="button" aria-label="Upload profile photo" style="width: 80px; height: 80px; border-radius: 50%; background: #1E1E28; border: 1px dashed #6B6978; color: #E8A33D; display: flex; align-items: center; justify-content: center; flex: none"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></button>
+          <div><p style="margin: 0; font-weight: 600">Profile photo</p><p class="sm">Shown on your page and in fans' feeds</p></div>
+        </div>
+        <label class="fld">Display name<span class="in">Amani Wanjiru</span></label>
+        <label class="fld">Handle<span class="in"><span style="color: #A8A6B3">fanfolio.com/</span>amani.w<span style="flex: 1"></span><span class="ok" style="font-size: 13px; font-weight: 600">Available</span></span></label>
+        <label class="fld">Category<span class="in">Music<span style="flex: 1"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A8A6B3" stroke-width="1.5" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></label>
+        <div class="card" style="flex-direction: row; align-items: center">
+          <div style="flex: 1"><p style="margin: 0; font-weight: 600">I'll post adult content (18+)</p><p class="sm">Your page is hidden from the public site and shown only to age-verified fans.</p></div>
+          <span role="switch" aria-checked="false" aria-label="Adult content" style="width: 44px; height: 24px; border-radius: 12px; background: #6B6978; display: flex; align-items: center; padding: 3px; flex: none"><span style="width: 18px; height: 18px; border-radius: 50%; background: #F5F3EF"></span></span>
+        </div>
+        <div style="flex: 1"></div>
+        <a href="#" class="btn pr">Continue</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3 ID document -->
+  <section aria-label="ID document capture">
+    <p class="cap">3 · Scan your ID</p>
+    <div class="phone">
+      <div class="ph-head"><a href="#" aria-label="Back" style="color: #F5F3EF"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a><span style="flex: 1"></span><span class="sm">Front side</span></div>
+      <div class="ph-body" style="gap: 14px">
+        <div class="steps"><span class="on"></span><span class="on"></span><span></span><span></span></div>
+        <p class="lbl">Step 2 of 4 · Identity document</p>
+        <div style="display: flex; gap: 6px; background: #15151C; border-radius: 10px; padding: 4px" role="tablist" aria-label="Document type">
+          <button type="button" role="tab" aria-selected="true" style="flex: 1; height: 36px; border: 0; border-radius: 8px; background: #1E1E28; color: #F5F3EF; font: 600 13px Inter">National ID</button>
+          <button type="button" role="tab" aria-selected="false" style="flex: 1; height: 36px; border: 0; border-radius: 8px; background: transparent; color: #A8A6B3; font: 400 13px Inter">Passport</button>
+          <button type="button" role="tab" aria-selected="false" style="flex: 1; height: 36px; border: 0; border-radius: 8px; background: transparent; color: #A8A6B3; font: 400 13px Inter">Licence</button>
+        </div>
+        <div class="cam" aria-label="Camera viewfinder">
+          <div style="width: 300px; height: 190px; border: 2px solid #E8A33D; border-radius: 14px; box-shadow: 0 0 0 999px rgba(0,0,0,0.55)"></div>
+          <p style="position: absolute; bottom: 16px; left: 0; right: 0; text-align: center; margin: 0; font-size: 14px; font-weight: 600">Fit the front of your ID inside the frame</p>
+          <span class="pill ok" style="position: absolute; top: 14px; left: 14px; background: rgba(0,0,0,0.6)">Good lighting</span>
+        </div>
+        <div class="row" style="justify-content: space-around; font-size: 13px; color: #A8A6B3"><span>No glare</span><span>All 4 corners</span><span>Not blurry</span></div>
+        <div class="row" style="justify-content: center; gap: 28px">
+          <a href="#" style="font-size: 14px; font-weight: 600; width: 80px">Upload</a>
+          <button type="button" aria-label="Take photo" style="width: 72px; height: 72px; border-radius: 50%; background: #F5F3EF; border: 4px solid #0B0B0F; box-shadow: 0 0 0 3px #F5F3EF"></button>
+          <span style="width: 80px"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4 Selfie -->
+  <section aria-label="Selfie liveness check">
+    <p class="cap">4 · Selfie liveness check</p>
+    <div class="phone">
+      <div class="ph-head"><a href="#" aria-label="Back" style="color: #F5F3EF"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a></div>
+      <div class="ph-body" style="gap: 14px">
+        <div class="steps"><span class="on"></span><span class="on"></span><span class="on"></span><span></span></div>
+        <p class="lbl">Step 3 of 4 · Prove it's you</p>
+        <div class="cam" aria-label="Front camera" style="flex-direction: column; gap: 18px">
+          <div style="width: 220px; height: 290px; border-radius: 50%; border: 3px solid #E8A33D; box-shadow: 0 0 0 999px rgba(0,0,0,0.6)"></div>
+          <div style="position: absolute; bottom: 20px; left: 0; right: 0; display: flex; flex-direction: column; align-items: center; gap: 8px">
+            <p style="margin: 0; font: 600 18px/26px Sora">Slowly turn your head left</p>
+            <div class="row" style="gap: 6px"><span style="width: 28px; height: 4px; border-radius: 2px; background: #34C47C"></span><span style="width: 28px; height: 4px; border-radius: 2px; background: #E8A33D"></span><span style="width: 28px; height: 4px; border-radius: 2px; background: #6B6978"></span></div>
+            <p class="sm">2 of 3 moves</p>
+          </div>
+        </div>
+        <div class="row" style="background: #15151C; border-radius: 10px; padding: 12px; align-items: flex-start"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A8A6B3" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: none"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg><p class="sm">We match your face to your ID, then delete the video. Fans never see it.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 Payout -->
+  <section aria-label="Payout method">
+    <p class="cap">5 · Payout method</p>
+    <div class="phone">
+      <div class="ph-head"><a href="#" aria-label="Back" style="color: #F5F3EF"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a></div>
+      <div class="ph-body" style="gap: 14px">
+        <div class="steps"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span></div>
+        <p class="lbl">Step 4 of 4 · Get paid</p>
+        <h2 class="h2">Where should we send your money?</h2>
+        <div class="opt sel"><span class="radio on"></span><div style="flex: 1"><p style="margin: 0; font-weight: 600">Bank account</p><p class="sm">Kenyan banks · 1–2 business days</p></div></div>
+        <label class="fld">Bank<span class="in">Equity Bank<span style="flex: 1"></span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#A8A6B3" stroke-width="1.5" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></span></label>
+        <label class="fld">Account number<span class="in">0170 2938 4821</span></label>
+        <div class="row" style="font-size: 13px"><span class="ok" style="display: flex"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><span>Name on account matches your ID: <strong>AMANI W. WANJIRU</strong></span></div>
+        <div class="opt"><span class="radio"></span><div style="flex: 1"><p style="margin: 0; font-weight: 600">USDT wallet</p><p class="sm">TRC-20 · within 1 hour</p></div></div>
+        <div class="opt"><span class="radio"></span><div style="flex: 1"><p style="margin: 0; font-weight: 600">Paxum</p><p class="sm">Within 1 business day</p></div></div>
+        <div style="flex: 1"></div>
+        <a href="#" class="btn pr">Review and submit</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6 Review -->
+  <section aria-label="Review and submit">
+    <p class="cap">6 · Review &amp; submit</p>
+    <div class="phone">
+      <div class="ph-head"><a href="#" aria-label="Back" style="color: #F5F3EF"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a></div>
+      <div class="ph-body" style="gap: 14px">
+        <h2 class="h2">Check everything</h2>
+        <div class="card" style="gap: 0; padding: 4px 16px">
+          <div class="row" style="padding: 12px 0; border-bottom: 1px solid #2E2E3A"><div style="flex: 1"><p class="sm">Page</p><p style="margin: 0; font-weight: 600">Amani Wanjiru · @amani.w</p></div><a href="#" style="font-size: 14px; font-weight: 600">Edit</a></div>
+          <div class="row" style="padding: 12px 0; border-bottom: 1px solid #2E2E3A"><div style="flex: 1"><p class="sm">Identity document</p><p style="margin: 0; font-weight: 600">National ID ····8821</p></div><span class="ok" style="font-size: 13px; font-weight: 600">Captured</span></div>
+          <div class="row" style="padding: 12px 0; border-bottom: 1px solid #2E2E3A"><div style="flex: 1"><p class="sm">Selfie check</p><p style="margin: 0; font-weight: 600">3 of 3 moves</p></div><span class="ok" style="font-size: 13px; font-weight: 600">Done</span></div>
+          <div class="row" style="padding: 12px 0"><div style="flex: 1"><p class="sm">Payouts</p><p style="margin: 0; font-weight: 600">Equity Bank ····4821</p></div><a href="#" style="font-size: 14px; font-weight: 600">Edit</a></div>
+        </div>
+        <label class="row" style="align-items: flex-start; font-size: 14px; line-height: 20px"><span class="chk" style="margin-top: 2px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>I agree to the Creator Terms and the 20% platform fee.</label>
+        <label class="row" style="align-items: flex-start; font-size: 14px; line-height: 20px"><span class="chk" style="margin-top: 2px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Everyone in my content is 18+, has consented, and I will upload their ID and release forms before posting.</label>
+        <div style="flex: 1"></div>
+        <a href="#" class="btn pr">Submit for review</a>
+        <p class="sm" style="text-align: center">Most creators are approved within 24 hours.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 Under review -->
+  <section aria-label="Verification in review">
+    <p class="cap">7 · In review (status)</p>
+    <div class="phone">
+      <div class="ph-head"><span style="font: 600 18px Sora">FanFolio</span><span class="pill" style="color: #E8A33D">Studio</span></div>
+      <div class="ph-body" style="gap: 18px">
+        <svg width="112" height="112" viewBox="0 0 120 120" fill="none" aria-hidden="true" style="flex: none"><circle cx="60" cy="60" r="52" fill="#1E1E28"/><rect x="38" y="24" width="44" height="7" rx="3.5" fill="#F5F3EF"/><rect x="38" y="89" width="44" height="7" rx="3.5" fill="#F5F3EF"/><path d="M43 31h34c0 14-11 20-11 29s11 15 11 29H43c0-14 11-20 11-29S43 45 43 31Z" fill="#2E2E3A" stroke="#F5F3EF" stroke-width="2.5" stroke-linejoin="round"/><path d="M48 38h24c-2 7-8 11-12 15-4-4-10-8-12-15Z" fill="#E8A33D"/><path d="M49 84c2-9 7-12 11-14 4 2 9 5 11 14Z" fill="#E8A33D"/><path d="M60 58v9" stroke="#E8A33D" stroke-width="2.5" stroke-linecap="round"/><path d="M92 29L93.5 32.5L97 34L93.5 35.5L92 39L90.5 35.5L87 34L90.5 32.5Z" fill="#F5C877"/><path d="M26 74L27.2 76.8L30 78L27.2 79.2L26 82L24.8 79.2L22 78L24.8 76.8Z" fill="#F5C877"/><path d="M96 83L96.9 85.1L99 86L96.9 86.9L96 89L95.1 86.9L93 86L95.1 85.1Z" fill="#E8A33D"/></svg>
+        <h2 class="h2">We're reviewing your account</h2>
+        <p class="p">Usually under 24 hours. We'll notify you by email and push as soon as you're approved.</p>
+        <div class="card" style="gap: 16px">
+          <div class="tl"><span class="dot" style="background: #34C47C; color: #1A1206"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><div><p style="margin: 0; font-weight: 600">Submitted</p><p class="sm">Today, 14:02</p></div></div>
+          <div class="tl"><span class="dot" style="background: #34C47C; color: #1A1206"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span><div><p style="margin: 0; font-weight: 600">ID and selfie matched</p><p class="sm">Automatic check passed</p></div></div>
+          <div class="tl"><span class="dot" style="border: 2px solid #E8A33D; background: #15151C"></span><div><p style="margin: 0; font-weight: 600">Manual review</p><p class="sm">In progress</p></div></div>
+          <div class="tl"><span class="dot"></span><div><p style="margin: 0; font-weight: 600; color: #A8A6B3">Approved · start earning</p></div></div>
+        </div>
+        <p class="lbl">While you wait</p>
+        <a href="#" class="btn pr">Prepare your first 3 posts</a>
+        <a href="#" class="btn">Set prices &amp; bundles</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 Action needed -->
+  <section aria-label="Verification action needed">
+    <p class="cap">8 · Action needed (error state)</p>
+    <div class="phone">
+      <div class="ph-head"><span style="font: 600 18px Sora">FanFolio</span><span class="pill" style="color: #E8A33D">Studio</span></div>
+      <div class="ph-body" style="gap: 18px">
+        <svg width="112" height="112" viewBox="0 0 120 120" fill="none" aria-hidden="true" style="flex: none"><circle cx="60" cy="60" r="52" fill="#1E1E28"/><rect x="20" y="36" width="72" height="50" rx="8" fill="#2E2E3A" stroke="#F5F3EF" stroke-width="2.5"/><rect x="28" y="46" width="22" height="28" rx="4" fill="#E8A33D"/><circle cx="39" cy="56" r="5" fill="#B97A22"/><path d="M31 72c1.5-6 5-8 8-8s6.5 2 8 8" fill="#B97A22"/><rect x="56" y="50" width="28" height="4" rx="2" fill="#F5F3EF"/><rect x="56" y="60" width="20" height="4" rx="2" fill="#6B6978"/><rect x="56" y="70" width="24" height="4" rx="2" fill="#6B6978"/><circle cx="88" cy="84" r="15" fill="#F5D06B" stroke="#0B0B0F" stroke-width="3"/><path d="M88 76v9" stroke="#0B0B0F" stroke-width="3.5" stroke-linecap="round"/><circle cx="88" cy="91" r="2.2" fill="#0B0B0F"/><path d="M98 25L99.5 28.5L103 30L99.5 31.5L98 35L96.5 31.5L93 30L96.5 28.5Z" fill="#F5C877"/><path d="M22 25L22.9 27.1L25 28L22.9 28.9L22 31L21.1 28.9L19 28L21.1 27.1Z" fill="#E8A33D"/></svg>
+        <h2 class="h2">One thing to fix</h2>
+        <p class="p">Your ID photo was too blurry to read the date of birth. Everything else is approved.</p>
+        <div class="card" style="border-color: #F5D06B">
+          <div class="row"><div style="flex: 1"><p style="margin: 0; font-weight: 600">Retake ID photo</p><p class="sm">Takes about 1 minute</p></div><span class="pill warn">Needed</span></div>
+          <p class="sm">Tip: put the card on a dark surface near a window and hold the phone steady.</p>
+        </div>
+        <div class="card" style="gap: 10px">
+          <div class="row" style="font-size: 14px"><span class="ok" style="display: flex"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Selfie check</div>
+          <div class="row" style="font-size: 14px"><span class="ok" style="display: flex"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Payout account</div>
+          <div class="row" style="font-size: 14px"><span class="ok" style="display: flex"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg></span>Page details</div>
+        </div>
+        <div style="flex: 1"></div>
+        <a href="#" class="btn pr">Retake ID photo</a>
+        <a href="#" class="btn">Contact support</a>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":3480,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

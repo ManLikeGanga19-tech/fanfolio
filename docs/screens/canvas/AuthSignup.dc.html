@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FanFolio · Sign up</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Sora:wght@600;700&amp;display=swap">
+<style>
+body{margin:0;background:#0B0B0F}
+a{color:#E8A33D}a:hover{color:#F5B85A}
+.au *{box-sizing:border-box}
+.au{display:grid;grid-template-columns:1.15fr 1fr;min-height:900px}
+.car{position:relative;margin:16px;border-radius:24px;overflow:hidden;background:#1E1E28;border:1px solid #2E2E3A;min-height:868px}
+.car .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#6B6978;font:500 14px Inter,sans-serif;padding:0 0 0 35%;text-align:center}
+.car .shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(11,11,15,.92) 0%,rgba(11,11,15,.6) 45%,rgba(11,11,15,0) 75%)}
+.car .top{position:absolute;top:32px;left:40px}
+.car .copy{position:absolute;left:40px;bottom:48px;max-width:420px;display:flex;flex-direction:column;gap:16px}
+.dots{display:flex;gap:8px;margin-top:12px}
+.dot{width:28px;height:44px;padding:0;border:0;background:transparent;cursor:pointer;display:flex;align-items:center}
+.dot span{display:block;width:100%;height:4px;border-radius:2px;background:#6B6978}
+.dot.on span{background:#E8A33D}
+.logo{font:700 22px/28px Sora,sans-serif;color:#F5F3EF;text-decoration:none;display:flex;align-items:center;gap:10px}
+.mark{width:32px;height:32px;border-radius:10px;background:#E8A33D;color:#1A1206;display:flex;align-items:center;justify-content:center;font:700 16px Sora,sans-serif}
+.side{display:flex;flex-direction:column;justify-content:center;padding:48px}
+.form{width:100%;max-width:400px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+.d2{font:700 40px/48px Sora,sans-serif;margin:0;color:#F5F3EF}
+.p{font:400 16px/24px Inter,sans-serif;color:#A8A6B3;margin:0}
+.sm{font:400 13px/18px Inter,sans-serif;color:#A8A6B3;margin:0}
+.btn{height:52px;width:100%;border-radius:10px;font:600 16px/20px Inter,sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;border:1px solid #6B6978;background:#15151C;color:#F5F3EF;cursor:pointer}
+.btn.pr{background:#E8A33D;border-color:#E8A33D;color:#1A1206}
+.fld{display:flex;flex-direction:column;gap:8px;font:600 15px/22px Inter,sans-serif;color:#F5F3EF}
+.in{height:48px;background:#1E1E28;border:1px solid #6B6978;border-radius:10px;color:#F5F3EF;font:400 15px Inter,sans-serif;padding:0 14px;width:100%}
+.in::placeholder{color:#A8A6B3}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:4px;background:#15151C;border:1px solid #2E2E3A;border-radius:12px;margin:0;border-width:1px}
+.seg label{height:44px;border-radius:8px;display:flex;align-items:center;justify-content:center;font:600 15px Inter,sans-serif;color:#A8A6B3;cursor:pointer}
+.seg label.on{background:#1E1E28;color:#F5F3EF;box-shadow:inset 0 0 0 1px #E8A33D}
+.seg input{position:absolute;opacity:0;width:1px;height:1px}
+.hint{font:400 13px/18px Inter,sans-serif;color:#A8A6B3}
+.or{display:flex;align-items:center;gap:12px;color:#A8A6B3;font:400 13px Inter,sans-serif}.or::before,.or::after{content:"";flex:1;height:1px;background:#2E2E3A}
+.slide-h{font:700 36px/44px Sora,sans-serif;margin:0;color:#F5F3EF}
+.slide-p{font:400 17px/26px Inter,sans-serif;margin:0;color:#F5F3EF;opacity:.85}
+@media (max-width:1023px){
+.au{grid-template-columns:1fr}
+.car{min-height:200px;height:200px;margin:12px}
+.car .copy{bottom:20px;left:20px}.car .top{display:none}
+.slide-h{font-size:22px;line-height:28px}.slide-p{display:none}
+.side{padding:24px 20px 40px}
+}
+</style>
+</helmet>
+<div class="au" style="background: #0B0B0F; color: #F5F3EF; font-family: Inter, system-ui, sans-serif">
+
+  <section class="car" aria-roledescription="carousel" aria-label="Why FanFolio">
+    <div class="ph" aria-hidden="true">Slide 3 image · "Fans connecting"</div>
+    <div class="shade" aria-hidden="true"></div>
+    <a href="#" class="logo top"><span class="mark" aria-hidden="true">F</span>FanFolio</a>
+    <div class="copy" aria-live="polite">
+      <h2 class="slide-h">Closer to the creators you love.</h2>
+      <p class="slide-p">Subscribe, unlock exclusive posts and message creators directly. Your name stays private.</p>
+      <div class="dots" role="group" aria-label="Choose slide">
+        <button type="button" class="dot" aria-label="Slide 1 of 5"><span></span></button>
+        <button type="button" class="dot" aria-label="Slide 2 of 5"><span></span></button>
+        <button type="button" class="dot on" aria-label="Slide 3 of 5" aria-current="true"><span></span></button>
+        <button type="button" class="dot" aria-label="Slide 4 of 5"><span></span></button>
+        <button type="button" class="dot" aria-label="Slide 5 of 5"><span></span></button>
+      </div>
+    </div>
+  </section>
+
+  <section class="side" aria-label="Sign up">
+    <form class="form" action="#">
+      <h1 class="d2">Create your account</h1>
+      <p class="p">Free, and it takes under a minute.</p>
+      <fieldset class="seg"><legend class="sm" style="position: absolute; width: 1px; height: 1px; overflow: hidden">I am joining as</legend><label class="on"><input type="radio" name="role" checked="">I'm a fan</label><label><input type="radio" name="role">I'm a creator</label></fieldset>
+      <label class="fld">Email<input class="in" type="email" placeholder="you@example.com" autocomplete="email"></label>
+      <label class="fld">Username<input class="in" type="text" placeholder="@yourname" autocomplete="username"><span class="hint">Creators see this instead of your real name</span></label>
+      <label class="fld">Password<input class="in" type="password" placeholder="At least 12 characters" autocomplete="new-password"></label>
+      <label style="display: flex; gap: 10px; align-items: flex-start; font: 400 14px/20px Inter, sans-serif; color: #A8A6B3"><input type="checkbox" style="width: 18px; height: 18px; margin-top: 1px; accent-color: #E8A33D; flex: none">I am 18 or older and agree to the <a href="#">Terms</a> and <a href="#">Privacy Policy</a></label>
+      <button type="submit" class="btn pr">Continue</button>
+      <div class="or">or</div>
+      <button type="button" class="btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="15" r="4"/><path d="m10.85 12.15 8.65-8.65"/><path d="m18 5 3 3"/><path d="m15 8 3 3"/></svg>Sign up with a passkey</button>
+      <p class="p" style="text-align: center">Already have an account? <a href="#" style="font-weight: 600">Log in</a></p>
+    </form>
+  </section>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

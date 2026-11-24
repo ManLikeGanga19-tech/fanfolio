@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Studio content library</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Sora:wght@600;700&amp;display=swap">
+<style>
+body{margin:0;background:#0B0B0F}
+a{color:#E8A33D}a:hover{color:#F5B85A}
+.app *{box-sizing:border-box}
+.side{flex:1 1 248px;max-width:100%;background:#15151C;border-right:1px solid #2E2E3A;padding:24px 12px;display:flex;flex-direction:column;gap:4px}
+.wm{font:600 18px/26px Sora,sans-serif;padding:0 12px 20px;display:flex;gap:8px;align-items:baseline}
+.side a{display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:10px;color:#A8A6B3;text-decoration:none;font-size:15px}
+.side a[aria-current]{background:#1E1E28;color:#F5F3EF;font-weight:600}
+.h1{font:700 32px/40px Sora,sans-serif;margin:0}.h3{font:600 18px/26px Sora,sans-serif;margin:0}
+.p{font:400 15px/22px Inter,sans-serif;color:#A8A6B3;margin:0}.sm{font:400 13px/18px Inter,sans-serif;color:#A8A6B3;margin:0}
+.lbl{font:600 12px/16px Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#A8A6B3}
+.btn{height:44px;border-radius:10px;font:600 15px/20px Inter,sans-serif;display:inline-flex;align-items:center;justify-content:center;border:1px solid #6B6978;background:#15151C;color:#F5F3EF;text-decoration:none;padding:0 18px;cursor:pointer}
+.btn.pr{background:#E8A33D;border-color:#E8A33D;color:#1A1206}
+.pill{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;background:#1E1E28;font:600 12px/16px Inter,sans-serif;color:#F5F3EF}
+.ok{color:#34C47C}.warn{color:#F5D06B}.bad{color:#F0525B}.br{color:#E8A33D}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}.tabs button{height:36px;padding:0 14px;border-radius:999px;border:1px solid #2E2E3A;background:#0B0B0F;color:#A8A6B3;font:400 13px Inter,sans-serif;cursor:pointer}.tabs button[aria-pressed=true]{border-color:#E8A33D;background:#1E1E28;color:#F5F3EF;font-weight:600}
+.in{height:44px;background:#1E1E28;border:1px solid #6B6978;border-radius:10px;padding:0 14px;display:flex;align-items:center;gap:8px;color:#A8A6B3;font-size:14px}
+.post{background:#15151C;border:1px solid #2E2E3A;border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.thumb{aspect-ratio:4/3;background:#1E1E28;position:relative;display:flex;align-items:center;justify-content:center;color:#6B6978}
+.thumb .t{position:absolute;left:10px;bottom:10px;background:rgba(0,0,0,.72)}
+.thumb .v{position:absolute;right:10px;top:10px}
+</style>
+</helmet>
+<div class="app" style="min-height: 960px; display: flex; flex-wrap: wrap; background: #0B0B0F; font-family: Inter, system-ui, sans-serif; color: #F5F3EF">
+  <nav class="side" aria-label="Studio">
+    <div class="wm">FanFolio <span class="lbl br">Studio</span></div>
+    <a href="#">Dashboard</a><a href="#">Upload &amp; schedule</a><a href="#" aria-current="page">Content library</a><a href="#">Prices &amp; bundles</a><a href="#">Fans</a><a href="#">Messages</a><a href="#">Earnings &amp; withdrawals</a><a href="#">Verification</a>
+  </nav>
+  <main style="flex: 999 1 560px; min-width: 0; padding: 32px; display: flex; flex-direction: column; gap: 24px">
+    <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between">
+      <div><h1 class="h1">Content library</h1><p class="p">214 posts · 3 scheduled · 2 drafts</p></div>
+      <a href="#" class="btn pr">New post</a>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 12px; align-items: center">
+      <label class="in" style="flex: 1 1 260px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>Search captions</label>
+      <div class="tabs" role="group" aria-label="Filter posts"><button type="button" aria-pressed="true">All · 214</button><button type="button" aria-pressed="false">Subscribers</button><button type="button" aria-pressed="false">Pay-per-view</button><button type="button" aria-pressed="false">Scheduled · 3</button><button type="button" aria-pressed="false">Drafts · 2</button><button type="button" aria-pressed="false">Vault</button></div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px">
+      <article class="post"><div class="thumb">Video<span class="pill t">Video · 04:30</span><span class="pill v">Subscribers</span></div><div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 4px"><strong style="font-size: 15px">Studio session (video)</strong><span class="sm">2h ago · 1.2k likes · $1,120</span></div></article>
+      <article class="post"><div class="thumb">Photos<span class="pill t">8 photos</span><span class="pill v br">PPV · 250</span></div><div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 4px"><strong style="font-size: 15px">Golden hour, Diani</strong><span class="sm">18 Nov · 214 unlocks · $535</span></div></article>
+      <article class="post" style="border-color: #E8A33D"><div class="thumb">Video<span class="pill t">Video · 02:14</span><span class="pill v warn">Scheduled</span></div><div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 4px"><strong style="font-size: 15px">Acoustic version</strong><span class="sm">Goes live Fri 22 Nov, 18:00</span></div></article>
+      <article class="post"><div class="thumb">Audio<span class="pill t">Voice note · 01:05</span><span class="pill v">Subscribers</span></div><div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 4px"><strong style="font-size: 15px">Weekly voice note #12</strong><span class="sm">16 Nov · 640 plays</span></div></article>
+      <article class="post"><div class="thumb">Photos<span class="pill t">3 photos</span><span class="pill v ok">Free teaser</span></div><div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 4px"><strong style="font-size: 15px">Behind the scenes</strong><span class="sm">14 Nov · 3.4k views · 41 new subs</span></div></article>
+      <article class="post"><div class="thumb">Draft<span class="pill t">Draft</span></div><div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 4px"><strong style="font-size: 15px">Untitled draft</strong><span class="sm">Edited yesterday · <a href="#">Continue</a></span></div></article>
+      <article class="post"><div class="thumb">Video<span class="pill t">Video · 06:10</span><span class="pill v br">PPV · 400</span></div><div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 4px"><strong style="font-size: 15px">Unreleased demo #3</strong><span class="sm">10 Nov · 131 unlocks · $328</span></div></article>
+      <article class="post"><div class="thumb">Processing<span class="pill t">Encrypting · 80%</span></div><div style="padding: 12px 14px; display: flex; flex-direction: column; gap: 4px"><strong style="font-size: 15px">rehearsal-full.mp4</strong><span class="sm">Ready in about 2 min</span></div></article>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

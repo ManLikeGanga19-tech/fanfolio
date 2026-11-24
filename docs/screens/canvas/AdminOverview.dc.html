@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Admin overview</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Sora:wght@600;700&amp;display=swap">
+<style>
+body{margin:0;background:#0B0B0F}
+a{color:#E8A33D}a:hover{color:#F5B85A}
+.app *{box-sizing:border-box}
+.side{flex:1 1 248px;max-width:100%;background:#15151C;border-right:1px solid #2E2E3A;padding:24px 12px;display:flex;flex-direction:column;gap:4px}
+.wm{font:600 18px/26px Sora,sans-serif;padding:0 12px 20px;display:flex;gap:8px;align-items:baseline}
+.side a{display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:10px;color:#A8A6B3;text-decoration:none;font-size:15px}
+.side a[aria-current]{background:#1E1E28;color:#F5F3EF;font-weight:600}
+.n{margin-left:auto;min-width:24px;height:22px;border-radius:999px;background:#0B0B0F;color:#F5F3EF;font:600 12px/22px Inter,sans-serif;text-align:center;padding:0 8px}
+.h1{font:700 32px/40px Sora,sans-serif;margin:0}.h3{font:600 18px/26px Sora,sans-serif;margin:0}
+.p{font:400 15px/22px Inter,sans-serif;color:#A8A6B3;margin:0}.sm{font:400 13px/18px Inter,sans-serif;color:#A8A6B3;margin:0}
+.lbl{font:600 12px/16px Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#A8A6B3}
+.btn{height:44px;border-radius:10px;font:600 15px/20px Inter,sans-serif;display:inline-flex;align-items:center;justify-content:center;border:1px solid #6B6978;background:#15151C;color:#F5F3EF;text-decoration:none;padding:0 18px}
+.btn.sm{height:36px;font-size:13px;padding:0 12px}
+.pill{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;background:#1E1E28;font:600 12px/16px Inter,sans-serif;color:#F5F3EF}
+.ok{color:#34C47C}.warn{color:#F5D06B}.bad{color:#F0525B}.br{color:#E8A33D}
+.card{background:#15151C;border:1px solid #2E2E3A;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:8px}
+.v{font:700 30px/38px Sora,sans-serif}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}
+.bars{display:flex;align-items:flex-end;gap:8px;height:180px;border-bottom:1px solid #2E2E3A}.bars span{flex:1;background:#E8A33D;border-radius:3px 3px 0 0}
+.al{display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #2E2E3A}.al:last-child{border-bottom:0}
+.dt{width:10px;height:10px;border-radius:50%;margin-top:6px;flex:none}
+</style>
+</helmet>
+<div class="app" style="min-height: 960px; display: flex; flex-wrap: wrap; background: #0B0B0F; font-family: Inter, system-ui, sans-serif; color: #F5F3EF">
+  <nav class="side" aria-label="Admin">
+    <div class="wm">FanFolio <span class="lbl bad">Admin</span></div>
+    <a href="#" aria-current="page">Overview</a><a href="#">Creator approvals<span class="n">5</span></a><a href="#">Moderation queue<span class="n">12</span></a><a href="#">Payout reviews<span class="n">3</span></a><a href="#">Disputes</a><a href="#">Leak takedowns<span class="n">4</span></a><a href="#">Users &amp; bans</a><a href="#">Audit log</a><a href="#">Fees &amp; settings</a>
+  </nav>
+  <main style="flex: 999 1 560px; min-width: 0; padding: 32px; display: flex; flex-direction: column; gap: 24px">
+    <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between">
+      <div><h1 class="h1">Overview</h1><p class="p">Thursday 21 Nov · all systems normal except 1 warning</p></div>
+      <div style="display: flex; gap: 8px"><span class="pill" style="height: 36px; padding: 0 14px">Today</span><span class="pill" style="height: 36px; padding: 0 14px; background: transparent; border: 1px solid #2E2E3A; color: #A8A6B3">7 days</span><span class="pill" style="height: 36px; padding: 0 14px; background: transparent; border: 1px solid #2E2E3A; color: #A8A6B3">30 days</span></div>
+    </div>
+    <div class="kpis">
+      <a href="#" class="card" style="text-decoration: none; color: inherit"><span class="sm">Sales today (GMV)</span><span class="v">$18,420</span><span class="sm ok">+9% vs last Thu</span></a>
+      <a href="#" class="card" style="text-decoration: none; color: inherit"><span class="sm">Creators awaiting KYC</span><span class="v">5</span><span class="sm warn">Oldest 6h</span></a>
+      <a href="#" class="card" style="text-decoration: none; color: inherit"><span class="sm">Open moderation cases</span><span class="v">12</span><span class="sm">Oldest 38 min</span></a>
+      <a href="#" class="card" style="text-decoration: none; color: inherit"><span class="sm">Payouts to review</span><span class="v">$9,840</span><span class="sm">3 requests</span></a>
+      <a href="#" class="card" style="text-decoration: none; color: inherit"><span class="sm">Chargeback rate (30d)</span><span class="v">0.42%</span><span class="sm ok">Below 0.75% target</span></a>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start">
+      <section class="card" style="flex: 2 1 480px; padding: 24px; gap: 16px">
+        <h2 class="h3">Sales, last 14 days (USD)</h2>
+        <div class="bars" role="img" aria-label="Daily sales rising from about 11 thousand to 18 thousand dollars over 14 days"><span style="height: 58%"></span><span style="height: 61%"></span><span style="height: 55%"></span><span style="height: 66%"></span><span style="height: 70%"></span><span style="height: 82%"></span><span style="height: 78%"></span><span style="height: 69%"></span><span style="height: 73%"></span><span style="height: 80%"></span><span style="height: 86%"></span><span style="height: 92%"></span><span style="height: 88%"></span><span style="height: 100%"></span></div>
+        <div style="display: flex; justify-content: space-between" class="sm"><span>8 Nov</span><span>14 Nov</span><span>21 Nov</span></div>
+      </section>
+      <section class="card" style="flex: 1 1 300px; padding: 24px">
+        <h2 class="h3">System health</h2>
+        <div class="al"><span class="dt" style="background: #F5D06B"></span><div style="flex: 1"><strong>Card gateway latency high</strong><p class="sm">p95 2.4s since 14:05 · top-ups still succeeding</p></div></div>
+        <div class="al"><span class="dt" style="background: #F0525B"></span><div style="flex: 1"><strong>4 leaks matched to watermarks</strong><p class="sm">Takedown notices drafted</p></div><a href="#" class="btn sm">Review</a></div>
+        <div class="al"><span class="dt" style="background: #34C47C"></span><div style="flex: 1"><strong>Ledger reconciliation passed</strong><p class="sm">02:00 · 0 mismatches</p></div></div>
+        <div class="al"><span class="dt" style="background: #34C47C"></span><div style="flex: 1"><strong>DRM licence service</strong><p class="sm">Healthy · 99.98% (7 days)</p></div></div>
+      </section>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

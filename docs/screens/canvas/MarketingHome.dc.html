@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>FanFolio · Home</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Sora:wght@600;700&amp;display=swap">
+<style>
+body{margin:0;background:#0B0B0F}
+a{color:#E8A33D}a:hover{color:#F5B85A}
+.mk *{box-sizing:border-box}
+.wrap{max-width:1200px;margin:0 auto;padding:0 32px}
+.nav{height:80px;display:flex;align-items:center;justify-content:space-between;gap:24px}
+.navlinks{display:flex;gap:28px;font:500 15px/20px Inter,sans-serif}
+.navlinks a{color:#A8A6B3;text-decoration:none}.navlinks a:hover{color:#F5F3EF}
+.logo{font:700 22px/28px Sora,sans-serif;color:#F5F3EF;text-decoration:none;display:flex;align-items:center;gap:10px}
+.mark{width:32px;height:32px;border-radius:10px;background:#E8A33D;color:#1A1206;display:flex;align-items:center;justify-content:center;font:700 16px Sora,sans-serif}
+.btn{height:52px;padding:0 24px;border-radius:10px;font:600 16px/20px Inter,sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid #6B6978;background:#15151C;color:#F5F3EF;text-decoration:none;white-space:nowrap}
+.btn:hover{color:#F5F3EF;border-color:#A8A6B3}
+.btn.pr{background:#E8A33D;border-color:#E8A33D;color:#1A1206}.btn.pr:hover{background:#F5B85A;color:#1A1206}
+.btn.sm{height:44px;padding:0 18px;font-size:15px}
+.eyebrow{font:600 13px/16px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#E8A33D;margin:0}
+.d1{font:700 64px/72px Sora,sans-serif;letter-spacing:-.02em;margin:0;color:#F5F3EF}
+.d2{font:700 44px/52px Sora,sans-serif;letter-spacing:-.01em;margin:0;color:#F5F3EF}
+.h3{font:600 20px/28px Sora,sans-serif;margin:0;color:#F5F3EF}
+.lead{font:400 19px/30px Inter,sans-serif;color:#A8A6B3;margin:0}
+.p{font:400 16px/26px Inter,sans-serif;color:#A8A6B3;margin:0}
+.sm{font:400 13px/18px Inter,sans-serif;color:#A8A6B3;margin:0}
+.amber{color:#E8A33D}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;padding:56px 0 96px}
+.ctas{display:flex;gap:12px;flex-wrap:wrap}
+.trust{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:28px 0;border-top:1px solid #2E2E3A;border-bottom:1px solid #2E2E3A}
+.trust div{display:flex;align-items:center;gap:12px;font:500 15px/22px Inter,sans-serif;color:#F5F3EF}
+.ico{width:40px;height:40px;border-radius:10px;background:#1E1E28;color:#E8A33D;display:flex;align-items:center;justify-content:center;flex:none}
+.sec{padding:112px 0}
+.sechead{display:flex;flex-direction:column;gap:16px;max-width:720px;margin-bottom:56px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.card{background:#15151C;border:1px solid #2E2E3A;border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:14px}
+.num{width:40px;height:40px;border-radius:999px;border:1px solid #E8A33D;color:#E8A33D;display:flex;align-items:center;justify-content:center;font:600 16px Sora,sans-serif}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.big{font:700 120px/1 Sora,sans-serif;color:#E8A33D;letter-spacing:-.03em;margin:0}
+.list{display:flex;flex-direction:column;gap:14px;margin:0;padding:0;list-style:none}
+.list li{display:flex;gap:12px;font:400 16px/24px Inter,sans-serif;color:#F5F3EF}
+.list svg{flex:none;color:#E8A33D;margin-top:2px}
+.band{background:#15151C;border-top:1px solid #2E2E3A;border-bottom:1px solid #2E2E3A}
+.cat{position:relative;height:220px;border-radius:16px;overflow:hidden;background:#1E1E28;display:flex;align-items:flex-end;padding:20px;border:1px solid #2E2E3A}
+.cat .ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#6B6978;font:500 13px Inter,sans-serif}
+.cat strong{position:relative;font:600 18px/24px Sora,sans-serif}
+.tag{position:relative;display:inline-flex;height:24px;padding:0 10px;border-radius:999px;background:#0B0B0F;border:1px solid #2E2E3A;font:600 12px/22px Inter,sans-serif;color:#A8A6B3;margin-left:8px}
+.faq{display:flex;flex-direction:column;border-top:1px solid #2E2E3A}
+.faq details{border-bottom:1px solid #2E2E3A;padding:22px 0}
+.faq summary{font:600 18px/26px Sora,sans-serif;color:#F5F3EF;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:16px}
+.faq summary::-webkit-details-marker{display:none}
+.faq details p{margin:12px 0 0}
+.cta{background:#15151C;border:1px solid #2E2E3A;border-radius:24px;padding:72px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:20px}
+.foot{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:32px;padding:64px 0 32px}
+.foot h4{font:600 14px/20px Inter,sans-serif;color:#F5F3EF;margin:0 0 14px}
+.foot a{display:block;color:#A8A6B3;text-decoration:none;font:400 14px/30px Inter,sans-serif}.foot a:hover{color:#F5F3EF}
+.phone{width:300px;height:620px;border-radius:36px;border:1px solid #2E2E3A;background:#0B0B0F;overflow:hidden;display:flex;flex-direction:column}
+.stage{position:relative;height:640px;display:flex;align-items:center;justify-content:center}
+.float{position:absolute;background:#1E1E28;border:1px solid #2E2E3A;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;font:500 14px/20px Inter,sans-serif;color:#F5F3EF;box-shadow:0 16px 40px rgba(0,0,0,.45)}
+.av{width:40px;height:40px;border-radius:999px;background:#2E2E3A;flex:none}
+.mock{background:#15151C;border:1px solid #2E2E3A;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:16px}
+.bar{height:10px;border-radius:999px;background:#1E1E28;overflow:hidden}.bar span{display:block;height:100%;background:#E8A33D;border-radius:999px}
+@media (max-width:960px){
+.hero,.split{grid-template-columns:1fr}
+.grid3,.trust{grid-template-columns:1fr 1fr}
+.grid4{grid-template-columns:1fr 1fr}
+.d1{font-size:44px;line-height:52px}.d2{font-size:34px;line-height:42px}.big{font-size:88px}
+.navlinks{display:none}
+.foot{grid-template-columns:1fr 1fr}
+.cta{padding:48px 24px}
+.sec{padding:80px 0}
+}
+@media (max-width:600px){
+.grid3,.trust,.grid4{grid-template-columns:1fr}
+.wrap{padding:0 20px}
+.stage{height:560px}
+.float.f2{display:none}
+}
+</style>
+</helmet>
+<div class="mk" style="background: #0B0B0F; color: #F5F3EF; font-family: Inter, system-ui, sans-serif">
+
+  <header class="wrap nav">
+    <a href="#" class="logo"><span class="mark" aria-hidden="true">F</span>FanFolio</a>
+    <nav class="navlinks" aria-label="Main"><a href="#">For fans</a><a href="#">For creators</a><a href="#">Safety</a><a href="#">FAQ</a></nav>
+    <div style="display: flex; gap: 12px; align-items: center"><a href="#" style="font: 600 15px Inter, sans-serif; color: #F5F3EF; text-decoration: none">Log in</a><a href="#" class="btn pr sm">Get started</a></div>
+  </header>
+
+  <section class="wrap hero" aria-label="Introduction">
+    <div style="display: flex; flex-direction: column; gap: 28px">
+      <p class="eyebrow">Made for African creators</p>
+      <h1 class="d1">Your fans. Your content. <span class="amber">Your money.</span></h1>
+      <p class="lead">FanFolio is where creators across Africa share exclusive content with the fans who pay to see it. Subscriptions, unlocks, tips and paid messages, all in one private place.</p>
+      <div class="ctas"><a href="#" class="btn pr">Start earning as a creator</a><a href="#" class="btn">Find creators</a></div>
+      <p class="sm">Free to join. Every creator is ID-verified and 18+.</p>
+    </div>
+    <div class="stage" aria-hidden="true">
+      <div class="phone">
+        <div style="height: 180px; background: #1E1E28; display: flex; align-items: center; justify-content: center; color: #6B6978; font-size: 12px">Creator cover image</div>
+        <div style="padding: 0 18px; margin-top: -36px; display: flex; flex-direction: column; gap: 10px">
+          <div style="width: 72px; height: 72px; border-radius: 999px; background: #2E2E3A; border: 3px solid #0B0B0F"></div>
+          <div style="font: 600 18px Sora, sans-serif">Creator name <span style="color: #E8A33D">✓</span></div>
+          <div class="sm">Music · Nairobi</div>
+          <div style="height: 46px; border-radius: 10px; background: #E8A33D; color: #1A1206; display: flex; align-items: center; justify-content: center; font: 600 15px Inter, sans-serif">Subscribe · 450 credits/mo</div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px; margin-top: 6px"><div style="height: 82px; background: #1E1E28; border-radius: 6px"></div><div style="height: 82px; background: #1E1E28; border-radius: 6px"></div><div style="height: 82px; background: #1E1E28; border-radius: 6px"></div><div style="height: 82px; background: #1E1E28; border-radius: 6px"></div><div style="height: 82px; background: #1E1E28; border-radius: 6px"></div><div style="height: 82px; background: #1E1E28; border-radius: 6px"></div></div>
+        </div>
+      </div>
+      <div class="float" style="top: 70px; left: 0"><span class="av"></span><span>New subscriber<br><span class="sm">just now</span></span></div>
+      <div class="float f2" style="bottom: 110px; right: 0"><span class="ico" style="width: 36px; height: 36px">+</span><span>Tip received<br><span class="sm" style="color: #E8A33D">250 credits</span></span></div>
+      <div class="float" style="bottom: 30px; left: 20px"><span class="ico" style="width: 36px; height: 36px"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><span>Post unlocked<br><span class="sm">Protected content</span></span></div>
+    </div>
+  </section>
+
+  <section class="wrap" aria-label="Why trust FanFolio">
+    <div class="trust">
+      <div><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span>ID-verified adult creators</div>
+      <div><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span>Encrypted, watermarked media</div>
+      <div><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg></span>Discreet billing name</div>
+      <div><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>Payouts to bank or crypto</div>
+    </div>
+  </section>
+
+  <section class="wrap sec" aria-labelledby="how">
+    <div class="sechead"><p class="eyebrow">For fans</p><h2 id="how" class="d2">Get closer to the creators you love</h2><p class="lead">No noise, no algorithm deciding what you see. Just the people you chose to support.</p></div>
+    <div class="grid3">
+      <div class="card"><svg width="104" height="104" viewBox="0 0 120 120" fill="none" aria-hidden="true" style="flex: none"><circle cx="60" cy="60" r="52" fill="#1E1E28"/><rect x="28" y="30" width="64" height="60" rx="10" fill="#2E2E3A" stroke="#F5F3EF" stroke-width="2.5"/><circle cx="60" cy="52" r="11" fill="#E8A33D"/><path d="M42 82c3-10 10-14 18-14s15 4 18 14" fill="#E8A33D"/><circle cx="88" cy="34" r="12" fill="#34C47C" stroke="#0B0B0F" stroke-width="3"/><path d="m83 34 3.5 3.5 6-6" stroke="#0B0B0F" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 82L23.2 84.8L26 86L23.2 87.2L22 90L20.8 87.2L18 86L20.8 84.8Z" fill="#F5C877"/></svg><span class="num">1</span><h3 class="h3">Create a free account</h3><p class="p">Sign up in under a minute. Creators see your username, never your real name.</p></div>
+      <div class="card"><svg width="104" height="104" viewBox="0 0 120 120" fill="none" aria-hidden="true" style="flex: none"><circle cx="60" cy="60" r="52" fill="#1E1E28"/><rect x="36" y="26" width="44" height="30" rx="5" fill="#F5F3EF" transform="rotate(-10 58 41)"/><rect x="40" y="31" width="20" height="4" rx="2" fill="#6B6978" transform="rotate(-10 58 41)"/><rect x="22" y="44" width="76" height="48" rx="10" fill="#E8A33D"/><rect x="22" y="44" width="76" height="12" rx="6" fill="#B97A22"/><rect x="70" y="62" width="30" height="18" rx="6" fill="#B97A22"/><circle cx="80" cy="71" r="4" fill="#F5C877"/><path d="M98 25L99.5 28.5L103 30L99.5 31.5L98 35L96.5 31.5L93 30L96.5 28.5Z" fill="#F5C877"/><path d="M20 27L20.9 29.1L23 30L20.9 30.9L20 33L19.1 30.9L17 30L19.1 29.1Z" fill="#E8A33D"/></svg><span class="num">2</span><h3 class="h3">Top up your wallet</h3><p class="p">Add credits by card or crypto. One balance for every creator you follow.</p></div>
+      <div class="card"><svg width="104" height="104" viewBox="0 0 120 120" fill="none" aria-hidden="true" style="flex: none"><circle cx="60" cy="60" r="52" fill="#1E1E28"/><path d="M44 52V40a16 16 0 0 1 31-6" stroke="#F5F3EF" stroke-width="6" stroke-linecap="round" fill="none"/><rect x="32" y="52" width="56" height="44" rx="10" fill="#E8A33D"/><rect x="32" y="52" width="56" height="10" rx="5" fill="#B97A22"/><circle cx="60" cy="72" r="6" fill="#0B0B0F"/><rect x="57.5" y="74" width="5" height="12" rx="2.5" fill="#0B0B0F"/><path d="M90 24L91.8 28.2L96 30L91.8 31.8L90 36L88.2 31.8L84 30L88.2 28.2Z" fill="#F5C877"/><path d="M100 49L100.9 51.1L103 52L100.9 52.9L100 55L99.1 52.9L97 52L99.1 51.1Z" fill="#E8A33D"/><path d="M24 36L25.2 38.8L28 40L25.2 41.2L24 44L22.8 41.2L20 40L22.8 38.8Z" fill="#F5C877"/></svg><span class="num">3</span><h3 class="h3">Subscribe and unlock</h3><p class="p">Follow for free, subscribe for the full feed, unlock special posts and send messages.</p></div>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="earn">
+    <div class="wrap sec split">
+      <div style="display: flex; flex-direction: column; gap: 24px">
+        <p class="eyebrow">For creators</p>
+        <h2 id="earn" class="d2">Keep the biggest share of what you earn</h2>
+        <p class="big">80%</p>
+        <p class="lead">Of every subscription, unlock, tip and paid message goes to you. Earnings clear after 7 days and you withdraw to your bank, crypto wallet, Paxum or Payoneer.</p>
+        <div class="ctas"><a href="#" class="btn pr">Become a creator</a><a href="#" class="btn">See how payouts work</a></div>
+      </div>
+      <div class="mock" aria-label="Example of the creator studio">
+        <div style="display: flex; justify-content: space-between; align-items: center"><span class="h3">Studio</span><span class="sm">Sample data</span></div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px">
+          <div style="background: #1E1E28; border-radius: 10px; padding: 16px"><p class="sm">Available to withdraw</p><p style="font: 700 28px/36px Sora, sans-serif; margin: 4px 0 0">$1,284.40</p></div>
+          <div style="background: #1E1E28; border-radius: 10px; padding: 16px"><p class="sm">Active subscribers</p><p style="font: 700 28px/36px Sora, sans-serif; margin: 4px 0 0">312</p></div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px">
+          <div style="display: flex; justify-content: space-between" class="sm"><span>Subscriptions</span><span>62%</span></div><div class="bar"><span style="width: 62%"></span></div>
+          <div style="display: flex; justify-content: space-between" class="sm"><span>Unlocks</span><span>23%</span></div><div class="bar"><span style="width: 23%"></span></div>
+          <div style="display: flex; justify-content: space-between" class="sm"><span>Tips and messages</span><span>15%</span></div><div class="bar"><span style="width: 15%"></span></div>
+        </div>
+        <div style="height: 48px; border-radius: 10px; background: #E8A33D; color: #1A1206; display: flex; align-items: center; justify-content: center; font: 600 15px Inter, sans-serif">Withdraw</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap sec" aria-labelledby="ways">
+    <div class="sechead"><p class="eyebrow">Many ways to earn</p><h2 id="ways" class="d2">Price your work the way you want</h2></div>
+    <div class="grid3">
+      <div class="card"><h3 class="h3">Monthly subscriptions</h3><p class="p">Set your price and offer 3, 6 and 12-month bundles at a discount.</p></div>
+      <div class="card"><h3 class="h3">Pay-per-view posts</h3><p class="p">Lock special photos and videos so fans unlock them one at a time.</p></div>
+      <div class="card"><h3 class="h3">Tips</h3><p class="p">Fans say thank you with credits on any post or in chat.</p></div>
+      <div class="card"><h3 class="h3">Paid messages</h3><p class="p">Send locked media to one fan or to all your subscribers at once.</p></div>
+      <div class="card"><h3 class="h3">Collaborations</h3><p class="p">Post with another verified creator and split the earnings automatically.</p></div>
+      <div class="card"><h3 class="h3">Free followers</h3><p class="p">Grow an audience with free posts, then turn followers into subscribers.</p></div>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="safety">
+    <div class="wrap sec">
+      <div class="sechead"><p class="eyebrow">Safety first</p><h2 id="safety" class="d2">Built to protect creators and fans</h2><p class="lead">We take the hard parts seriously, so you can focus on creating.</p></div>
+      <div class="grid4">
+        <div class="card" style="background: #0B0B0F"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg></span><h3 class="h3">Verified adults only</h3><p class="p">Every creator and every person in a post passes ID and selfie checks. No one under 18, ever.</p></div>
+        <div class="card" style="background: #0B0B0F"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="m16 11 2 2 4-4"/></svg></span><h3 class="h3">Consent on every post</h3><p class="p">Co-creators approve each post before it goes live, and can withdraw consent at any time.</p></div>
+        <div class="card" style="background: #0B0B0F"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></span><h3 class="h3">Protected content</h3><p class="p">Media is encrypted and watermarked to each viewer, so leaks can be traced and taken down.</p></div>
+        <div class="card" style="background: #0B0B0F"><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></span><h3 class="h3">Your privacy</h3><p class="p">Fans stay anonymous to creators. Charges show a discreet name on your statement.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap sec" aria-labelledby="cats">
+    <div class="sechead"><p class="eyebrow">Explore</p><h2 id="cats" class="d2">Something for every fan</h2></div>
+    <div class="grid4">
+      <a href="#" class="cat" style="text-decoration: none; color: #F5F3EF"><span class="ph">Category image</span><strong>Music</strong></a>
+      <a href="#" class="cat" style="text-decoration: none; color: #F5F3EF"><span class="ph">Category image</span><strong>Fitness</strong></a>
+      <a href="#" class="cat" style="text-decoration: none; color: #F5F3EF"><span class="ph">Category image</span><strong>Fashion and beauty</strong></a>
+      <a href="#" class="cat" style="text-decoration: none; color: #F5F3EF"><span class="ph">Category image</span><strong>After dark<span class="tag">18+ verified</span></strong></a>
+    </div>
+  </section>
+
+  <section class="band" aria-labelledby="faqh">
+    <div class="wrap sec split" style="align-items: flex-start">
+      <div class="sechead" style="margin: 0"><p class="eyebrow">FAQ</p><h2 id="faqh" class="d2">Questions, answered</h2><p class="lead">Still unsure? Write to support@[domain].</p></div>
+      <div class="faq">
+        <details open=""><summary>Who can become a creator?<span class="amber" aria-hidden="true">−</span></summary><p class="p">Anyone 18 or older who passes our ID and selfie check. It takes a few minutes.</p></details>
+        <details><summary>How do fans pay?<span class="amber" aria-hidden="true">+</span></summary><p class="p">Fans top up a FanFolio wallet with credits by card or crypto, then spend credits on creators.</p></details>
+        <details><summary>When do creators get paid?<span class="amber" aria-hidden="true">+</span></summary><p class="p">Earnings clear 7 days after each sale. You can then withdraw to bank, crypto, Paxum or Payoneer.</p></details>
+        <details><summary>Will my bank statement say FanFolio?<span class="amber" aria-hidden="true">+</span></summary><p class="p">No. Charges show a neutral billing name.</p></details>
+        <details><summary>Can fans get a refund?<span class="amber" aria-hidden="true">+</span></summary><p class="p">[CREDIT REFUND POLICY]</p></details>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap sec" aria-label="Get started">
+    <div class="cta">
+      <p class="eyebrow">Join FanFolio</p>
+      <h2 class="d2" style="max-width: 720px">Start building income from the people who already love your work</h2>
+      <p class="lead" style="max-width: 560px">Free to join. Get verified, set your price and post your first content today.</p>
+      <div class="ctas" style="justify-content: center"><a href="#" class="btn pr">Become a creator</a><a href="#" class="btn">Join as a fan</a></div>
+    </div>
+  </section>
+
+  <footer class="wrap" style="border-top: 1px solid #2E2E3A">
+    <div class="foot">
+      <div style="display: flex; flex-direction: column; gap: 14px"><a href="#" class="logo"><span class="mark" aria-hidden="true">F</span>FanFolio</a><p class="sm" style="max-width: 320px">The home for African creators and the fans who back them. Strictly 18+ to view adult content.</p></div>
+      <div><h4>Product</h4><a href="#">For fans</a><a href="#">For creators</a><a href="#">Safety</a></div>
+      <div><h4>Help</h4><a href="#">FAQ</a><a href="#">Support</a><a href="#">Report content</a></div>
+      <div><h4>Legal</h4><a href="#">Terms [LEGAL TEXT]</a><a href="#">Privacy</a><a href="#">Record-keeping notice</a></div>
+    </div>
+    <p class="sm" style="padding: 24px 0 40px; border-top: 1px solid #2E2E3A">© FanFolio · privacy@[domain]</p>
+  </footer>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":5000}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

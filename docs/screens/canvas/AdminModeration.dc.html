@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Admin moderation queue</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Sora:wght@600;700&amp;display=swap">
+<style>
+body{margin:0;background:#0B0B0F}
+a{color:#E8A33D}a:hover{color:#F5B85A}
+.app *{box-sizing:border-box}
+.side{flex:1 1 248px;max-width:100%;background:#15151C;border-right:1px solid #2E2E3A;padding:24px 12px;display:flex;flex-direction:column;gap:4px}
+.wm{font:600 18px/26px Sora,sans-serif;padding:0 12px 20px;display:flex;gap:8px;align-items:baseline}
+.side a{display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:10px;color:#A8A6B3;text-decoration:none;font-size:15px}
+.side a[aria-current]{background:#1E1E28;color:#F5F3EF;font-weight:600}
+.n{margin-left:auto;min-width:24px;height:22px;border-radius:999px;background:#0B0B0F;color:#F5F3EF;font:600 12px/22px Inter,sans-serif;text-align:center;padding:0 8px}
+.side a[aria-current] .n{background:#E8A33D;color:#1A1206}
+.h1{font:700 32px/40px Sora,sans-serif;margin:0}.h3{font:600 18px/26px Sora,sans-serif;margin:0}
+.p{font:400 15px/22px Inter,sans-serif;color:#A8A6B3;margin:0}.sm{font:400 13px/18px Inter,sans-serif;color:#A8A6B3;margin:0}
+.lbl{font:600 12px/16px Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#A8A6B3}
+.btn{height:44px;border-radius:10px;font:600 15px/20px Inter,sans-serif;display:inline-flex;align-items:center;justify-content:center;border:1px solid #6B6978;background:#15151C;color:#F5F3EF;text-decoration:none;padding:0 18px;cursor:pointer}
+.btn.dg{background:#F0525B;border-color:#F0525B;color:#1A1206}
+.pill{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;background:#1E1E28;font:600 12px/16px Inter,sans-serif;color:#F5F3EF;white-space:nowrap}
+.ok{color:#34C47C}.warn{color:#F5D06B}.bad{color:#F0525B}.br{color:#E8A33D}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}.tabs button{height:36px;padding:0 14px;border-radius:999px;border:1px solid #2E2E3A;background:#0B0B0F;color:#A8A6B3;font:400 13px Inter,sans-serif;cursor:pointer}.tabs button[aria-pressed=true]{border-color:#E8A33D;background:#1E1E28;color:#F5F3EF;font-weight:600}
+.case{display:flex;flex-direction:column;gap:4px;padding:14px 16px;border-bottom:1px solid #2E2E3A;text-decoration:none;color:#F5F3EF}
+.card{background:#15151C;border:1px solid #2E2E3A;border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:14px}
+.sig{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}.sig div{background:#1E1E28;border-radius:10px;padding:12px}
+</style>
+</helmet>
+<div class="app" style="min-height: 960px; display: flex; flex-wrap: wrap; background: #0B0B0F; font-family: Inter, system-ui, sans-serif; color: #F5F3EF">
+  <nav class="side" aria-label="Admin">
+    <div class="wm">FanFolio <span class="lbl bad">Admin</span></div>
+    <a href="#">Overview</a><a href="#">Creator approvals<span class="n">5</span></a><a href="#" aria-current="page">Moderation queue<span class="n">12</span></a><a href="#">Payout reviews<span class="n">3</span></a><a href="#">Disputes</a><a href="#">Leak takedowns<span class="n">4</span></a><a href="#">Users &amp; bans</a><a href="#">Audit log</a><a href="#">Fees &amp; settings</a>
+  </nav>
+  <main style="flex: 999 1 560px; min-width: 0; padding: 32px; display: flex; flex-direction: column; gap: 20px">
+    <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between">
+      <div><h1 class="h1">Moderation queue</h1><p class="p">12 open · oldest waiting 38 min</p></div>
+      <a href="#" class="btn">Assign to me</a>
+    </div>
+    <div class="tabs" role="group" aria-label="Queue filter"><button type="button" aria-pressed="true">All · 12</button><button type="button" aria-pressed="false">Hash match · 0</button><button type="button" aria-pressed="false">AI flagged · 6</button><button type="button" aria-pressed="false">User reports · 4</button><button type="button" aria-pressed="false">Consent withdrawn · 1</button><button type="button" aria-pressed="false">Leaks · 1</button></div>
+    <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start">
+      <section aria-label="Cases" style="flex: 1 1 280px; background: #15151C; border: 1px solid #2E2E3A; border-radius: 16px; overflow: hidden">
+        <a class="case" href="#" style="background: #1E1E28"><span style="display: flex; justify-content: space-between"><strong>#4821 · AI flagged</strong><span class="warn">●</span></span><span class="sm">@zuri.k · video · 38 min ago</span></a>
+        <a class="case" href="#"><span style="display: flex; justify-content: space-between"><strong>#4820 · Consent withdrawn</strong><span class="bad">●</span></span><span class="sm">Juma O. on @amani.w post · auto-hidden</span></a>
+        <a class="case" href="#"><span style="display: flex; justify-content: space-between"><strong>#4818 · User report ×3</strong><span class="warn">●</span></span><span class="sm">@tumi.art · post · 1h ago</span></a>
+        <a class="case" href="#"><span style="display: flex; justify-content: space-between"><strong>#4817 · User report</strong><span class="sm">●</span></span><span class="sm">@kevo_254 · message · 2h ago</span></a>
+        <a class="case" href="#" style="border-bottom: 0"><span style="display: flex; justify-content: space-between"><strong>#4815 · AI flagged</strong><span class="warn">●</span></span><span class="sm">@nala.fit · photo set · 3h ago</span></a>
+      </section>
+      <section class="card" aria-label="Case detail" style="flex: 2 1 460px">
+        <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; align-items: center"><h2 class="h3">Case #4821 · AI flagged</h2><span class="pill">Assigned to you</span></div>
+        <div style="height: 220px; border-radius: 10px; background: #101015; display: flex; flex-direction: column; gap: 10px; align-items: center; justify-content: center"><strong>Blurred preview</strong><a href="#" class="btn">Reveal (logged)</a></div>
+        <p class="sm">Hash-match cases are never shown to moderators; they go straight to escalation.</p>
+        <div class="sig">
+          <div><p class="sm">Signal</p><strong>Explicit-content classifier · 0.94</strong></div>
+          <div><p class="sm">Creator</p><strong>@zuri.k · KYC verified · 0 strikes</strong></div>
+          <div><p class="sm">People in post</p><strong class="ok">2 of 2 verified &amp; consented</strong></div>
+        </div>
+        <label style="display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 14px">Decision note (saved to audit log)<span style="min-height: 64px; background: #1E1E28; border: 1px solid #6B6978; border-radius: 10px; padding: 12px; font-weight: 400; color: #A8A6B3">Adult content from verified 18+ creators; consent on file for both. Allowed.</span></label>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px"><a href="#" class="btn">Approve</a><a href="#" class="btn">Remove</a><a href="#" class="btn">Remove + strike</a><a href="#" class="btn dg">Escalate &amp; report</a></div>
+      </section>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

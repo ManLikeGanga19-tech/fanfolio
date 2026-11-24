@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Fan PWA explore, messages and account</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Sora:wght@600;700&amp;display=swap">
+<style>
+body{margin:0;background:#0B0B0F}
+a{color:#E8A33D}a:hover{color:#F5B85A}
+.app *{box-sizing:border-box}
+.phone{width:390px;height:844px;background:#0B0B0F;border:1px solid #2E2E3A;border-radius:28px;overflow:hidden;display:flex;flex-direction:column;flex:none}
+.ph-head{height:60px;display:flex;align-items:center;gap:12px;padding:0 16px;flex:none}
+.ph-body{flex:1;overflow:hidden;display:flex;flex-direction:column}
+.cap{font:600 14px/20px Inter,sans-serif;color:#A8A6B3;margin:0 0 12px}
+.lbl{font:600 12px/16px Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#A8A6B3;margin:0}
+.h2{font:600 24px/32px Sora,sans-serif;margin:0;flex:1}
+.sm{font:400 13px/18px Inter,sans-serif;color:#A8A6B3;margin:0}
+.btn{height:44px;border-radius:10px;font:600 15px/20px Inter,sans-serif;display:flex;align-items:center;justify-content:center;border:1px solid #6B6978;background:#15151C;color:#F5F3EF;text-decoration:none;padding:0 16px}
+.btn.pr{background:#E8A33D;border-color:#E8A33D;color:#1A1206}
+.row{display:flex;align-items:center;gap:12px}
+.chip{display:inline-flex;align-items:center;height:36px;padding:0 14px;border-radius:999px;background:#1E1E28;font:400 13px Inter,sans-serif;color:#F5F3EF;white-space:nowrap}
+.chip.on{background:#F5F3EF;color:#0B0B0F;font-weight:600}
+.pill{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;background:#1E1E28;font:600 12px/16px Inter,sans-serif;white-space:nowrap}
+.ok{color:#34C47C}.warn{color:#F5D06B}.bad{color:#F0525B}.br{color:#E8A33D}
+.av{border-radius:50%;background:#6B6978;flex:none}
+.search{height:44px;border-radius:999px;background:#1E1E28;display:flex;align-items:center;gap:10px;padding:0 14px;color:#A8A6B3;font-size:15px}
+.media{background:#1E1E28;display:flex;align-items:center;justify-content:center;color:#A8A6B3;font-size:13px}
+.li{display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #2E2E3A}
+.b{max-width:75%;padding:10px 14px;border-radius:16px;font-size:15px;line-height:22px}
+.b.in{background:#1E1E28;border-bottom-left-radius:4px;align-self:flex-start}
+.b.me{background:#E8A33D;color:#1A1206;border-bottom-right-radius:4px;align-self:flex-end}
+.ic{width:40px;height:40px;border-radius:50%;background:#1E1E28;display:flex;align-items:center;justify-content:center;flex:none;font-size:14px;font-weight:600}
+nav.tab{height:72px;border-top:1px solid #2E2E3A;background:#15151C;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));flex:none}
+nav.tab a{display:flex;align-items:center;justify-content:center;font-size:13px;color:#A8A6B3;text-decoration:none}
+nav.tab a[aria-current]{color:#E8A33D;font-weight:600}
+</style>
+</helmet>
+<div class="app" style="width: 2190px; height: 1000px; box-sizing: border-box; padding: 40px; display: flex; gap: 40px; background: #0B0B0F; font-family: Inter, system-ui, sans-serif; color: #F5F3EF">
+
+  <section aria-label="Explore">
+    <p class="cap">Explore</p>
+    <div class="phone">
+      <div class="ph-head"><h2 class="h2">Explore</h2></div>
+      <div class="ph-body" style="padding: 0 16px 16px; gap: 14px">
+        <div class="search"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>Search creators or categories</div>
+        <div class="row" style="gap: 8px; overflow: hidden"><span class="chip on">All</span><span class="chip">Music</span><span class="chip">Fitness</span><span class="chip">Comedy</span><span class="chip">Lifestyle</span></div>
+        <div class="row" style="background: #15151C; border-radius: 10px; padding: 10px 12px; font-size: 13px"><span class="sm" style="flex: 1">Adult creators hidden</span><a href="#" style="font-weight: 600">Verify age</a></div>
+        <h3 style="margin: 0; font: 600 18px Sora">Trending in Kenya</h3>
+        <div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+          <div style="background: #15151C; border-radius: 16px; overflow: hidden"><div class="media" style="height: 100px">Cover</div><div style="padding: 10px 12px"><strong>Amani Wanjiru <span class="br">✓</span></strong><p class="sm">Music</p><span class="lbl br">450 cr/mo</span></div></div>
+          <div style="background: #15151C; border-radius: 16px; overflow: hidden"><div class="media" style="height: 100px">Cover</div><div style="padding: 10px 12px"><strong>Kofi Mensah <span class="br">✓</span></strong><p class="sm">Comedy</p><span class="lbl br">300 cr/mo</span></div></div>
+          <div style="background: #15151C; border-radius: 16px; overflow: hidden"><div class="media" style="height: 100px">Cover</div><div style="padding: 10px 12px"><strong>Nala Otieno <span class="br">✓</span></strong><p class="sm">Fitness</p><span class="lbl br">350 cr/mo</span></div></div>
+          <div style="background: #15151C; border-radius: 16px; overflow: hidden"><div class="media" style="height: 100px">Cover</div><div style="padding: 10px 12px"><strong>Tumi Dlamini <span class="br">✓</span></strong><p class="sm">Art</p><span class="lbl br">250 cr/mo</span></div></div>
+        </div>
+      </div>
+      <nav class="tab" aria-label="Main"><a href="#">Home</a><a href="#" aria-current="page">Explore</a><a href="#">Messages</a><a href="#">Wallet</a><a href="#">Profile</a></nav>
+    </div>
+  </section>
+
+  <section aria-label="Messages inbox">
+    <p class="cap">Messages inbox</p>
+    <div class="phone">
+      <div class="ph-head"><h2 class="h2">Messages</h2></div>
+      <div class="ph-body">
+        <div class="row" style="gap: 8px; padding: 0 16px 12px; border-bottom: 1px solid #2E2E3A"><span class="chip on">All</span><span class="chip">Unread · 2</span><span class="chip">Paid</span></div>
+        <a class="li" href="#" style="text-decoration: none; color: inherit"><span class="av" style="width: 48px; height: 48px; box-shadow: 0 0 0 2px #E8A33D"></span><span style="flex: 1; min-width: 0"><strong>Amani Wanjiru</strong><br><span style="font-size: 13px"><span class="br">Locked message</span> · 150 credits</span></span><span style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px"><span class="sm">2m</span><span class="pill" style="background: #E8A33D; color: #1A1206">1</span></span></a>
+        <a class="li" href="#" style="text-decoration: none; color: inherit"><span class="av" style="width: 48px; height: 48px; box-shadow: 0 0 0 2px #E8A33D"></span><span style="flex: 1"><strong>Zuri Kamau</strong><br><span style="font-size: 13px">Thank you for the tip!</span></span><span style="display: flex; flex-direction: column; align-items: flex-end; gap: 6px"><span class="sm">1h</span><span class="pill" style="background: #E8A33D; color: #1A1206">1</span></span></a>
+        <a class="li" href="#" style="text-decoration: none; color: inherit"><span class="av" style="width: 48px; height: 48px"></span><span style="flex: 1"><span>Kofi Mensah</span><br><span class="sm">New sketch dropping tonight</span></span><span class="sm">Yesterday</span></a>
+        <a class="li" href="#" style="text-decoration: none; color: inherit"><span class="av" style="width: 48px; height: 48px"></span><span style="flex: 1"><span>Nala Otieno</span><br><span class="sm">Your custom plan is ready</span></span><span class="sm">Mon</span></a>
+        <a class="li" href="#" style="text-decoration: none; color: inherit"><span class="av" style="width: 48px; height: 48px"></span><span style="flex: 1"><span>Tumi Dlamini</span><br><span class="sm">Glad you liked it</span></span><span class="sm">12 Nov</span></a>
+      </div>
+      <nav class="tab" aria-label="Main"><a href="#">Home</a><a href="#">Explore</a><a href="#" aria-current="page">Messages</a><a href="#">Wallet</a><a href="#">Profile</a></nav>
+    </div>
+  </section>
+
+  <section aria-label="Chat">
+    <p class="cap">Chat thread</p>
+    <div class="phone">
+      <div class="ph-head" style="border-bottom: 1px solid #2E2E3A"><a href="#" aria-label="Back" style="color: #F5F3EF; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a><span class="av" style="width: 36px; height: 36px; box-shadow: 0 0 0 2px #E8A33D"></span><span style="flex: 1"><strong>Amani Wanjiru</strong><br><span class="sm">Usually replies within an hour</span></span></div>
+      <div class="ph-body" style="padding: 16px; gap: 10px">
+        <p class="sm" style="text-align: center">Today</p>
+        <div class="b in">Hey Kevin! Thanks for subscribing. What would you like to see more of?</div>
+        <div class="b me">Loved the studio session. Any chance of an acoustic version?</div>
+        <div class="b in">Recorded one just for subscribers who asked:</div>
+        <div style="width: 264px; background: #15151C; border: 1px solid #2E2E3A; border-radius: 16px; padding: 12px; display: flex; flex-direction: column; gap: 10px"><div class="media" style="height: 120px; border-radius: 10px; background: #101015; flex-direction: column; gap: 4px"><span style="color: #F5F3EF; font-weight: 600">Video · 2:14</span><span>Locked</span></div><a href="#" class="btn pr">Unlock for 150 credits</a></div>
+        <span class="chip" style="align-self: center">You tipped 100 credits</span>
+      </div>
+      <div class="row" style="padding: 10px 12px 24px; background: #15151C; border-top: 1px solid #2E2E3A"><button type="button" aria-label="Send a tip" style="width: 44px; height: 44px; border-radius: 50%; border: 0; background: #1E1E28; color: #E8A33D; font-weight: 600">Tip</button><span class="search" style="flex: 1">Message Amani…</span><button type="button" aria-label="Send" style="width: 44px; height: 44px; border-radius: 50%; border: 0; background: #E8A33D; color: #1A1206; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg></button></div>
+    </div>
+  </section>
+
+  <section aria-label="Notifications">
+    <p class="cap">Notifications</p>
+    <div class="phone">
+      <div class="ph-head"><h2 class="h2">Notifications</h2><a href="#" style="font-size: 13px; font-weight: 600">Mark all read</a></div>
+      <div class="ph-body">
+        <p class="lbl" style="padding: 8px 16px">Today</p>
+        <div class="li" style="background: #15151C; align-items: flex-start"><span class="ic br">New</span><span style="flex: 1"><strong>Amani posted 6 new photos</strong><br><span class="sm">Included in your subscription</span></span><span class="sm">12m</span></div>
+        <div class="li" style="background: #15151C; align-items: flex-start"><span class="ic br">DM</span><span style="flex: 1"><strong>Zuri sent you a message</strong><br><span class="sm">"Thank you for the tip!"</span></span><span class="sm">1h</span></div>
+        <div class="li" style="align-items: flex-start"><span class="ic ok">✓</span><span style="flex: 1"><strong>Top-up successful</strong><br><span class="sm">1,000 credits added · balance 2,250</span></span><span class="sm">3h</span></div>
+        <p class="lbl" style="padding: 16px 16px 8px">Earlier</p>
+        <div class="li" style="align-items: flex-start"><span class="ic warn">!</span><span style="flex: 1"><strong>Subscription renews in 3 days</strong><br><span class="sm">Kofi Mensah · 300 credits from your wallet</span></span><span class="sm">Mon</span></div>
+        <div class="li" style="align-items: flex-start"><span class="ic bad">!</span><span style="flex: 1"><strong>Renewal failed for Nala Otieno</strong><br><span class="sm">Top up within 3 days to keep access</span></span><span class="sm">Sun</span></div>
+      </div>
+      <nav class="tab" aria-label="Main"><a href="#" aria-current="page">Home</a><a href="#">Explore</a><a href="#">Messages</a><a href="#">Wallet</a><a href="#">Profile</a></nav>
+    </div>
+  </section>
+
+  <section aria-label="My subscriptions">
+    <p class="cap">My subscriptions</p>
+    <div class="phone">
+      <div class="ph-head"><a href="#" aria-label="Back" style="color: #F5F3EF; display: flex"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></a><h2 class="h2">Subscriptions</h2></div>
+      <div class="ph-body" style="padding: 4px 16px 16px; gap: 12px">
+        <div class="row" style="background: #15151C; border: 1px solid #2E2E3A; border-radius: 16px; padding: 16px; justify-content: space-between"><span><span class="sm">Active</span><br><strong>3</strong></span><span><span class="sm">Next renewal</span><br><strong>24 Nov</strong></span><span><span class="sm">Due this month</span><br><strong>1,215 cr</strong></span></div>
+        <div style="background: #15151C; border-radius: 16px; padding: 14px 16px" class="row"><span class="av" style="width: 44px; height: 44px"></span><span style="flex: 1"><strong>Amani Wanjiru</strong><br><span class="sm">3 months · renews 24 Nov</span></span><span class="pill ok">Active</span></div>
+        <div style="background: #15151C; border-radius: 16px; padding: 14px 16px" class="row"><span class="av" style="width: 44px; height: 44px"></span><span style="flex: 1"><strong>Kofi Mensah</strong><br><span class="sm">1 month · renews 25 Nov</span></span><span class="pill ok">Active</span></div>
+        <div style="background: #15151C; border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px"><div class="row"><span class="av" style="width: 44px; height: 44px"></span><span style="flex: 1"><strong>Tumi Dlamini</strong><br><span class="sm">Ends 2 Dec · auto-renew off</span></span><span class="pill warn">Ending</span></div><a href="#" class="btn">Turn on auto-renew</a></div>
+        <div style="background: #15151C; border-radius: 16px; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px"><div class="row"><span class="av" style="width: 44px; height: 44px"></span><span style="flex: 1"><strong>Nala Otieno</strong><br><span class="sm">Renewal failed 17 Nov</span></span><span class="pill bad">Past due</span></div><a href="#" class="btn pr">Top up to keep access</a></div>
+      </div>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":2190,"height":1000}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

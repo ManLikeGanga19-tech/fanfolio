@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Admin leak takedowns</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Sora:wght@600;700&amp;display=swap">
+<style>
+body{margin:0;background:#0B0B0F}
+a{color:#E8A33D}a:hover{color:#F5B85A}
+.app *{box-sizing:border-box}
+.side{flex:1 1 248px;max-width:100%;background:#15151C;border-right:1px solid #2E2E3A;padding:24px 12px;display:flex;flex-direction:column;gap:4px}
+.wm{font:600 18px/26px Sora,sans-serif;padding:0 12px 20px;display:flex;gap:8px;align-items:baseline}
+.side a{display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:10px;color:#A8A6B3;text-decoration:none;font-size:15px}
+.side a[aria-current]{background:#1E1E28;color:#F5F3EF;font-weight:600}
+.n{margin-left:auto;min-width:24px;height:22px;border-radius:999px;background:#0B0B0F;color:#F5F3EF;font:600 12px/22px Inter,sans-serif;text-align:center;padding:0 8px}
+.side a[aria-current] .n{background:#E8A33D;color:#1A1206}
+.h1{font:700 32px/40px Sora,sans-serif;margin:0}.h3{font:600 18px/26px Sora,sans-serif;margin:0}
+.p{font:400 15px/22px Inter,sans-serif;color:#A8A6B3;margin:0}.sm{font:400 13px/18px Inter,sans-serif;color:#A8A6B3;margin:0}
+.lbl{font:600 12px/16px Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#A8A6B3}
+.btn{height:44px;border-radius:10px;font:600 15px/20px Inter,sans-serif;display:inline-flex;align-items:center;justify-content:center;border:1px solid #6B6978;background:#15151C;color:#F5F3EF;text-decoration:none;padding:0 18px;cursor:pointer}
+.btn.pr{background:#E8A33D;border-color:#E8A33D;color:#1A1206}
+.btn.dg{background:#F0525B;border-color:#F0525B;color:#1A1206}
+.pill{display:inline-flex;align-items:center;height:24px;padding:0 10px;border-radius:999px;background:#1E1E28;font:600 12px/16px Inter,sans-serif;color:#F5F3EF;white-space:nowrap}
+.ok{color:#34C47C}.warn{color:#F5D06B}.bad{color:#F0525B}.br{color:#E8A33D}
+.card{background:#15151C;border:1px solid #2E2E3A;border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:8px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px}.v{font:700 28px/36px Sora,sans-serif}
+table{width:100%;border-collapse:collapse;font-size:14px}th{text-align:left;font:600 12px/16px Inter,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#A8A6B3;padding:10px 12px;border-bottom:1px solid #2E2E3A;white-space:nowrap}td{padding:12px;border-bottom:1px solid #2E2E3A;white-space:nowrap}
+tr.sel td{background:#1E1E28}
+.step{display:flex;gap:12px;align-items:flex-start;padding:8px 0}.step .d{width:22px;height:22px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
+</style>
+</helmet>
+<div class="app" style="min-height: 960px; display: flex; flex-wrap: wrap; background: #0B0B0F; font-family: Inter, system-ui, sans-serif; color: #F5F3EF">
+  <nav class="side" aria-label="Admin">
+    <div class="wm">FanFolio <span class="lbl bad">Admin</span></div>
+    <a href="#">Overview</a><a href="#">Creator approvals<span class="n">5</span></a><a href="#">Moderation queue<span class="n">12</span></a><a href="#">Payout reviews<span class="n">3</span></a><a href="#">Disputes</a><a href="#" aria-current="page">Leak takedowns<span class="n">4</span></a><a href="#">Users &amp; bans</a><a href="#">Audit log</a><a href="#">Fees &amp; settings</a>
+  </nav>
+  <main style="flex: 999 1 560px; min-width: 0; padding: 32px; display: flex; flex-direction: column; gap: 24px">
+    <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: center; justify-content: space-between">
+      <div><h1 class="h1">Leak takedowns</h1><p class="p">The crawler checks known leak sites and channels every hour and reads the watermark on each copy it finds.</p></div>
+      <a href="#" class="btn">Report a URL</a>
+    </div>
+    <div class="kpis">
+      <div class="card"><span class="sm">New matches</span><span class="v bad">4</span><span class="sm">Need a decision</span></div>
+      <div class="card"><span class="sm">Notices sent (30d)</span><span class="v">31</span><span class="sm">27 removed</span></div>
+      <div class="card"><span class="sm">Median time to removal</span><span class="v">19h</span><span class="sm">Last 30 days</span></div>
+      <div class="card"><span class="sm">Accounts banned for leaking</span><span class="v">6</span><span class="sm">Last 30 days</span></div>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start">
+      <section style="flex: 2 1 520px; background: #15151C; border: 1px solid #2E2E3A; border-radius: 16px; padding: 8px 12px; overflow-x: auto">
+        <table>
+          <thead><tr><th>Found on</th><th>Watermark</th><th>Creator</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr class="sel"><td>Telegram channel</td><td>WM-K29D → @user_8841</td><td>Zuri Kamau</td><td><span class="pill bad">New match</span></td></tr>
+            <tr><td>Tube site</td><td>WM-81QA → @user_2210</td><td>Amani Wanjiru</td><td><span class="pill bad">New match</span></td></tr>
+            <tr><td>X (Twitter)</td><td>Visible mark cropped</td><td>Nala Otieno</td><td><span class="pill warn">Forensic check running</span></td></tr>
+            <tr><td>Forum</td><td>WM-7Z0P → @user_5502</td><td>Zuri Kamau</td><td><span class="pill">Notice sent 19 Nov</span></td></tr>
+            <tr><td>Telegram channel</td><td>WM-3HTR → @user_1190</td><td>Kofi Mensah</td><td><span class="pill ok">Removed</span></td></tr>
+          </tbody>
+        </table>
+      </section>
+      <section class="card" style="flex: 1 1 300px; padding: 24px; gap: 12px" aria-label="Leak detail">
+        <h2 class="h3">Telegram · WM-K29D</h2>
+        <p class="sm">Copy of "Golden hour, Diani" (PPV) found 21 Nov, 13:40</p>
+        <div style="background: #1E1E28; border-radius: 10px; padding: 12px">
+          <p class="sm">Watermark traced to</p><strong>@user_8841</strong>
+          <p class="sm">Playback session 18 Nov, 22:14 · Chrome on Android · Nairobi</p>
+        </div>
+        <div class="step"><span class="d" style="background: #E8A33D; color: #1A1206">1</span><div><strong>Send takedown notice</strong><p class="sm">Template prefilled with links and ownership proof</p></div></div>
+        <div class="step"><span class="d" style="background: #1E1E28">2</span><div><strong>Ban leaking account</strong><p class="sm">Revokes all sessions; wallet frozen for review</p></div></div>
+        <div class="step"><span class="d" style="background: #1E1E28">3</span><div><strong>Notify creator</strong><p class="sm">Zuri sees progress in her studio</p></div></div>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap"><a href="#" class="btn pr">Send notice</a><a href="#" class="btn dg">Ban @user_8841</a></div>
+      </section>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1280,"height":960}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
