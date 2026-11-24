@@ -28,6 +28,9 @@ final class SignUpController
     /** Session flag: the recovery codes page continues to the email step. */
     public const string CONTINUE_SIGNUP = 'identity.signup_continues';
 
+    /** Session flag: chose "I'm a creator" at sign-up; the email step continues to Become a creator. */
+    public const string JOINING_AS_CREATOR = 'identity.signup_as_creator';
+
     public function show(): View
     {
         return view('identity::auth.signup');
@@ -47,6 +50,7 @@ final class SignUpController
         }
 
         $this->signIn($request, $user, 'signup', $complete);
+        $this->rememberJoiningAs($request);
         $this->sendFirstCode($user, $codes);
 
         return redirect()->route('signup.email');
@@ -58,12 +62,23 @@ final class SignUpController
      */
     public function passkeyOptions(PasskeySignUpRequest $request, RegisterFanWithPasskey $register): Responsable
     {
+        $this->rememberJoiningAs($request);
+
         return $register->options(
             $request->session(),
             $request->string('email')->toString(),
             $request->string('username')->toString(),
             $this->phone($request),
         );
+    }
+
+    private function rememberJoiningAs(Request $request): void
+    {
+        if ($request->input('joining_as') === 'creator') {
+            $request->session()->put(self::JOINING_AS_CREATOR, true);
+        } else {
+            $request->session()->forget(self::JOINING_AS_CREATOR);
+        }
     }
 
     /** The optional phone number, already normalised by the request (null when left empty). */

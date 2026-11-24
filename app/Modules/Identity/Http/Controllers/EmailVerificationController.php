@@ -72,6 +72,11 @@ final class EmailVerificationController
             throw ValidationException::withMessages([$e->field => $e->getMessage()]);
         }
 
+        // Chose "I'm a creator": the creator ID check covers 18+, so on to Become a creator.
+        if ($request->session()->pull(SignUpController::JOINING_AS_CREATOR) === true) {
+            return redirect()->route('creator.start')->with('status', 'Email verified. Next: your creator page.');
+        }
+
         // On to step 3, the optional 18+ check.
         return redirect()->route('signup.age')->with('status', 'Email verified.');
     }

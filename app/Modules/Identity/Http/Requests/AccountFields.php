@@ -20,6 +20,8 @@ trait AccountFields
             // Optional and unverified (decision D-12): the verified email stays the primary contact.
             'phone' => ['nullable', 'string', 'regex:/^\+[1-9][0-9]{7,14}$/'],
             'adult_and_terms' => ['accepted'],
+            // Canvas AuthSignup: "I'm a fan / I'm a creator". A creator goes on to Become a creator.
+            'joining_as' => ['nullable', 'string', 'in:fan,creator'],
         ];
     }
 

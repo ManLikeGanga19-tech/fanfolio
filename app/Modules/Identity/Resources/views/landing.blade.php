@@ -14,7 +14,8 @@
 
         <div class="flex flex-col gap-3 sm:flex-row">
             <x-ui.button variant="brand" :href="route('signup')" class="sm:w-auto sm:px-8">Create free account</x-ui.button>
-            <x-ui.button :href="route('creator.start')" class="sm:w-auto sm:px-8">I am a creator</x-ui.button>
+            {{-- A visitor without an account signs up as a creator; Become a creator follows the email step. --}}
+            <x-ui.button :href="route('signup', ['as' => 'creator'])" class="sm:w-auto sm:px-8">I am a creator</x-ui.button>
         </div>
 
         <ul class="flex flex-col gap-2 text-small text-ink-muted">

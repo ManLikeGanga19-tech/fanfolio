@@ -166,7 +166,8 @@ it('rate limits the handle check', function (): void {
 });
 
 it('links to Become a creator from the account hub and the landing page', function (): void {
-    $this->get('/')->assertSee(route('creator.start'), false);
+    // A visitor signs up as a creator first (canvas AuthSignup); Become a creator follows the email step.
+    $this->get('/')->assertSee(e(route('signup', ['as' => 'creator'])), false);
 
     signedInFan();
     $this->get('/account')->assertSee('Become a creator')->assertSee(route('creator.start'), false);
