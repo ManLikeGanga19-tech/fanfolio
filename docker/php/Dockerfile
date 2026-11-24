@@ -28,14 +28,21 @@ ENTRYPOINT ["fanfolio-entrypoint"]
 # --watch reloads the workers when PHP, config, routes or .env change.
 CMD ["php", "artisan", "octane:start", "--server=swoole", "--host=0.0.0.0", "--port=8000", "--watch"]
 
+# ---- PHP packages the asset build reads (the admin theme imports Filament's CSS) ----
+FROM composer:2 AS vendor
+WORKDIR /build
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader --no-interaction --prefer-dist --ignore-platform-reqs
+
 # ---- front-end assets (Vite + Tailwind), built once for the production image ----
 FROM node:22-alpine AS assets
 WORKDIR /build
 COPY package.json package-lock.json ./
 RUN npm ci --ignore-scripts
 COPY vite.config.js ./
+COPY --from=vendor /build/vendor ./vendor
 COPY resources ./resources
-COPY app/Modules ./app/Modules
+COPY app ./app
 RUN npm run build
 
 # ---- production: code baked in, no dev dependencies ----
