@@ -38,4 +38,5 @@ Status: **to do**, **done**, or **later** (the screen arrives with its milestone
 - **Keep me logged in** (AuthLogin): left out until a remember token keeps the 3-device limit and remote sign-out (SEC-05). Planned as its own PR.
 - **Support inbox:** "Contact support" uses `support@[domain]` (`FANFOLIO_SUPPORT_EMAIL`) until the domain is set.
 
-- **Carousel:** the canvas has 5 slides; only slide 1 ("Create on your terms.") and slide 3 ("Closer to the creators you love.") are drawn, and the app has 3 photos. Needed: two more photos and the headline and line for slides 2, 4 and 5. Until then the carousel shows 3 slides.
+- **Carousel:** 5 slides with the owner's photos (24 Nov 2026). Slides 4 ("Create together, with consent.") and 5 ("Your content, protected.") reuse the landing page's safety-card wording, pending owner approval. Transitions use Motion (motion.dev, the plain-JavaScript version of Framer Motion); with reduced motion on, nothing animates or auto-plays.
+- **Home · Explore:** larger bento tiles with photos (owner, 24 Nov 2026) instead of the canvas's 220 px placeholders; tiles rise in on scroll with Motion.

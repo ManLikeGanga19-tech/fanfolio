@@ -4,9 +4,11 @@ import { initHandleChecks } from './handle-check';
 import { initKycCapture } from './kyc-capture';
 import { initPasskeys } from './passkeys';
 import { initPasswordToggles } from './password-toggle';
+import { initReveals } from './reveal';
 import { syncTimezone } from './timezone';
 
 syncTimezone();
+initReveals();
 initPasskeys();
 initHandleChecks();
 initPasswordToggles();
