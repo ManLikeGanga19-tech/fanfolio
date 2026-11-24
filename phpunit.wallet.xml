@@ -20,6 +20,8 @@
             <directory>app/Modules/Wallet/Tests</directory>
             <!-- Migrations are checked by CI's migrate, rollback and migrate step. -->
             <directory>app/Modules/Wallet/Database/Migrations</directory>
+            <!-- Views are exercised by the feature and browser tests, not measured as code. -->
+            <directory>app/Modules/Wallet/Resources</directory>
         </exclude>
     </source>
     <php>
@@ -74,6 +76,8 @@
         <env name="FANFOLIO_CLASSIFIER_DRIVER" value="fake" force="true"/>
         <server name="FANFOLIO_CLASSIFIER_DRIVER" value="fake" force="true"/>
         <env name="FANFOLIO_LEAK_CRAWLER_DRIVER" value="fake" force="true"/>
+        <env name="FANFOLIO_NETWORK_RISK_DRIVER" value="fake" force="true"/>
+        <server name="FANFOLIO_NETWORK_RISK_DRIVER" value="fake" force="true"/>
         <server name="FANFOLIO_LEAK_CRAWLER_DRIVER" value="fake" force="true"/>
     </php>
 </phpunit>

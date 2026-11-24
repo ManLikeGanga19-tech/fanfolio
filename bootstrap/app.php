@@ -19,6 +19,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->prepend(IgnoreReferrer::class);
         $middleware->redirectGuestsTo(fn (): string => route('login'));
         $middleware->redirectUsersTo(fn (): string => route('account'));
+        // Gateway webhooks are authenticated by their signature, not a session (spec "Inbound webhooks").
+        $middleware->validateCsrfTokens(except: ['webhooks/*']);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

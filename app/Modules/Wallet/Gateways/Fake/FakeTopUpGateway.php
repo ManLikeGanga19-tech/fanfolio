@@ -48,7 +48,7 @@ final readonly class FakeTopUpGateway implements FakeDriver, TopUpGateway
      *
      * @return array{payload: string, headers: array<string, string>}
      */
-    public function signedWebhook(GatewayEventType $type, string $gatewayRef, Money $amount, ?string $eventId = null, ?DateTimeImmutable $at = null): array
+    public function signedWebhook(GatewayEventType $type, string $gatewayRef, Money $amount, ?string $eventId = null, ?DateTimeImmutable $at = null, ?string $paymentHint = 'Visa ····4242'): array
     {
         $at ??= new DateTimeImmutable;
         $payload = json_encode([
@@ -58,6 +58,7 @@ final readonly class FakeTopUpGateway implements FakeDriver, TopUpGateway
             'amount_minor' => $amount->amountMinor,
             'currency' => $amount->currency,
             'occurred_at' => $at->format(DATE_ATOM),
+            'payment_hint' => $paymentHint,
         ], JSON_THROW_ON_ERROR);
 
         return [
@@ -93,7 +94,9 @@ final readonly class FakeTopUpGateway implements FakeDriver, TopUpGateway
             throw new InvalidWebhookSignature('Payload has an invalid type or timestamp.');
         }
 
-        return new GatewayEvent($this->name(), $data['id'], $type, $data['ref'], Money::of($data['amount_minor'], $data['currency']), $occurredAt);
+        $hint = $data['payment_hint'] ?? null;
+
+        return new GatewayEvent($this->name(), $data['id'], $type, $data['ref'], Money::of($data['amount_minor'], $data['currency']), $occurredAt, is_string($hint) ? $hint : null);
     }
 
     private function signer(): HmacSignature

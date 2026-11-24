@@ -37,6 +37,37 @@ test('signed-in pages pass axe and keep a visible focus ring', async ({ page, br
     await expectNoAxeViolations(page);
     await expectVisibleFocusOnTab(page);
 
+    // Wallet & top-up (canvas FanCore), the test checkout, Top-up success (FanMore),
+    // Purchases & receipts (FanProfile) and the Currency setting (D-21).
+    await page.goto('/wallet');
+    await expect(page.getByRole('heading', { name: 'Wallet' })).toBeVisible();
+    await expectNoAxeViolations(page);
+    await expectVisibleFocusOnTab(page);
+    await page.getByText('2,600 credits').click();
+    await page.getByRole('button', { name: 'Continue to secure checkout' }).click();
+    await expect(page.getByRole('heading', { name: 'Pay $25.00' })).toBeVisible();
+    await page.getByRole('button', { name: 'Pay', exact: true }).click();
+    // The payments queue applies the webhook; until then the page says it is waiting.
+    await expect(async () => {
+        if (await page.getByRole('link', { name: 'Check again' }).isVisible()) {
+            await page.getByRole('link', { name: 'Check again' }).click();
+        }
+        await expect(page.getByRole('heading', { name: '2,600 credits added' })).toBeVisible({ timeout: 1000 });
+    }).toPass({ timeout: 30_000 });
+    await expectNoAxeViolations(page);
+    await expectVisibleFocusOnTab(page);
+    await page.goto('/account/purchases');
+    await expect(page.getByText('+2,600')).toBeVisible();
+    await expectNoAxeViolations(page);
+    await expectVisibleFocusOnTab(page);
+    await page.goto('/account/currency');
+    await expectNoAxeViolations(page);
+    await page.getByLabel('Kenyan shilling (KSh)').check();
+    await page.getByRole('button', { name: 'Save' }).click();
+    await expect(page.getByRole('link', { name: /Currency\s+KSh/ })).toBeVisible();
+    await expect(page.getByText(/≈ KSh/)).toBeVisible();
+    await expectNoAxeViolations(page);
+
     await page.goto('/account/security');
     await expectNoAxeViolations(page);
     await expectVisibleFocusOnTab(page);

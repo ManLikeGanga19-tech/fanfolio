@@ -122,6 +122,10 @@ Forms that start a check send `device` (`phone` or `computer`), set by `resource
 - `User::canAccessPanel`: the `admin` panel is for staff, the `studio` panel for creators; both need MFA and an account that may sign in. Studio also checks creator eligibility (`Creators\Http\Middleware\EnsureStudioAccess`).
 - Route middleware alias `staff` (`EnsureAdminAccess`) protects staff pages outside the Filament panel, such as the ID viewer.
 
+## Network risk (D-16)
+
+`Contracts\NetworkRiskCheck` answers whether an address is a VPN, proxy or other anonymising network (`isAnonymised`) and whether an area refuses one (`refuses`: `staff_sign_in`, `creator_kyc`, `payouts`, `topups`, from `fanfolio.network_risk.refuse`). The IP-reputation provider is not chosen: `Gateways\Fake\FakeNetworkRiskCheck` treats the addresses in `fanfolio.fake.anonymised_ips` as anonymised. Top-ups check it from M3 PR 2; staff sign-in, creator ID checks and payouts get the check as they are next changed. The switches move to two-admin settings in M3 PR 7.
+
 ## Gateways
 
 - `SmsSender`: `fake` (logs the message locally). Not used by sign-up since D-12; kept for co-performer invites by phone (spec, Collaborations).

@@ -18,11 +18,13 @@ use App\Modules\Identity\Contracts\Accounts;
 use App\Modules\Identity\Contracts\AccountStats;
 use App\Modules\Identity\Contracts\BreachedPasswordChecker;
 use App\Modules\Identity\Contracts\IdentityVerifier;
+use App\Modules\Identity\Contracts\NetworkRiskCheck;
 use App\Modules\Identity\Contracts\PhoneHandoff;
 use App\Modules\Identity\Contracts\SmsSender;
 use App\Modules\Identity\Contracts\StaffAbility;
 use App\Modules\Identity\Gateways\Fake\FakeBreachedPasswordChecker;
 use App\Modules\Identity\Gateways\Fake\FakeIdentityVerifier;
+use App\Modules\Identity\Gateways\Fake\FakeNetworkRiskCheck;
 use App\Modules\Identity\Gateways\Fake\FakeSmsSender;
 use App\Modules\Identity\Gateways\Hibp\HibpBreachedPasswordChecker;
 use App\Modules\Identity\Http\Middleware\ApplyDisplayTimezone;
@@ -70,6 +72,7 @@ final class IdentityServiceProvider extends ModuleServiceProvider
         $this->bindDriver(IdentityVerifier::class, 'kyc', ['fake' => FakeIdentityVerifier::class]);
         $this->app->bind(PhoneHandoff::class, PhoneHandoffs::class);
         $this->bindDriver(SmsSender::class, 'sms', ['fake' => FakeSmsSender::class]);
+        $this->bindDriver(NetworkRiskCheck::class, 'network_risk', ['fake' => FakeNetworkRiskCheck::class]);
         $this->bindDriver(BreachedPasswordChecker::class, 'breached_passwords', [
             'fake' => FakeBreachedPasswordChecker::class,
             'hibp' => HibpBreachedPasswordChecker::class,

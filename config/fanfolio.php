@@ -133,6 +133,20 @@ return [
         'legal_text' => '[LEGAL TEXT]',
     ],
 
+    // D-16: areas that refuse a VPN or proxy. Each switch is changed with two-admin approval
+    // on Fees & settings (M3 PR 7). Top-ups check it from M3 PR 2; the others as they are built.
+    'network_risk' => [
+        'refuse' => [
+            'staff_sign_in' => true,
+            'creator_kyc' => true,
+            'payouts' => true,
+            'topups' => true,
+        ],
+    ],
+
+    // D-21: the currencies a fan can see next to credits. Display only.
+    'display_currencies' => ['USD', 'KES'],
+
     // Gateway drivers. Only "fake" exists until a provider is chosen (see CLAUDE.md open decisions).
     // A fake driver refuses to run in production.
     'drivers' => [
@@ -147,6 +161,8 @@ return [
         'sms' => env('FANFOLIO_SMS_DRIVER', 'fake'),
         // "hibp" is the Pwned Passwords range API (k-anonymity, no account or key).
         'breached_passwords' => env('FANFOLIO_BREACHED_PASSWORDS_DRIVER', 'fake'),
+        // D-16: VPN and proxy detection; the IP-reputation provider is not chosen.
+        'network_risk' => env('FANFOLIO_NETWORK_RISK_DRIVER', 'fake'),
         'drm' => env('FANFOLIO_DRM_DRIVER', 'fake'),
         'malware' => env('FANFOLIO_MALWARE_DRIVER', 'fake'),
         'abuse_hash' => env('FANFOLIO_ABUSE_HASH_DRIVER', 'fake'),
@@ -166,6 +182,8 @@ return [
         'fx_rates' => [
             'USD:KES' => 130_000_000,
         ],
+        // Addresses the fake NetworkRiskCheck treats as a VPN or proxy (D-16).
+        'anonymised_ips' => [],
     ],
 
 ];

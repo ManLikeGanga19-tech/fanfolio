@@ -100,6 +100,7 @@ return [
 
     'waits' => [
         'redis:default' => 60,
+        'redis:payments' => 60,
     ],
 
     /*
@@ -212,12 +213,33 @@ return [
             'timeout' => 60,
             'nice' => 0,
         ],
+        // Spec: gateway webhooks and other money jobs run on their own "payments" queue, so they
+        // never wait behind email; an alert fires when it waits over 60 s (spec "Observability").
+        'supervisor-payments' => [
+            'connection' => 'redis',
+            'queue' => ['payments'],
+            'balance' => 'auto',
+            'autoScalingStrategy' => 'time',
+            'maxProcesses' => 1,
+            'maxTime' => 0,
+            'maxJobs' => 0,
+            'memory' => 128,
+            // Each job sets its own retries and back-off (ProcessGatewayWebhook: 5 tries).
+            'tries' => 5,
+            'timeout' => 60,
+            'nice' => 0,
+        ],
     ],
 
     'environments' => [
         'production' => [
             'supervisor-1' => [
                 'maxProcesses' => 10,
+                'balanceMaxShift' => 1,
+                'balanceCooldown' => 3,
+            ],
+            'supervisor-payments' => [
+                'maxProcesses' => 5,
                 'balanceMaxShift' => 1,
                 'balanceCooldown' => 3,
             ],

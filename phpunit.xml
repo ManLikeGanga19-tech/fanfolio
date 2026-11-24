@@ -79,6 +79,8 @@
         <env name="FANFOLIO_CLASSIFIER_DRIVER" value="fake" force="true"/>
         <server name="FANFOLIO_CLASSIFIER_DRIVER" value="fake" force="true"/>
         <env name="FANFOLIO_LEAK_CRAWLER_DRIVER" value="fake" force="true"/>
+        <env name="FANFOLIO_NETWORK_RISK_DRIVER" value="fake" force="true"/>
+        <server name="FANFOLIO_NETWORK_RISK_DRIVER" value="fake" force="true"/>
         <server name="FANFOLIO_LEAK_CRAWLER_DRIVER" value="fake" force="true"/>
     </php>
 </phpunit>

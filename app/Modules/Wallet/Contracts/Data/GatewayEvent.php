@@ -19,5 +19,7 @@ final readonly class GatewayEvent
         public string $gatewayRef,
         public Money $amount,
         public DateTimeImmutable $occurredAt,
+        /** How the fan paid, as the gateway shows it ("Visa ····4417", "USDT"). Never a card number. */
+        public ?string $paymentHint = null,
     ) {}
 }
