@@ -13,6 +13,7 @@ use App\Modules\Identity\Contracts\Data\VerificationStatus;
 use App\Modules\Identity\Contracts\IdentityVerifier;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 /**
  * Decision D-01: staff look at an ID image or selfie frame fetched from the KYC
@@ -38,7 +39,18 @@ final class KycDocumentController
             ->first();
         abort_unless($check instanceof CreatorKyc, 404);
 
-        $image = $verifier->fetchDocumentImage($check->provider_ref, $documentSide);
+        try {
+            $image = $verifier->fetchDocumentImage($check->provider_ref, $documentSide);
+        } catch (Throwable $e) {
+            // The provider failed or no longer holds the image. Logged, not audited:
+            // nothing was seen. Never a cached page either.
+            report($e);
+
+            return response('The verification partner could not return this document. Try again later, or ask the creator to retake their ID.', 502, [
+                'Content-Type' => 'text/plain; charset=UTF-8',
+                'Cache-Control' => 'no-store, private',
+            ]);
+        }
 
         $audit->record('kyc.document_viewed', $staffId, 'creator_kyc', $check->id, ['side' => $documentSide->value]);
 

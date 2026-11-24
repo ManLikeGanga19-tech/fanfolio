@@ -22,7 +22,7 @@ See `docs/backend-spec.md` for the module's rules and `docs/plans/M2.md` for the
 | GET, POST | `/creator/profile` | Step 1 of 4: display name, handle, category, adult flag. "Save & exit" returns to the account hub | 20 per minute per account |
 | GET | `/creator/handle-check?handle=` | "Available" hint while typing; the save checks again | 60 per minute per account |
 | GET | `/creator/kyc` | Steps 2–3 of 4: ID document and selfie liveness, "Action needed" (board 8), or the result | none |
-| POST | `/creator/kyc` | Opens a session with the KYC provider and sends the creator to its hosted page (D-11) | 10 per hour per account (each start is a paid provider session) |
+| POST | `/creator/kyc` | Opens a session with the KYC provider (D-11). A phone goes to its hosted page; a computer gets a QR code to continue on a phone (D-14, `Identity\Contracts\PhoneHandoff`) | 10 per hour per account (each start is a paid provider session) |
 | GET | `/creator/kyc/return?ref=` | The provider sends the creator back here. The result is fetched from the provider for a check that belongs to this creator; nothing in the URL but the reference is read | 20 per minute per account |
 | GET, POST | `/creator/payout` | Step 4 of 4: bank account, USDT (TRC-20) wallet or Paxum. Needs a passkey or authenticator code confirmed in the last 10 minutes (`step-up:second-factor`, SEC-04, D-13) and a passed ID check | 20 per minute per account |
 | GET, POST | `/creator/review` | Review & submit (board 6). Needs the page, a passed ID check, a payout method and both statements, then goes to `/creator/status` | 20 per minute per account |

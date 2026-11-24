@@ -1,4 +1,6 @@
+import { execFileSync } from 'node:child_process';
 import { createHmac, randomBytes } from 'node:crypto';
+import { fileURLToPath } from 'node:url';
 import AxeBuilder from '@axe-core/playwright';
 import { expect } from '@playwright/test';
 
@@ -87,4 +89,69 @@ export function totpCode(base32Secret, at = Date.now()) {
     const code = (hmac.readUInt32BE(offset) & 0x7fffffff) % 1_000_000;
 
     return code.toString().padStart(6, '0');
+}
+
+/** Signs up a fresh fan through the real sign-up screen (step 1). */
+export async function signUp(page, account) {
+    await page.goto('/signup');
+    await page.getByLabel('Email').fill(account.email);
+    await page.getByLabel('Username').fill(account.username);
+    await page.getByLabel('Password', { exact: true }).fill(account.password);
+    await page.getByLabel('Confirm password', { exact: true }).fill(account.password);
+    await page.getByRole('checkbox').check();
+    await page.getByRole('button', { name: 'Continue', exact: true }).click();
+    await expect(page).toHaveURL(/\/signup\/email$/);
+}
+
+/** Turns on an authenticator app from Devices & security; returns its set-up key. */
+export async function setUpAuthenticator(page) {
+    await page.goto('/account/security');
+    await page.getByRole('button', { name: 'Set up' }).click();
+    await expect(page.getByRole('heading', { name: 'Set up authenticator app' })).toBeVisible();
+
+    const secret = (await page.getByLabel('Set-up key').textContent()).trim();
+    await page.getByLabel('6-digit code').fill(totpCode(secret));
+    await page.getByRole('button', { name: 'Turn on' }).click();
+    await expect(page.getByRole('heading', { name: 'Save your recovery codes' })).toBeVisible();
+
+    return secret;
+}
+
+/**
+ * Decision D-14: makes an account staff with the development-only command. Runs on the
+ * same machine as the app, with the same database settings (the environment it inherits).
+ */
+export function makeStaff(email, role = 'admin') {
+    execFileSync('php', ['artisan', 'fanfolio:dev-staff', email, `--role=${role}`], {
+        cwd: fileURLToPath(new URL('../..', import.meta.url)),
+        stdio: 'pipe',
+    });
+}
+
+/**
+ * Starts the ID and selfie check and follows it to the end with the Fake provider
+ * (D-14): a computer gets a QR code and, in development mode, "continue on this
+ * computer"; the development stand-in capture page accepts anything.
+ */
+export async function passIdCheck(page) {
+    await page.getByRole('button', { name: 'Start ID check' }).click();
+
+    const onComputer = page.getByRole('heading', { name: 'Continue on your phone' });
+    const standIn = page.getByText('Development stand-in for the verification partner');
+    const matched = page.getByRole('heading', { name: 'ID and selfie matched' });
+    await expect(onComputer.or(standIn).or(matched)).toBeVisible();
+
+    if (await onComputer.isVisible()) {
+        await expectNoAxeViolations(page);
+        await page.getByRole('link', { name: 'Continue on this computer (development only)' }).click();
+        await expect(standIn.or(matched)).toBeVisible();
+    }
+
+    if (await standIn.isVisible()) {
+        await expectNoAxeViolations(page);
+        await expectVisibleFocusOnTab(page);
+        await page.getByRole('button', { name: 'Finish' }).click();
+    }
+
+    await expect(matched).toBeVisible();
 }

@@ -6,9 +6,12 @@ namespace App\Modules\Identity\Providers;
 
 use App\Modules\Creators\Events\CreatorApproved;
 use App\Modules\Identity\Actions\AccountLookup;
+use App\Modules\Identity\Actions\PhoneHandoffs;
+use App\Modules\Identity\Console\MakeDevStaff;
 use App\Modules\Identity\Contracts\Accounts;
 use App\Modules\Identity\Contracts\BreachedPasswordChecker;
 use App\Modules\Identity\Contracts\IdentityVerifier;
+use App\Modules\Identity\Contracts\PhoneHandoff;
 use App\Modules\Identity\Contracts\SmsSender;
 use App\Modules\Identity\Gateways\Fake\FakeBreachedPasswordChecker;
 use App\Modules\Identity\Gateways\Fake\FakeIdentityVerifier;
@@ -55,6 +58,7 @@ final class IdentityServiceProvider extends ModuleServiceProvider
     public function register(): void
     {
         $this->bindDriver(IdentityVerifier::class, 'kyc', ['fake' => FakeIdentityVerifier::class]);
+        $this->app->bind(PhoneHandoff::class, PhoneHandoffs::class);
         $this->bindDriver(SmsSender::class, 'sms', ['fake' => FakeSmsSender::class]);
         $this->bindDriver(BreachedPasswordChecker::class, 'breached_passwords', [
             'fake' => FakeBreachedPasswordChecker::class,
@@ -84,6 +88,10 @@ final class IdentityServiceProvider extends ModuleServiceProvider
         parent::boot();
 
         $this->rateLimits();
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([MakeDevStaff::class]);
+        }
     }
 
     /**
@@ -118,6 +126,9 @@ final class IdentityServiceProvider extends ModuleServiceProvider
             Limit::perHour(5)->by('password-reset:'.mb_strtolower($request->string('email')->toString())),
             Limit::perHour(20)->by('password-reset-ip:'.$request->ip()),
         ]);
+
+        // D-14: phone links for the ID and face scan, per address.
+        RateLimiter::for('phone-handoff', static fn (Request $request): Limit => Limit::perMinute(20)->by('phone-handoff:'.$request->ip()));
 
         RateLimiter::for('otp-verify', static fn (Request $request): Limit => Limit::perMinute(10)->by('otp-verify:'.self::userKey($request)));
     }

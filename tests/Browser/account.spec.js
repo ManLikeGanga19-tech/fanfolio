@@ -1,12 +1,17 @@
 import { expect, test } from '@playwright/test';
-import { expectNoAxeViolations, expectVisibleFocusOnTab, fakeAccount, totpCode } from './support.js';
+import {
+    expectNoAxeViolations, expectVisibleFocusOnTab, fakeAccount, makeStaff, passIdCheck, setUpAuthenticator, signUp, totpCode,
+} from './support.js';
 
 // Signed-in pages, reached through the real flows with a fresh fake account: sign up,
 // email code, age check, account hub, security, step-up, authenticator set-up, recovery
-// codes, then the second-factor screen at log in.
+// codes, creator onboarding, staff approval in /admin, /studio, then the second-factor
+// screen at log in.
 test.describe.configure({ mode: 'serial' });
 
-test('signed-in pages pass axe and keep a visible focus ring', async ({ page }) => {
+test('signed-in pages pass axe and keep a visible focus ring', async ({ page, browser }) => {
+    // Two accounts and about twenty pages, on a dev server reading from OneDrive.
+    test.setTimeout(420_000);
     const account = fakeAccount();
 
     await page.goto('/signup');
@@ -69,13 +74,11 @@ test('signed-in pages pass axe and keep a visible focus ring', async ({ page }) 
     await page.getByRole('button', { name: 'Continue' }).click();
     await expect(page.getByText('Saved. Next: verify your identity.')).toBeVisible();
 
-    // Steps 2–3: ID and selfie. The fake provider sends the creator straight back.
+    // Steps 2–3: ID and selfie, on a phone or through the QR code on a computer (D-14).
     await expect(page.getByRole('heading', { name: 'Scan your ID' })).toBeVisible();
     await expectNoAxeViolations(page);
     await expectVisibleFocusOnTab(page);
-    await page.getByRole('button', { name: 'Start ID check' }).click();
-
-    await expect(page.getByRole('heading', { name: 'ID and selfie matched' })).toBeVisible();
+    await passIdCheck(page);
     await expectNoAxeViolations(page);
     await page.getByRole('link', { name: 'Continue' }).click();
 
@@ -102,6 +105,35 @@ test('signed-in pages pass axe and keep a visible focus ring', async ({ page }) 
     await page.getByLabel(/Everyone in my content is 18\+/).check();
     await page.getByRole('button', { name: 'Submit for review' }).click();
     await expect(page.getByRole('heading', { name: "We're reviewing your account" })).toBeVisible();
+    await expectNoAxeViolations(page);
+
+    // Staff approve the application in /admin (a second account, made staff with the
+    // development-only command, D-14), then the creator opens /studio.
+    const staffContext = await browser.newContext({ ...test.info().project.use });
+    const staffPage = await staffContext.newPage();
+    const staff = fakeAccount();
+    await signUp(staffPage, staff);
+    makeStaff(staff.email);
+    await setUpAuthenticator(staffPage);
+
+    await staffPage.goto('/admin/creator-approvals');
+    await expect(staffPage.getByRole('heading', { name: 'Creators awaiting review' })).toBeVisible();
+    await expectNoAxeViolations(staffPage);
+    // Oldest first, so search for this run's creator.
+    const handle = account.username.replace('_', '.');
+    await staffPage.getByRole('searchbox').fill(handle);
+    const row = staffPage.getByRole('row').filter({ hasText: `@${handle}` });
+    await row.getByRole('button', { name: 'Approve' }).click();
+    // Filament's confirmation modal is an alertdialog (a plain dialog on older versions).
+    await staffPage.getByRole('alertdialog').or(staffPage.getByRole('dialog')).getByRole('button', { name: 'Confirm' }).click();
+    await expect(staffPage.getByText('Approved.')).toBeVisible();
+    await staffContext.close();
+
+    await page.goto('/creator/status');
+    await expect(page.getByRole('heading', { name: "You're approved" })).toBeVisible();
+    await expectNoAxeViolations(page);
+    await page.goto('/studio');
+    await expect(page.getByRole('heading', { name: 'Welcome to Studio' })).toBeVisible();
     await expectNoAxeViolations(page);
 
     // Log out, log back in: the second-factor screen.

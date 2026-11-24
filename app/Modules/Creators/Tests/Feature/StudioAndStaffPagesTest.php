@@ -10,6 +10,7 @@ use App\Modules\Creators\Filament\Admin\CreatorApprovals;
 use App\Modules\Creators\Models\Creator;
 use Filament\Actions\Testing\TestAction;
 use Filament\Facades\Filament;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 use Tests\Support\RecordingAuditLog;
@@ -30,7 +31,7 @@ function approvedCreator(): Creator
     $creator = Creator::factory()->create(['user_id' => $user->id]);
 
     config(['fanfolio.fake.kyc_outcome' => 'pass']);
-    test()->get((string) test()->post('/creator/kyc')->headers->get('Location'));
+    test()->get((string) test()->post('/creator/kyc', ['device' => 'phone'])->headers->get('Location'));
     confirmedSecondFactor();
     test()->post('/creator/payout', ['rail' => 'bank', 'bank_name' => 'Test Bank', 'account_number' => '000011112222', 'account_name' => 'Test Person']);
     test()->post('/creator/review', ['terms' => '1', 'co_performers' => '1']);
@@ -106,6 +107,20 @@ it('streams the ID image from the provider to staff, uncached and audited (D-01)
     $this->get(route('creator.kyc-document', ['creator' => $creator->id, 'side' => 'tattoo']))->assertNotFound();
 });
 
+it('tells staff when the provider cannot return the ID image, without a server error or audit entry', function (): void {
+    $creator = approvedCreator();
+    signedInStaff('moderator');
+    // The provider no longer knows the session (the fake keeps it in the cache).
+    Cache::flush();
+
+    $response = $this->get(route('creator.kyc-document', ['creator' => $creator->id, 'side' => 'front']))
+        ->assertStatus(502)
+        ->assertSee('could not return this document');
+
+    expect((string) $response->headers->get('Cache-Control'))->toContain('no-store')
+        ->and($this->audit->of('kyc.document_viewed'))->toHaveCount(0);
+});
+
 it('refuses the ID viewer to anyone but staff', function (): void {
     $creator = approvedCreator();
 
@@ -123,7 +138,7 @@ it('lists submitted applications for staff with masked details only, and approve
     $user = signedInFanWithMfa();
     $creator = Creator::factory()->create(['user_id' => $user->id, 'display_name' => 'Waiting Creator', 'handle' => 'waiting.creator']);
     config(['fanfolio.fake.kyc_outcome' => 'pass']);
-    $this->get((string) $this->post('/creator/kyc')->headers->get('Location'));
+    $this->get((string) $this->post('/creator/kyc', ['device' => 'phone'])->headers->get('Location'));
     confirmedSecondFactor();
     $this->post('/creator/payout', ['rail' => 'bank', 'bank_name' => 'Test Bank', 'account_number' => '000011112222', 'account_name' => 'Test Person']);
     $this->post('/creator/review', ['terms' => '1', 'co_performers' => '1']);
@@ -152,4 +167,46 @@ it('keeps fans and creators out of the staff page', function (): void {
     approvedCreator();
 
     $this->get('/admin/creator-approvals')->assertForbidden();
+});
+
+it('gives every inline script in the panels the CSP nonce, so Filament works under the policy (D-07)', function (string $path): void {
+    $creator = approvedCreator();
+    if ($path === '/admin/creator-approvals') {
+        signedInStaff();
+    } else {
+        actAsUserId($creator->user_id);
+    }
+
+    $response = $this->get($path)->assertOk();
+    preg_match("/'nonce-([^']+)'/", (string) $response->headers->get('Content-Security-Policy'), $nonce);
+    preg_match_all('/<script(?![^>]*\bsrc=)[^>]*>/', (string) $response->getContent(), $inline);
+
+    expect($nonce[1] ?? null)->not->toBeNull()
+        ->and($inline[0])->not->toBeEmpty();
+    foreach ($inline[0] as $tag) {
+        expect($tag)->toContain('nonce="'.$nonce[1].'"');
+    }
+})->with(['/admin/creator-approvals', '/studio']);
+
+it('points creators past onboarding to their status, and the account hub to Studio once approved', function (): void {
+    $creator = approvedCreator();
+    // A fresh request loads the account again, with the creator role from the approval.
+    actAsUserId($creator->user_id);
+
+    $this->get('/creator/start')->assertRedirect(route('creator.status'));
+    $this->get('/account')->assertOk()
+        ->assertSee('Creator Studio')
+        ->assertSee(url('/studio'), false)
+        ->assertDontSee('Become a creator');
+
+    $creator->forceFill(['status' => CreatorStatus::Submitted])->save();
+    $this->get('/creator/start')->assertRedirect(route('creator.status'));
+});
+
+it('shows staff a link to Admin on the account hub', function (): void {
+    signedInStaff();
+
+    $this->get('/account')->assertOk()
+        ->assertSee(url('/admin'), false)
+        ->assertDontSee('Become a creator');
 });

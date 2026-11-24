@@ -147,6 +147,11 @@ return [
         'leak_crawler' => env('FANFOLIO_LEAK_CRAWLER_DRIVER', 'fake'),
     ],
 
+    // Decision D-14: development shortcuts (any email code, a stand-in KYC capture page,
+    // "continue on this computer", fanfolio:dev-staff). Honoured only with APP_ENV=local;
+    // the app refuses to boot in production with it on (App\Support\DevMode).
+    'dev_mode' => (bool) env('FANFOLIO_DEV_MODE', false),
+
     // Settings for the fake drivers only (local and testing).
     'fake' => [
         'kyc_outcome' => env('FANFOLIO_FAKE_KYC_OUTCOME', 'pass'),

@@ -8,12 +8,16 @@ use App\Modules\Audit\Contracts\AuditLog;
 use App\Modules\Identity\Exceptions\IdentityException;
 use App\Modules\Identity\Models\EmailVerification;
 use App\Modules\Identity\Models\User;
+use App\Support\DevMode;
 use App\Support\Security\KeyedHash;
 use Illuminate\Support\Facades\DB;
 
 /**
  * Checks the latest email code: at most 5 attempts within 10 minutes. Success marks
  * the email verified. Each wrong attempt is committed before the refusal.
+ *
+ * Development mode (D-14, local only): any 6-digit code verifies, with or without a
+ * code sent, so sign-up can be tried without reading the mail log.
  */
 final readonly class VerifyEmail
 {
@@ -24,6 +28,12 @@ final readonly class VerifyEmail
 
     public function handle(User $user, string $code): void
     {
+        if (DevMode::enabled()) {
+            $this->markVerified($user, dev: true);
+
+            return;
+        }
+
         $matched = DB::transaction(function () use ($user, $code): bool {
             $verification = EmailVerification::query()
                 ->where('user_id', $user->id)
@@ -50,9 +60,7 @@ final readonly class VerifyEmail
             }
 
             $verification->forceFill(['verified_at' => now()])->save();
-            $user->forceFill(['email_verified_at' => now()])->save();
-
-            $this->audit->record('identity.email_verified', $user->id, 'user', $user->id);
+            $this->markVerified($user, dev: false);
 
             return true;
         });
@@ -60,5 +68,12 @@ final readonly class VerifyEmail
         if (! $matched) {
             throw new IdentityException('That code is not right. Check the email and try again.', 'code');
         }
+    }
+
+    private function markVerified(User $user, bool $dev): void
+    {
+        $user->forceFill(['email_verified_at' => now()])->save();
+
+        $this->audit->record('identity.email_verified', $user->id, 'user', $user->id, $dev ? ['dev_mode' => true] : []);
     }
 }

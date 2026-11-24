@@ -43,7 +43,10 @@ it('shows Become a creator with the screen copy', function (): void {
         ->assertSee('Get paid by the fans who love your work')
         ->assertSee('Keep 80% of every sale')
         ->assertSee('Start verification')
-        ->assertSee('You must be 18 or older.');
+        ->assertSee('You must be 18 or older.')
+        // D-01, rule 10: the board's "stored encrypted" is replaced; we never store the image.
+        ->assertSee('We never store the image.')
+        ->assertDontSee('stored encrypted');
 });
 
 it('needs MFA before starting, and comes back here after', function (): void {

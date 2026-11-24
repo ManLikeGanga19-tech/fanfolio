@@ -21,10 +21,22 @@
                 <span>Devices &amp; security</span>
                 <span class="text-small text-ink-muted">{{ $deviceCount }} {{ $deviceCount === 1 ? 'device' : 'devices' }}</span>
             </a>
-            <a href="{{ route('creator.start') }}" class="flex min-h-11 items-center justify-between px-4 py-3 hover:bg-surface-raised">
-                <span>Become a creator</span>
-                <span class="text-small text-ink-muted" aria-hidden="true">›</span>
-            </a>
+            @if ($user->role->isStaff())
+                <a href="{{ url('/admin') }}" class="flex min-h-11 items-center justify-between px-4 py-3 hover:bg-surface-raised">
+                    <span>Admin</span>
+                    <span class="text-small text-ink-muted" aria-hidden="true">›</span>
+                </a>
+            @elseif ($user->role === \App\Modules\Identity\Enums\Role::Creator)
+                <a href="{{ url('/studio') }}" class="flex min-h-11 items-center justify-between px-4 py-3 hover:bg-surface-raised">
+                    <span>Creator Studio</span>
+                    <span class="text-small text-ink-muted" aria-hidden="true">›</span>
+                </a>
+            @else
+                <a href="{{ route('creator.start') }}" class="flex min-h-11 items-center justify-between px-4 py-3 hover:bg-surface-raised">
+                    <span>Become a creator</span>
+                    <span class="text-small text-ink-muted" aria-hidden="true">›</span>
+                </a>
+            @endif
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="flex min-h-11 w-full items-center px-4 py-3 text-left text-danger hover:bg-surface-raised">Log out</button>

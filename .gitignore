@@ -28,3 +28,6 @@ yarn-error.log
 /playwright-report
 /tests/Browser/.auth
 /screenshots
+
+# Local Claude Code settings: never committed.
+.claude/

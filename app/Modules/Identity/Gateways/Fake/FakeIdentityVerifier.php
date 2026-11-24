@@ -11,6 +11,7 @@ use App\Modules\Identity\Contracts\Data\VerificationResult;
 use App\Modules\Identity\Contracts\Data\VerificationSession;
 use App\Modules\Identity\Contracts\Data\VerificationStatus;
 use App\Modules\Identity\Contracts\IdentityVerifier;
+use App\Support\DevMode;
 use App\Support\Gateways\FakeDriver;
 use DateTimeImmutable;
 use Illuminate\Contracts\Cache\Repository as Cache;
@@ -23,6 +24,10 @@ use RuntimeException;
  *
  * The outcome of each new session is the scripted one (willReturn) or else config
  * fanfolio.fake.kyc_outcome: pass, fail, review, underage or fraud.
+ * In development mode (D-14) the session opens a stand-in capture page that accepts
+ * any ID photo and any selfie, and lets the developer pick the outcome. Until that page
+ * is submitted the result is pending, as a real provider's would be; otherwise it
+ * returns straight to the return URL.
  * State lives in the cache so it survives across requests and Octane workers.
  */
 final class FakeIdentityVerifier implements FakeDriver, IdentityVerifier
@@ -60,9 +65,41 @@ final class FakeIdentityVerifier implements FakeDriver, IdentityVerifier
         $outcome = $this->scripted ?? (is_string($configured) ? $configured : 'pass');
         $this->scripted = null;
 
+        $return = $request->returnUrl.(str_contains($request->returnUrl, '?') ? '&' : '?').'ref='.$ref;
+
+        if (DevMode::enabled()) {
+            // Nothing captured yet: pending until the stand-in capture page is submitted.
+            $this->cache->put($this->key($ref), 'pending', now()->addDay());
+            $this->cache->put($this->key($ref).':return', $return, now()->addDay());
+
+            return new VerificationSession($ref, route('fake.kyc.capture', ['ref' => $ref]));
+        }
+
         $this->cache->put($this->key($ref), $outcome, now()->addDay());
 
-        return new VerificationSession($ref, $request->returnUrl.(str_contains($request->returnUrl, '?') ? '&' : '?').'ref='.$ref);
+        return new VerificationSession($ref, $return);
+    }
+
+    /**
+     * The stand-in capture page was submitted: record the chosen outcome and give back
+     * where the real provider would send the user. Null for an unknown session.
+     */
+    public function finishCapture(string $providerRef, string $outcome): ?string
+    {
+        $return = $this->cache->get($this->key($providerRef).':return');
+
+        if (! is_string($return) || ! in_array($outcome, self::OUTCOMES, true)) {
+            return null;
+        }
+
+        $this->cache->put($this->key($providerRef), $outcome, now()->addDay());
+
+        return $return;
+    }
+
+    public function hasCapture(string $providerRef): bool
+    {
+        return is_string($this->cache->get($this->key($providerRef).':return'));
     }
 
     public function result(string $providerRef): VerificationResult
@@ -77,6 +114,7 @@ final class FakeIdentityVerifier implements FakeDriver, IdentityVerifier
         $adultDob = $now->modify('-30 years');
 
         return match ($outcome) {
+            'pending' => new VerificationResult($providerRef, VerificationStatus::Pending, false, false, $now),
             'pass' => new VerificationResult($providerRef, VerificationStatus::Passed, true, true, $now, $adultDob, 'TEST PERSON', 'national_id', '0000', $now->modify('+5 years')),
             'review' => new VerificationResult($providerRef, VerificationStatus::Review, true, true, $now, $adultDob, 'TEST PERSON', 'national_id', '0000', $now->modify('+5 years'), failureReason: 'name_mismatch'),
             'fail' => new VerificationResult($providerRef, VerificationStatus::Failed, false, false, $now, failureReason: 'document_unreadable'),

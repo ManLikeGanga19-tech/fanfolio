@@ -54,7 +54,7 @@ function runKyc(string $outcome = 'pass'): TestResponse
 {
     kycOutcome($outcome);
 
-    $start = test()->post('/creator/kyc');
+    $start = test()->post('/creator/kyc', ['device' => 'phone']);
     $location = (string) $start->headers->get('Location');
     expect($location)->toStartWith(route('creator.kyc.return'));
 
@@ -66,7 +66,7 @@ it('sends guests to log in and non-applicants to Become a creator', function ():
 
     signedInFanWithMfa();
     $this->get('/creator/kyc')->assertRedirect(route('creator.start'));
-    $this->post('/creator/kyc')->assertRedirect(route('creator.start'));
+    $this->post('/creator/kyc', ['device' => 'phone'])->assertRedirect(route('creator.start'));
 });
 
 it('needs the page set up first', function (): void {
@@ -74,7 +74,7 @@ it('needs the page set up first', function (): void {
     Creator::factory()->create(['user_id' => $user->id, 'handle' => null, 'display_name' => null]);
 
     $this->get('/creator/kyc')->assertRedirect(route('creator.profile'));
-    $this->post('/creator/kyc')->assertRedirect(route('creator.profile'))->assertSessionHasErrors(['profile' => 'Set up your page first.']);
+    $this->post('/creator/kyc', ['device' => 'phone'])->assertRedirect(route('creator.profile'))->assertSessionHasErrors(['profile' => 'Set up your page first.']);
 });
 
 it('goes from profile basics to the ID step', function (): void {
@@ -95,7 +95,7 @@ it('goes from profile basics to the ID step', function (): void {
 it('sends the creator to the provider and keeps only the reference', function (): void {
     $creator = applicant();
 
-    $start = $this->post('/creator/kyc');
+    $start = $this->post('/creator/kyc', ['device' => 'phone']);
 
     $check = CreatorKyc::query()->sole();
     expect($start->headers->get('Location'))->toContain('ref='.$check->provider_ref)
@@ -166,7 +166,7 @@ it('rejects an under-18 applicant, audited, with an event for Trust & Safety', f
 
     // No second try.
     $this->get('/creator/kyc')->assertSee('We could not verify you')->assertDontSee('Start ID check');
-    $this->post('/creator/kyc')->assertSessionHasErrors(['kyc' => 'We could not verify you. Contact support if you think this is a mistake.']);
+    $this->post('/creator/kyc', ['device' => 'phone'])->assertSessionHasErrors(['kyc' => 'We could not verify you. Contact support if you think this is a mistake.']);
     expect(CreatorKyc::query()->count())->toBe(1);
 });
 
@@ -208,7 +208,7 @@ it('rejects a date of birth under 18 even when the provider says adult', functio
     };
     app()->instance(IdentityVerifier::class, $verifier);
 
-    $location = (string) $this->post('/creator/kyc')->headers->get('Location');
+    $location = (string) $this->post('/creator/kyc', ['device' => 'phone'])->headers->get('Location');
     $this->get($location);
 
     expect($creator->refresh()->kyc_status)->toBe(KycStatus::Rejected)
@@ -258,9 +258,9 @@ it('ignores a reload of the return page and a stale reference', function (): voi
     $creator = applicant();
 
     kycOutcome('fail');
-    $first = (string) $this->post('/creator/kyc')->headers->get('Location');
+    $first = (string) $this->post('/creator/kyc', ['device' => 'phone'])->headers->get('Location');
     kycOutcome('pass');
-    $second = (string) $this->post('/creator/kyc')->headers->get('Location');
+    $second = (string) $this->post('/creator/kyc', ['device' => 'phone'])->headers->get('Location');
 
     // The older check is replaced by the newer one and changes nothing.
     $this->get($first);
@@ -276,7 +276,7 @@ it('ignores a reload of the return page and a stale reference', function (): voi
 
 it('offers to check again while the provider is still working', function (): void {
     $creator = applicant();
-    $this->post('/creator/kyc');
+    $this->post('/creator/kyc', ['device' => 'phone']);
 
     $ref = CreatorKyc::query()->sole()->provider_ref;
     $this->get('/creator/kyc')->assertSee('Check again')->assertSee(e(route('creator.kyc.return', ['ref' => $ref])), false);
@@ -318,7 +318,7 @@ it('lets an approved creator renew an expiring ID and stay approved when it is t
     $creator->refresh()->forceFill(['status' => CreatorStatus::Active, 'kyc_status' => KycStatus::Approved, 'approved_at' => now()])->save();
 
     // Not yet: the ID is valid for years.
-    $this->post('/creator/kyc')->assertSessionHasErrors(['kyc' => 'Your ID and selfie are already checked.']);
+    $this->post('/creator/kyc', ['device' => 'phone'])->assertSessionHasErrors(['kyc' => 'Your ID and selfie are already checked.']);
 
     $creator->forceFill(['id_expires_at' => now()->addDays(10), 'id_expiry_reminded_at' => now()])->save();
     runKyc('pass')->assertSessionHas('status', 'Your new ID is verified.');
@@ -347,8 +347,8 @@ it('rate limits starting checks', function (): void {
     applicant();
 
     foreach (range(1, 10) as $ignored) {
-        $this->post('/creator/kyc')->assertRedirect();
+        $this->post('/creator/kyc', ['device' => 'phone'])->assertRedirect();
     }
 
-    $this->post('/creator/kyc')->assertTooManyRequests();
+    $this->post('/creator/kyc', ['device' => 'phone'])->assertTooManyRequests();
 });

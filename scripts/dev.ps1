@@ -20,6 +20,8 @@ $env:SESSION_DRIVER = 'file'
 $env:CACHE_STORE = 'file'
 $env:QUEUE_CONNECTION = 'sync'
 $env:MAIL_MAILER = 'log'
+# Decision D-14: any email code, the stand-in KYC capture page, fanfolio:dev-staff.
+$env:FANFOLIO_DEV_MODE = 'true'
 
 php artisan migrate --force
 php artisan serve --host=127.0.0.1 --port=8088

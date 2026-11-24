@@ -6,14 +6,27 @@ use App\Modules\Identity\Http\Controllers\AccountController;
 use App\Modules\Identity\Http\Controllers\AgeVerificationController;
 use App\Modules\Identity\Http\Controllers\DeviceLimitController;
 use App\Modules\Identity\Http\Controllers\EmailVerificationController;
+use App\Modules\Identity\Http\Controllers\FakeKycCaptureController;
 use App\Modules\Identity\Http\Controllers\LoginController;
 use App\Modules\Identity\Http\Controllers\MfaChallengeController;
 use App\Modules\Identity\Http\Controllers\PasskeyLoginController;
 use App\Modules\Identity\Http\Controllers\PasswordResetController;
+use App\Modules\Identity\Http\Controllers\PhoneHandoffController;
 use App\Modules\Identity\Http\Controllers\SecurityController;
 use App\Modules\Identity\Http\Controllers\SignUpController;
 use App\Modules\Identity\Http\Controllers\StepUpController;
 use Illuminate\Support\Facades\Route;
+
+// Decision D-14: the phone side of the ID and face scan. The phone is usually not signed
+// in; the single-use, 10-minute link is the proof.
+Route::get('/verify/on-phone/{token}', [PhoneHandoffController::class, 'open'])->middleware('throttle:phone-handoff')->name('handoff.open');
+Route::get('/verify/on-phone-done', [PhoneHandoffController::class, 'done'])->middleware('throttle:phone-handoff')->name('handoff.done');
+
+// Decision D-14, development only: the stand-in for the KYC provider's capture page.
+if (app()->environment('local', 'testing') && config('fanfolio.drivers.kyc') === 'fake') {
+    Route::get('/_fake/kyc/{ref}', [FakeKycCaptureController::class, 'show'])->name('fake.kyc.capture');
+    Route::post('/_fake/kyc/{ref}', [FakeKycCaptureController::class, 'finish']);
+}
 
 Route::middleware('guest')->group(function (): void {
     Route::view('/', 'identity::landing')->name('landing');

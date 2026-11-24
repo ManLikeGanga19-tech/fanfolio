@@ -43,6 +43,17 @@ $env:OPENSSL_CONF="<php folder>xtras\ssl\openssl.cnf"   # the passkey tests mak
 vendor/bin/pest
 ```
 
+## Development mode
+
+`.env.example` and `scripts/dev.ps1` turn on `FANFOLIO_DEV_MODE` (decision D-14; honoured only with `APP_ENV=local`):
+
+- any 6-digit email code works at sign-up;
+- the ID and selfie check opens a stand-in capture page that accepts anything (pick the result to test: pass, fail, review, underage, fraud);
+- on a computer the ID check shows a QR code for your phone, plus "Continue on this computer (development only)";
+- `php artisan fanfolio:dev-staff you@example.test` makes an account an admin (add `--role=moderator` for a moderator). Then set up an authenticator app and open `/admin`.
+
+To try the phone flow on a real phone, open the app by your computer's network address. The live camera needs https; over plain http the page falls back to the phone's camera app.
+
 ## Checks
 
 ```sh
@@ -52,7 +63,7 @@ vendor/bin/pest --testsuite=Architecture,Unit           # fast, no database
 npx playwright install chromium && npm run test:a11y   # axe, keyboard and focus checks against the running app
 ```
 
-The accessibility checks (`tests/Browser`) open every fan page in Chromium, phone and desktop sizes. They fail on any WCAG 2.2 A/AA axe violation, on a control without a visible focus ring, or on a broken keyboard path. The signed-in pages are reached by signing up a fresh fake account through the real screens. Point them at another address with `A11Y_BASE_URL`.
+The accessibility checks (`tests/Browser`) open every fan page in Chromium, phone and desktop sizes. They fail on any WCAG 2.2 A/AA axe violation, on a control without a visible focus ring, or on a broken keyboard path. The signed-in pages are reached by signing up a fresh fake account through the real screens. The walk-through also makes a second account staff with `fanfolio:dev-staff`, approves the creator in `/admin` and opens `/studio`, so it needs development mode on and the same database settings as the app. Point them at another address with `A11Y_BASE_URL`.
 
 CI (`.github/workflows/ci.yml`) also runs:
 - migrate → rollback → migrate
