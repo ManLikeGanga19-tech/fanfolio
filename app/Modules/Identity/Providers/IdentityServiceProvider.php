@@ -9,6 +9,7 @@ use App\Modules\Identity\Actions\AccountLookup;
 use App\Modules\Identity\Actions\Directory;
 use App\Modules\Identity\Actions\PhoneHandoffs;
 use App\Modules\Identity\Actions\Restrictions;
+use App\Modules\Identity\Actions\SessionChecks;
 use App\Modules\Identity\Actions\SignUpStats;
 use App\Modules\Identity\Console\EndSuspensions;
 use App\Modules\Identity\Console\MakeDevStaff;
@@ -20,6 +21,7 @@ use App\Modules\Identity\Contracts\BreachedPasswordChecker;
 use App\Modules\Identity\Contracts\IdentityVerifier;
 use App\Modules\Identity\Contracts\NetworkRiskCheck;
 use App\Modules\Identity\Contracts\PhoneHandoff;
+use App\Modules\Identity\Contracts\SessionSecurity;
 use App\Modules\Identity\Contracts\SmsSender;
 use App\Modules\Identity\Contracts\StaffAbility;
 use App\Modules\Identity\Gateways\Fake\FakeBreachedPasswordChecker;
@@ -73,6 +75,7 @@ final class IdentityServiceProvider extends ModuleServiceProvider
         $this->app->bind(PhoneHandoff::class, PhoneHandoffs::class);
         $this->bindDriver(SmsSender::class, 'sms', ['fake' => FakeSmsSender::class]);
         $this->bindDriver(NetworkRiskCheck::class, 'network_risk', ['fake' => FakeNetworkRiskCheck::class]);
+        $this->app->bind(SessionSecurity::class, SessionChecks::class);
         $this->bindDriver(BreachedPasswordChecker::class, 'breached_passwords', [
             'fake' => FakeBreachedPasswordChecker::class,
             'hibp' => HibpBreachedPasswordChecker::class,

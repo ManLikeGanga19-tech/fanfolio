@@ -50,6 +50,11 @@ beforeEach(function (): void {
         {
             return $this->test->earning[$userId] ?? false;
         }
+
+        public function canWithdraw(string $userId): bool
+        {
+            return $this->canEarn($userId);
+        }
     });
 });
 

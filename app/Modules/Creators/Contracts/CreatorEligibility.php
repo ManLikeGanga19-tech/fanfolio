@@ -15,4 +15,7 @@ interface CreatorEligibility
 
     /** The same conditions: no sale or payout for a creator who cannot publish. */
     public function canEarn(string $userId): bool;
+
+    /** Can earn, and an admin has not paused this creator's payouts (plan M8a use case 13). */
+    public function canWithdraw(string $userId): bool;
 }

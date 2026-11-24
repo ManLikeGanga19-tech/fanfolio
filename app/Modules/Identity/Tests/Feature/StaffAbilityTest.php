@@ -29,6 +29,7 @@ const ADMIN_ONLY = [
     StaffAbility::ViewSettings,
     StaffAbility::ProposeSettings,
     StaffAbility::RefundPurchase,
+    StaffAbility::ReviewPayouts,
 ];
 
 /** @return array<string, array{StaffAbility, Role, bool}> */

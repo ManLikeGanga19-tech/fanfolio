@@ -3,10 +3,12 @@
 declare(strict_types=1);
 
 use App\Modules\Creators\Actions\ApproveCreator;
+use App\Modules\Creators\Actions\PauseCreatorPayouts;
 use App\Modules\Creators\Actions\ReinstateCreator;
 use App\Modules\Creators\Actions\RequireIdRecheck;
 use App\Modules\Creators\Actions\SuspendCreator;
 use App\Modules\Creators\Contracts\CreatorEligibility;
+use App\Modules\Creators\Contracts\PayoutDestinations;
 use App\Modules\Creators\Enums\CreatorStatus;
 use App\Modules\Creators\Enums\FixKind;
 use App\Modules\Creators\Enums\KycStatus;
@@ -18,6 +20,7 @@ use App\Modules\Creators\Models\Creator;
 use App\Modules\Creators\Notifications\ApplicationDecision;
 use App\Modules\Creators\Notifications\CreatorStatusNotice;
 use App\Modules\Identity\Contracts\AccountRestrictions;
+use App\Modules\Wallet\Contracts\Data\PayoutRail;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
@@ -263,4 +266,57 @@ it('refuses staff acting on their own creator page', function (): void {
     Livewire::test(CreatorsDirectory::class, ['selected' => $creator->id])
         ->assertSee('This is your own creator page.')
         ->assertDontSee('Require a new ID check');
+});
+
+it('lets an admin pause and resume payouts while publishing goes on (M8a use case 13)', function (): void {
+    $creator = liveCreator();
+    $moderator = signedInStaff('moderator');
+    $eligibility = app(CreatorEligibility::class);
+
+    expect(fn () => app(PauseCreatorPayouts::class)->pause($creator->id, $moderator->id, 'Dispute'))
+        ->toThrow(CreatorException::class, 'Your role cannot do this.')
+        ->and(fn () => app(PauseCreatorPayouts::class)->pause($creator->id, $this->admin->id, ' '))
+        ->toThrow(CreatorException::class, 'Write why');
+
+    actAsUserId($this->admin->id);
+    Livewire::test(CreatorsDirectory::class, ['selected' => $creator->id])
+        ->set('note', 'Chargeback under review')
+        ->callAction('pausePayouts')
+        ->assertNotified('Payouts paused.')
+        ->assertSee('Paused since')
+        ->assertSee('Resume payouts');
+
+    expect($eligibility->canWithdraw($creator->user_id))->toBeFalse()
+        ->and($eligibility->canEarn($creator->user_id))->toBeTrue()
+        ->and($this->audit->of('creator.payouts_paused')[0]['context'])->toMatchArray(['note' => 'Chargeback under review']);
+
+    // Pausing again changes nothing.
+    app(PauseCreatorPayouts::class)->pause($creator->id, $this->admin->id, 'Again');
+    expect($this->audit->of('creator.payouts_paused'))->toHaveCount(1);
+
+    Livewire::test(CreatorsDirectory::class, ['selected' => $creator->id])
+        ->set('note', 'Resolved')
+        ->callAction('resumePayouts')
+        ->assertNotified('Payouts resumed.');
+
+    expect($eligibility->canWithdraw($creator->user_id))->toBeTrue()
+        ->and($this->audit->of('creator.payouts_resumed'))->toHaveCount(1);
+});
+
+it('gives Wallet the payout methods masked, and the details only for sending', function (): void {
+    $creator = liveCreator();
+    $lookup = app(PayoutDestinations::class);
+
+    $methods = $lookup->forUser($creator->user_id);
+    expect($methods)->toHaveCount(1)
+        ->and($methods[0]->displayHint)->toBe('Test Bank ····2222')
+        ->and($methods[0]->rail)->toBe(PayoutRail::Bank)
+        ->and($methods[0]->isDefault)->toBeTrue()
+        ->and($lookup->find($creator->user_id, $methods[0]->id)?->id)->toBe($methods[0]->id)
+        ->and($lookup->find($creator->user_id, 'nope'))->toBeNull()
+        ->and($lookup->instructionFor($creator->user_id, $methods[0]->id))->toMatchArray(['account_name' => 'Test Person'])
+        ->and($lookup->instructionFor($creator->user_id, 'nope'))->toBeNull()
+        // Another account sees none of them.
+        ->and($lookup->forUser($this->admin->id))->toBe([])
+        ->and($lookup->find($this->admin->id, $methods[0]->id))->toBeNull();
 });

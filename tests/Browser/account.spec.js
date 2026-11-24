@@ -220,6 +220,13 @@ test('signed-in pages pass axe and keep a visible focus ring', async ({ page, br
     await expect(page.getByRole('heading', { name: 'Welcome to Studio' })).toBeVisible();
     await expectNoAxeViolations(page);
 
+    // Studio · Earnings & withdrawals (canvas StudioEarnings, M3 PR 4).
+    await page.goto('/studio/earnings');
+    await expect(page.getByRole('heading', { name: 'Earnings & withdrawals' })).toBeVisible();
+    await expect(page.getByText('Available to withdraw')).toBeVisible();
+    await expectNoAxeViolations(page);
+    await expectVisibleFocusOnTab(page, { maxSteps: 60 });
+
     // Log out, log back in: the second-factor screen.
     await page.goto('/account');
     await page.getByRole('button', { name: 'Log out' }).click();

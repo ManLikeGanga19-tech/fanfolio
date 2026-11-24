@@ -96,6 +96,9 @@
                         <div class="{{ $row }}"><dt class="text-ink-muted">Applied</dt><dd>{{ $detail->created_at?->setTimezone($zone)->format('j M Y') ?? '—' }}</dd></div>
                         <div class="{{ $row }}"><dt class="text-ink-muted">Submitted</dt><dd>{{ $detail->submitted_at?->setTimezone($zone)->format('j M Y') ?? '—' }}</dd></div>
                         <div class="{{ $row }}"><dt class="text-ink-muted">Approved</dt><dd>{{ $detail->approved_at?->setTimezone($zone)->format('j M Y') ?? '—' }}</dd></div>
+                        @if ($detail->payouts_paused_at !== null)
+                            <div class="{{ $row }}"><dt class="text-ink-muted">Payouts</dt><dd class="text-warning">Paused since {{ $detail->payouts_paused_at->setTimezone($zone)->format('j M Y') }}</dd></div>
+                        @endif
                         @if ($detail->suspended_at !== null)
                             <div class="{{ $row }}"><dt class="text-ink-muted">Suspended</dt><dd>{{ $detail->suspended_at->setTimezone($zone)->format('j M Y, H:i') }}</dd></div>
                         @endif
@@ -168,6 +171,9 @@
                                 @if ($can['suspend']) {{ $this->suspendAction }} @endif
                                 @if ($can['pause']) {{ $this->pauseAction }} @endif
                                 @if ($can['recheck']) {{ $this->recheckAction }} @endif
+                                @if ($can['pausePayouts'])
+                                    @if ($detail->payouts_paused_at === null) {{ $this->pausePayoutsAction }} @else {{ $this->resumePayoutsAction }} @endif
+                                @endif
                             @elseif ($can['reinstate'])
                                 {{ $this->reinstateAction }}
                             @endif
