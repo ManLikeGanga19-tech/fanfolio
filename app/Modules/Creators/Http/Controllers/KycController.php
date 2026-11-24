@@ -6,6 +6,7 @@ namespace App\Modules\Creators\Http\Controllers;
 
 use App\Modules\Creators\Actions\CompleteCreatorKyc;
 use App\Modules\Creators\Actions\StartCreatorKyc;
+use App\Modules\Creators\Enums\FixKind;
 use App\Modules\Creators\Enums\KycStatus;
 use App\Modules\Creators\Exceptions\CreatorException;
 use App\Modules\Creators\Models\Creator;
@@ -47,10 +48,13 @@ final class KycController
             'creator' => $creator,
             'latest' => $latest,
             'canStart' => StartCreatorKyc::canStart($creator),
-            // Board 8: the last check failed for a reason a retake can fix.
-            'fix' => $latest?->status === VerificationStatus::Failed && $creator->kyc_status !== KycStatus::Rejected
-                ? (self::FIX_MESSAGES[(string) $latest->failure_reason] ?? 'We could not read your ID or selfie. Try again.')
-                : null,
+            // Board 8: staff asked for a retake, or the last check failed for a reason a retake can fix.
+            'fix' => match (true) {
+                $creator->kyc_status === KycStatus::Rejected => null,
+                $creator->fix_kind === FixKind::RetakeId && $creator->kyc_status === KycStatus::ActionNeeded => $creator->fixMessage(),
+                $latest?->status === VerificationStatus::Failed => self::FIX_MESSAGES[(string) $latest->failure_reason] ?? 'We could not read your ID or selfie. Try again.',
+                default => null,
+            },
         ]);
     }
 

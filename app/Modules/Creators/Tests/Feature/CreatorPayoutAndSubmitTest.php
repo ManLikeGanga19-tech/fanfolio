@@ -260,7 +260,7 @@ it('submits for review once, audited, without letting the creator publish or ear
     $this->post('/creator/payout', bankPayout());
 
     $this->post('/creator/review', ['terms' => '1', 'co_performers' => '1'])
-        ->assertRedirect(route('creator.review'))
+        ->assertRedirect(route('creator.status'))
         ->assertSessionHas('status', "Submitted. We'll let you know as soon as you're approved.");
 
     $creator->refresh();
@@ -270,10 +270,11 @@ it('submits for review once, audited, without letting the creator publish or ear
         ->and($this->audit->of('creator.submitted'))->toHaveCount(1);
 
     // A double tap changes nothing.
-    $this->post('/creator/review', ['terms' => '1', 'co_performers' => '1'])->assertRedirect(route('creator.review'));
+    $this->post('/creator/review', ['terms' => '1', 'co_performers' => '1'])->assertRedirect(route('creator.status'));
     expect($this->audit->of('creator.submitted'))->toHaveCount(1);
 
-    $this->get('/creator/review')->assertOk()->assertSee("We're reviewing your account", false)->assertDontSee('Submit for review');
+    $this->get('/creator/review')->assertRedirect(route('creator.status'));
+    $this->get('/creator/status')->assertOk()->assertSee("We're reviewing your account", false)->assertDontSee('Submit for review');
 
     $eligibility = app(CreatorEligibility::class);
     expect($eligibility->canPublish($creator->user_id))->toBeFalse()

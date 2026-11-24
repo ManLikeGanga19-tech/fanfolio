@@ -128,3 +128,27 @@ function confirmedSecondFactor(): void
 {
     RequireStepUp::confirmSecondFactor(session()->driver());
 }
+
+/**
+ * A moderator or admin with an authenticator app, signed in, for other modules'
+ * staff tests (they call this instead of using Identity's model or roles).
+ */
+function signedInStaff(string $role = 'admin'): User
+{
+    $staff = User::factory()->withRole(Role::from($role))->create();
+    enableTotp($staff);
+
+    return $staff;
+}
+
+/** The account's role, for other modules' tests. */
+function roleOf(string $userId): string
+{
+    return User::query()->findOrFail($userId)->role->value;
+}
+
+/** Signs in as an existing account by id, for other modules' tests. */
+function actAsUserId(string $userId): void
+{
+    actAs(User::query()->findOrFail($userId));
+}

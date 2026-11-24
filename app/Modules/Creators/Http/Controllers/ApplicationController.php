@@ -74,12 +74,9 @@ final class ApplicationController
     {
         $creator = $this->creator($request);
 
-        if ($creator instanceof Creator && $creator->status === CreatorStatus::Submitted) {
-            return view('creators::review', ['creator' => $creator, 'submitted' => true, 'kyc' => null, 'payout' => null]);
-        }
-
+        // Submitted, approved or suspended: board 7 and the other status screens.
         if ($creator instanceof Creator && $creator->status !== CreatorStatus::Onboarding) {
-            return redirect()->route('account');
+            return redirect()->route('creator.status');
         }
 
         if (($redirect = $this->needsEarlierStep($creator, payout: true)) instanceof RedirectResponse) {
@@ -89,7 +86,6 @@ final class ApplicationController
         /** @var Creator $creator */
         return view('creators::review', [
             'creator' => $creator,
-            'submitted' => false,
             'kyc' => $creator->latestKyc(),
             'payout' => $creator->payoutMethod(),
         ]);
@@ -115,7 +111,7 @@ final class ApplicationController
             throw ValidationException::withMessages([$e->field => $e->getMessage()]);
         }
 
-        return redirect()->route('creator.review')->with('status', 'Submitted. We\'ll let you know as soon as you\'re approved.');
+        return redirect()->route('creator.status')->with('status', 'Submitted. We\'ll let you know as soon as you\'re approved.');
     }
 
     /** Sends the creator to the first unfinished step before this one. */

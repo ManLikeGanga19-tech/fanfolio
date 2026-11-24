@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Providers\Filament;
 
+use App\Modules\Creators\Filament\Admin\CreatorApprovals;
 use App\Modules\Identity\Http\Middleware\EnsureAdminAccess;
 use App\Modules\Identity\Http\Middleware\EnsureDeviceActive;
 use Filament\Enums\ThemeMode;
@@ -50,6 +51,8 @@ final class AdminPanelProvider extends PanelProvider
             ->renderHook(PanelsRenderHook::HEAD_END, static fn (): string => Blade::render("@vite('resources/css/admin.css')"))
             ->pages([
                 Dashboard::class,
+                // Decision D-10: minimal until the M8 approvals board.
+                CreatorApprovals::class,
             ])
             ->middleware([
                 EncryptCookies::class,

@@ -14,6 +14,7 @@ use App\Modules\TrustSafety\Providers\TrustSafetyServiceProvider;
 use App\Modules\Wallet\Providers\WalletServiceProvider;
 use App\Providers\AppServiceProvider;
 use App\Providers\Filament\AdminPanelProvider;
+use App\Providers\Filament\StudioPanelProvider;
 
 return [
     AppServiceProvider::class,
@@ -29,4 +30,5 @@ return [
     AuditServiceProvider::class,
     CollaborationsServiceProvider::class,
     AdminPanelProvider::class,
+    StudioPanelProvider::class,
 ];

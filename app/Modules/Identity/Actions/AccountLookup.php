@@ -15,6 +15,13 @@ final readonly class AccountLookup implements Accounts
         return User::query()->whereKey($userId)->where('mfa_enabled', true)->exists();
     }
 
+    public function isStaff(string $userId): bool
+    {
+        $user = User::query()->find($userId);
+
+        return $user instanceof User && $user->role->isStaff() && $user->mfa_enabled && $user->status->canSignIn();
+    }
+
     public function username(string $userId): ?string
     {
         $username = User::query()->whereKey($userId)->value('username');

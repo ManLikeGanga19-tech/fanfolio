@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Identity\Providers;
 
+use App\Modules\Creators\Events\CreatorApproved;
 use App\Modules\Identity\Actions\AccountLookup;
 use App\Modules\Identity\Contracts\Accounts;
 use App\Modules\Identity\Contracts\BreachedPasswordChecker;
@@ -13,9 +14,11 @@ use App\Modules\Identity\Gateways\Fake\FakeBreachedPasswordChecker;
 use App\Modules\Identity\Gateways\Fake\FakeIdentityVerifier;
 use App\Modules\Identity\Gateways\Fake\FakeSmsSender;
 use App\Modules\Identity\Gateways\Hibp\HibpBreachedPasswordChecker;
+use App\Modules\Identity\Http\Middleware\EnsureAdminAccess;
 use App\Modules\Identity\Http\Middleware\EnsureDeviceActive;
 use App\Modules\Identity\Http\Middleware\EnsureMfaEnrolled;
 use App\Modules\Identity\Http\Middleware\EnsureRecentStepUp;
+use App\Modules\Identity\Listeners\GrantCreatorRole;
 use App\Modules\Identity\Models\User;
 use App\Modules\Identity\Models\UserDevice;
 use App\Modules\Identity\Policies\UserDevicePolicy;
@@ -24,6 +27,7 @@ use App\Support\Security\KeyedHash;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\RateLimiter;
 
@@ -66,11 +70,16 @@ final class IdentityServiceProvider extends ModuleServiceProvider
         // Registered before the module routes load in parent::boot().
         $router = $this->app->make(Router::class);
         $router->aliasMiddleware('step-up', EnsureRecentStepUp::class);
+        // Staff-only pages outside the Filament panel (for example the ID viewer, D-01).
+        $router->aliasMiddleware('staff', EnsureAdminAccess::class);
         // SEC-05 and SEC-04 apply to every browser page, whichever module serves it.
         $router->pushMiddlewareToGroup('web', EnsureDeviceActive::class);
         $router->pushMiddlewareToGroup('web', EnsureMfaEnrolled::class);
 
         Gate::policy(UserDevice::class, UserDevicePolicy::class);
+
+        // An approved creator gets the creator role (opens Studio).
+        Event::listen(CreatorApproved::class, GrantCreatorRole::class);
 
         parent::boot();
 

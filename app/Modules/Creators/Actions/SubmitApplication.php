@@ -60,6 +60,9 @@ final readonly class SubmitApplication
                 'status' => CreatorStatus::Submitted,
                 'submitted_at' => now(),
                 'terms_accepted_at' => now(),
+                // Sent back by staff earlier (board 8): fixed now.
+                'fix_kind' => null,
+                'fix_note' => null,
             ])->save();
 
             $this->audit->record('creator.submitted', $creator->user_id, 'creator', $creator->id, [

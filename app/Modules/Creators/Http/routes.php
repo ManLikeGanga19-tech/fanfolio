@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 use App\Modules\Creators\Http\Controllers\ApplicationController;
 use App\Modules\Creators\Http\Controllers\KycController;
+use App\Modules\Creators\Http\Controllers\KycDocumentController;
 use App\Modules\Creators\Http\Controllers\OnboardingController;
+use App\Modules\Creators\Http\Controllers\StatusController;
 use Illuminate\Support\Facades\Route;
 
 // Creator onboarding (screens: Become a creator, Profile basics, ID and selfie). Signed-in accounts only.
@@ -30,5 +32,13 @@ Route::middleware('auth')->prefix('creator')->name('creator.')->group(function (
     Route::get('/review', [ApplicationController::class, 'review'])->name('review');
     Route::post('/review', [ApplicationController::class, 'submit'])->middleware('throttle:creator-onboarding');
 
+    // Board 7 · In review and board 8 · Action needed; Studio sends everyone it refuses here.
+    Route::get('/status', [StatusController::class, 'show'])->name('status');
+
     Route::get('/handle-check', [OnboardingController::class, 'handleCheck'])->middleware('throttle:handle-check')->name('handle-check');
 });
+
+// Decision D-01: staff view an ID image fetched from the provider on demand, never stored.
+Route::middleware(['auth', 'staff'])
+    ->get('/'.config()->string('fanfolio.admin.path').'/kyc-documents/{creator}/{side}', [KycDocumentController::class, 'show'])
+    ->name('creator.kyc-document');
