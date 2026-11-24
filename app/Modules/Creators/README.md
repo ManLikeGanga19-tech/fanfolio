@@ -61,7 +61,9 @@ Each Action checks, inside the Action, that the actor is staff with MFA (`Identi
 | `ReinstateCreator::endPause` via `creators:end-pauses` (every 5 min) | System | paused → `active` once `suspended_until` has passed; an admin suspension is never ended | `creator.pause_ended` | "active again" |
 | `RequireIdRecheck` | Moderator, admin (`RequireIdRecheck`), note required | `active` → `onboarding`, KYC `action_needed`, fix "Retake ID photo" | `creator.id_recheck_required` (note) | `RequireIdRecheck::MESSAGE` on board 8 and by email |
 
-Suspending dispatches `CreatorSuspended` and reinstating dispatches `CreatorReinstated` (after commit). `CreatorEligibility` reads the database on every call, so publishing and earning stop and resume at once (rule 9). The staff note goes to the audit log only. After a new ID check the creator verifies, submits and comes back through Creator approvals. "Pause payouts only" (use case 13) comes with payouts in M3.
+Suspending dispatches `CreatorSuspended` and reinstating dispatches `CreatorReinstated` (after commit). `CreatorEligibility` reads the database on every call, so publishing and earning stop and resume at once (rule 9). The staff note goes to the audit log only. After a new ID check the creator verifies, submits and comes back through Creator approvals. **Pause payouts** (use case 13, `Actions\PauseCreatorPayouts`, admins with `StaffAbility::PauseCreatorPayouts`, note required, audited as `creator.payouts_paused` / `creator.payouts_resumed`): `creators.payouts_paused_at` stops withdrawals (`CreatorEligibility::canWithdraw`) while publishing and sales go on.
+
+**For Wallet:** `Contracts\PayoutDestinations` lists a creator's active payout methods masked (`Contracts\Data\PayoutDestination`), and hands over the decrypted account name and details only through `instructionFor`, when a payout is sent.
 
 ## Studio
 

@@ -55,6 +55,8 @@ enum StaffAbility: string
     // Money (M3)
     /** Spec postings "Refund (admin)": an admin returns a sale to the fan's credits. */
     case RefundPurchase = 'admin.wallet.refund';
+    /** Canvas AdminPayouts: approve, hold or decline a withdrawal waiting for review. */
+    case ReviewPayouts = 'admin.payouts.review';
 
     /** Abilities moderators do not have. */
     public function adminOnly(): bool
@@ -74,7 +76,8 @@ enum StaffAbility: string
             self::ManageStaff,
             self::ViewSettings,
             self::ProposeSettings,
-            self::RefundPurchase => true,
+            self::RefundPurchase,
+            self::ReviewPayouts => true,
             default => false,
         };
     }

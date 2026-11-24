@@ -7,6 +7,7 @@ namespace App\Modules\Wallet\Providers;
 use App\Modules\Wallet\Actions\ChargePurchase;
 use App\Modules\Wallet\Actions\LedgerService;
 use App\Modules\Wallet\Actions\WalletDisplayService;
+use App\Modules\Wallet\Console\CheckPayouts;
 use App\Modules\Wallet\Console\CreateLedgerPartitions;
 use App\Modules\Wallet\Console\ReleaseEarnings;
 use App\Modules\Wallet\Console\VerifyLedger;
@@ -73,13 +74,14 @@ final class WalletServiceProvider extends ModuleServiceProvider
         RateLimiter::for('webhooks', static fn (Request $request): Limit => Limit::perMinute(600)->by('webhooks:'.$request->ip()));
 
         if ($this->app->runningInConsole()) {
-            $this->commands([VerifyLedger::class, CreateLedgerPartitions::class, ReleaseEarnings::class]);
+            $this->commands([VerifyLedger::class, CreateLedgerPartitions::class, ReleaseEarnings::class, CheckPayouts::class]);
         }
 
         $this->callAfterResolving(Schedule::class, static function (Schedule $schedule): void {
             $schedule->command('wallet:ledger-partitions')->dailyAt('01:00')->onOneServer()->withoutOverlapping();
             $schedule->command('wallet:verify-ledger')->dailyAt('02:30')->onOneServer()->withoutOverlapping();
             $schedule->command('wallet:release-earnings')->dailyAt('03:00')->onOneServer()->withoutOverlapping();
+            $schedule->command('wallet:payout-status')->everyFifteenMinutes()->onOneServer()->withoutOverlapping();
         });
     }
 }

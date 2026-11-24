@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Creators\Filament\Admin;
 
+use App\Modules\Creators\Actions\PauseCreatorPayouts;
 use App\Modules\Creators\Actions\ReinstateCreator;
 use App\Modules\Creators\Actions\RequireIdRecheck;
 use App\Modules\Creators\Actions\SuspendCreator;
@@ -153,6 +154,7 @@ final class CreatorsDirectory extends Page
                 'pause' => Gate::allows(StaffAbility::PauseCreator->value),
                 'reinstate' => Gate::allows(StaffAbility::ReinstateCreator->value),
                 'recheck' => Gate::allows(StaffAbility::RequireIdRecheck->value),
+                'pausePayouts' => Gate::allows(StaffAbility::PauseCreatorPayouts->value),
             ],
             'isOwn' => $detail instanceof Creator && $detail->user_id === auth()->id(),
         ];
@@ -239,6 +241,34 @@ final class CreatorsDirectory extends Page
             ->modalSubmitActionLabel('Ask for a new check')
             ->action(function (): void {
                 $this->decide(fn (string $staff): Creator => app(RequireIdRecheck::class)->handle((string) $this->selected, $staff, $this->note), 'New ID check requested.');
+            });
+    }
+
+    public function pausePayoutsAction(): Action
+    {
+        return Action::make('pausePayouts')
+            ->label('Pause payouts')
+            ->color('gray')
+            ->requiresConfirmation()
+            ->modalHeading('Pause payouts for this creator?')
+            ->modalDescription('Publishing and sales go on; withdrawals wait until you resume them. Write why in the note first.')
+            ->modalSubmitActionLabel('Pause payouts')
+            ->action(function (): void {
+                $this->decide(fn (string $staff): Creator => app(PauseCreatorPayouts::class)->pause((string) $this->selected, $staff, $this->note), 'Payouts paused.');
+            });
+    }
+
+    public function resumePayoutsAction(): Action
+    {
+        return Action::make('resumePayouts')
+            ->label('Resume payouts')
+            ->color('gray')
+            ->requiresConfirmation()
+            ->modalHeading('Resume payouts for this creator?')
+            ->modalDescription('The creator can withdraw again. Write why in the note first.')
+            ->modalSubmitActionLabel('Resume payouts')
+            ->action(function (): void {
+                $this->decide(fn (string $staff): Creator => app(PauseCreatorPayouts::class)->resume((string) $this->selected, $staff, $this->note), 'Payouts resumed.');
             });
     }
 

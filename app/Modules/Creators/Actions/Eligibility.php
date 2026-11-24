@@ -38,4 +38,10 @@ final readonly class Eligibility implements CreatorEligibility
     {
         return $this->canPublish($userId);
     }
+
+    public function canWithdraw(string $userId): bool
+    {
+        return $this->canEarn($userId)
+            && ! Creator::query()->where('user_id', $userId)->whereNotNull('payouts_paused_at')->exists();
+    }
 }

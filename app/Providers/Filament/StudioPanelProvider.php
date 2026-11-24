@@ -8,6 +8,7 @@ use App\Modules\Creators\Filament\Studio\StudioHome;
 use App\Modules\Creators\Http\Middleware\EnsureStudioAccess;
 use App\Modules\Identity\Http\Middleware\ApplyDisplayTimezone;
 use App\Modules\Identity\Http\Middleware\EnsureDeviceActive;
+use App\Modules\Wallet\Filament\Studio\EarningsPage;
 use Filament\Enums\ThemeMode;
 use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -57,6 +58,7 @@ final class StudioPanelProvider extends PanelProvider
             ->renderHook(PanelsRenderHook::BODY_END, static fn (): string => Blade::render("@vite('resources/js/panel.js')"))
             ->pages([
                 StudioHome::class,
+                EarningsPage::class,
             ])
             ->middleware([
                 EncryptCookies::class,
