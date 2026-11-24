@@ -8,6 +8,8 @@ use App\Modules\Creators\Contracts\ApprovalQueue;
 use App\Modules\Creators\Filament\Admin\CreatorApprovals;
 use App\Modules\Identity\Contracts\AccountStats;
 use App\Modules\Identity\Contracts\StaffAbility;
+use App\Modules\TrustSafety\Contracts\ModerationStats;
+use App\Modules\TrustSafety\Filament\Admin\ModerationBoard;
 use App\Support\Health\HealthCheck;
 use App\Support\Health\SystemHealth;
 use BackedEnum;
@@ -99,6 +101,7 @@ final class Overview extends Page
 
         $accounts = app(AccountStats::class);
         $approvals = app(ApprovalQueue::class);
+        $moderation = app(ModerationStats::class);
 
         $signUps = $accounts->signUps($from, $to);
         $previous = $accounts->signUps($from->subDays($days), $now->subDays($days));
@@ -120,6 +123,10 @@ final class Overview extends Page
             'oldestIsLate' => $oldest !== null && $oldest->lt(CarbonImmutable::now()->subDay()),
             'approved' => $approvals->approvedBetween($from, $to),
             'approvalsUrl' => CreatorApprovals::getUrl(),
+            'cases' => $moderation->pending(),
+            'urgentCases' => $moderation->urgent(),
+            'oldestCase' => $moderation->oldestPendingSince()?->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true),
+            'moderationUrl' => ModerationBoard::getUrl(),
             'chart' => self::chart($perDay, $chartStart),
             'health' => $this->health(),
         ];

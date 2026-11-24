@@ -30,6 +30,8 @@ Status: **to do**, **done**, or **later** (the screen arrives with its milestone
 | Admin: Users & bans | AdminUsers | Search, filter pills, table with status pills, detail pane with required reason and Ban / Suspend / Sign out everywhere. Spend, disputes and leak rows wait for M3 and M4; the note about blocking the verified ID waits for D-17 | done (M8a PR 2) |
 | Admin: creators directory | none (follows AdminUsers) | Filters, search, detail pane with ID checks and payout methods masked | done (M8a PR 3b) |
 | Admin: creator approvals | AdminApprovals | Sidebar with counts; list + detail pane with checks | done (M8a PR 3; search box added for long queues, payout name shown as match only (rule 13), face-match score and sanctions lines wait for the KYC provider) |
+| Admin: moderation queue | AdminModeration | Tabs by source with counts, case list with priority dot, detail with signals, decision note and buttons | done (M8a PR 4; account cases only: the blurred preview, Reveal and Remove buttons come with posts in M4; "Assign to me" sits in the detail pane next to who holds the case) |
+| Report sheet | FanMore · Report content | Anonymous note, five reasons with "under 18" in red, optional details, Submit report | built (M8a PR 4); shown on creator pages and profiles when they arrive in M5 |
 | Admin: other boards | Admin* | Built to the board in M8a and their milestones | later |
 
 ## Open items for the owner

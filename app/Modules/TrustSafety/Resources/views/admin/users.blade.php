@@ -129,6 +129,7 @@
                             {{ $this->liftAction }}
                             {{ $this->strikeAction }}
                             {{ $this->signOutAction }}
+                            {{ $this->flagAction }}
                         </div>
                         <p class="text-small text-ink-muted">Banning signs the user out everywhere, stops them signing in and stops a creator page earning.</p>
                     @endif

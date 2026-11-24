@@ -65,6 +65,19 @@ final readonly class Directory implements AccountDirectory
         ];
     }
 
+    public function findByUsername(string $username): ?AccountSummary
+    {
+        $username = ltrim(trim($username), '@');
+
+        if ($username === '') {
+            return null;
+        }
+
+        $user = $this->query()->where('username', $username)->first();
+
+        return $user instanceof User ? self::summary($user) : null;
+    }
+
     /**
      * @return Builder<User>
      */

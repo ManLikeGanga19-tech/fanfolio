@@ -157,6 +157,29 @@ test('signed-in pages pass axe and keep a visible focus ring', async ({ page, br
     await expect(creatorDetail.getByRole('button', { name: 'Suspend' })).toBeVisible();
     await expectNoAxeViolations(staffPage);
     await expectVisibleFocusOnTab(staffPage, { maxSteps: 60 });
+
+    // Flag this run's account on Users & bans; the case shows on the Moderation queue (canvas AdminModeration).
+    await staffPage.goto('/admin/accounts');
+    await staffPage.getByRole('searchbox').fill(account.username);
+    await staffPage.getByRole('button', { name: `@${account.username}` }).click();
+    await staffPage.getByLabel('Reason category').selectOption('spam');
+    await staffPage.getByLabel('Reason (required)').fill('Browser walk-through flag');
+    await staffPage.getByRole('button', { name: 'Flag for review' }).click();
+    await staffPage.getByRole('alertdialog').or(staffPage.getByRole('dialog')).getByRole('button', { name: 'Flag', exact: true }).click();
+    await expect(staffPage.getByText('Flagged. The case is in the moderation queue.')).toBeVisible();
+
+    await staffPage.goto('/admin/moderation?tab=staff_flag');
+    await expect(staffPage.getByRole('heading', { name: 'Moderation queue' })).toBeVisible();
+    await staffPage.getByRole('button', { name: new RegExp(`@${account.username} · account`) }).click();
+    const caseDetail = staffPage.getByRole('region', { name: 'Case detail' });
+    await expect(caseDetail.getByText('Browser walk-through flag')).toBeVisible();
+    await expectNoAxeViolations(staffPage);
+    await expectVisibleFocusOnTab(staffPage, { maxSteps: 80 });
+    // Close it, so dev queues do not fill up with walk-through cases.
+    await caseDetail.getByLabel('Decision note (saved to audit log)').fill('Walk-through case, no action needed');
+    await caseDetail.getByRole('button', { name: 'No action' }).click();
+    await staffPage.getByRole('alertdialog').or(staffPage.getByRole('dialog')).getByRole('button', { name: 'No action', exact: true }).click();
+    await expect(caseDetail.getByText('Decided: No action')).toBeVisible();
     await staffContext.close();
 
     await page.goto('/creator/status');
