@@ -15,12 +15,13 @@ Conflicts between sources, settled by the precedence rule in CLAUDE.md: the brie
 | D-09 | The spec gives creators a `category` but no list of categories | Use the categories shown on the screens (Music, Comedy, Fitness, Art, Lifestyle) as `fanfolio.creators.categories`, editable in config | Screens canvas (the spec is silent) |
 | D-10 | Board 7 shows "Manual review: in progress" after the automatic KYC check, while the approvals board is in M8 | M2 ships a minimal staff page to approve, reject or ask for a fix (audited) so the flow can finish; M8 replaces it with the full board | Screens canvas for the flow; brief build plan for the board |
 | D-11 | Boards 3–4 draw the ID frame and selfie moves as FanFolio screens; rule 10 says we never store ID images or selfies, and the KYC provider is behind `IdentityVerifier` | The capture runs on the provider's hosted page: `POST /creator/kyc` opens a provider session and redirects there, and the provider sends the creator back to `/creator/kyc/return`. FanFolio's screen is the hand-off with the board copy (the ID tips and the selfie note), so images never pass through our servers. An ID that has expired stops publishing and earning; a document with no expiry date (for example some national IDs) counts as unexpired. A creator can verify a new ID in the last 30 days before expiry and stays approved only when the provider passes it outright and the name and date of birth match the last passed check; anything else goes back to staff | Brief rule 10; spec `creator_kyc`; the M2 plan (approved) |
+| D-12 | The sign-up boards show step 2 as "Verify phone (OTP)" with an SMS code; the spec lists `phone` on `users` and a SIM-swap check in the payout flow | **Owner decision, 23 Nov 2026:** sign-up step 2 verifies the email instead, because email is more reliable. A 6-digit code is sent to the account's email at sign-up, with the same rules as the phone code (10 minutes, 5 attempts, 60 s between sends), and sets `users.email_verified_at`. The phone step and its routes are removed. The phone columns and `phone_verifications` table stay unused until the owner agrees to drop them (dropping would lose data). `SmsSender` stays for co-performer invites by phone. With no phone number collected, the payout flow's SIM-swap check has nothing to check; M3 relies on the new-device rule and raises this with the owner | Owner |
 
 ## Supporting interfaces needed by the screens but not listed under open decisions
 
 Each gets an interface plus a Fake driver; no provider is chosen.
 
-- `SmsSender`: phone one-time codes (sign-up step 2)
+- `SmsSender`: co-performer invites by phone (sign-up uses email since D-12)
 - `FxRateProvider`: "≈ KES" estimates next to credit amounts
 - `MalwareScanner`, `AbuseHashMatcher`, `ContentClassifier`: upload scanning
 - `LeakCrawler`: leak takedown board

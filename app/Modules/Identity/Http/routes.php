@@ -5,11 +5,11 @@ declare(strict_types=1);
 use App\Modules\Identity\Http\Controllers\AccountController;
 use App\Modules\Identity\Http\Controllers\AgeVerificationController;
 use App\Modules\Identity\Http\Controllers\DeviceLimitController;
+use App\Modules\Identity\Http\Controllers\EmailVerificationController;
 use App\Modules\Identity\Http\Controllers\LoginController;
 use App\Modules\Identity\Http\Controllers\MfaChallengeController;
 use App\Modules\Identity\Http\Controllers\PasskeyLoginController;
 use App\Modules\Identity\Http\Controllers\PasswordResetController;
-use App\Modules\Identity\Http\Controllers\PhoneController;
 use App\Modules\Identity\Http\Controllers\SecurityController;
 use App\Modules\Identity\Http\Controllers\SignUpController;
 use App\Modules\Identity\Http\Controllers\StepUpController;
@@ -45,9 +45,10 @@ Route::middleware('guest')->group(function (): void {
 });
 
 Route::middleware('auth')->group(function (): void {
-    Route::get('/signup/phone', [PhoneController::class, 'show'])->name('signup.phone');
-    Route::post('/signup/phone/send', [PhoneController::class, 'send'])->middleware('throttle:otp-send')->name('signup.phone.send');
-    Route::post('/signup/phone/verify', [PhoneController::class, 'verify'])->middleware('throttle:otp-verify')->name('signup.phone.verify');
+    // Sign up step 2: verify the email with a one-time code (decision D-12).
+    Route::get('/signup/email', [EmailVerificationController::class, 'show'])->name('signup.email');
+    Route::post('/signup/email/send', [EmailVerificationController::class, 'send'])->middleware('throttle:otp-send')->name('signup.email.send');
+    Route::post('/signup/email/verify', [EmailVerificationController::class, 'verify'])->middleware('throttle:otp-verify')->name('signup.email.verify');
 
     // Sign up step 3 (optional): 18+ check through the KYC provider.
     Route::get('/signup/age', [AgeVerificationController::class, 'show'])->name('signup.age');

@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { expectNoAxeViolations, expectVisibleFocusOnTab, fakeAccount, totpCode } from './support.js';
 
 // Signed-in pages, reached through the real flows with a fresh fake account: sign up,
-// phone, age check, account hub, security, step-up, authenticator set-up, recovery
+// email code, age check, account hub, security, step-up, authenticator set-up, recovery
 // codes, then the second-factor screen at log in.
 test.describe.configure({ mode: 'serial' });
 
@@ -17,8 +17,9 @@ test('signed-in pages pass axe and keep a visible focus ring', async ({ page }) 
     await page.getByRole('checkbox').check();
     await page.getByRole('button', { name: 'Continue', exact: true }).click();
 
-    // Sign up step 2.
-    await expect(page).toHaveURL(/\/signup\/phone$/);
+    // Sign up step 2: the code was emailed with the sign-up.
+    await expect(page).toHaveURL(/\/signup\/email$/);
+    await expect(page.getByRole('heading', { name: 'Verify your email' })).toBeVisible();
     await expectNoAxeViolations(page);
     await expectVisibleFocusOnTab(page);
 

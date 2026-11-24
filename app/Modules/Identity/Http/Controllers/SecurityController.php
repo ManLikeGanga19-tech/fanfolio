@@ -175,9 +175,9 @@ final class SecurityController
             return redirect()->route('account.security');
         }
 
-        // Straight after "Continue with a passkey", sign-up carries on to the phone step.
+        // Straight after "Continue with a passkey", sign-up carries on to the email step.
         $next = $request->session()->pull(SignUpController::CONTINUE_SIGNUP) === true
-            ? route('signup.phone')
+            ? route('signup.email')
             : route('account.security');
 
         return view('identity::account.recovery-codes', ['codes' => $codes, 'next' => $next]);

@@ -34,7 +34,9 @@ final class IdentityServiceProvider extends ModuleServiceProvider
         'user_devices',
         'sessions',
         'password_reset_tokens',
+        // Unused since D-12 (sign-up verifies email); kept until the owner agrees to drop it.
         'phone_verifications',
+        'email_verifications',
         'webauthn_credentials',
         'mfa_totp',
         'mfa_recovery_codes',
@@ -76,7 +78,7 @@ final class IdentityServiceProvider extends ModuleServiceProvider
     }
 
     /**
-     * SEC-14: Redis-backed limits (the cache store) on sign-up, login and phone codes.
+     * SEC-14: Redis-backed limits (the cache store) on sign-up, login and email codes.
      * Responses over the limit are 429 with Retry-After.
      */
     private function rateLimits(): void
