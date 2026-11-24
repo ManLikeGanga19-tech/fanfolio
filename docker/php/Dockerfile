@@ -18,10 +18,15 @@ RUN useradd --create-home --uid 1000 app
 # ---- local development: code is bind-mounted; pcov for coverage gates ----
 FROM base AS dev
 RUN install-php-extensions pcov
+# Node runs Octane's file watcher (--watch, chokidar from the project's node_modules).
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends nodejs \
+    && rm -rf /var/lib/apt/lists/*
 COPY docker/php/entrypoint.sh /usr/local/bin/fanfolio-entrypoint
 RUN chmod +x /usr/local/bin/fanfolio-entrypoint
 ENTRYPOINT ["fanfolio-entrypoint"]
-CMD ["php", "artisan", "octane:start", "--server=swoole", "--host=0.0.0.0", "--port=8000"]
+# --watch reloads the workers when PHP, config, routes or .env change.
+CMD ["php", "artisan", "octane:start", "--server=swoole", "--host=0.0.0.0", "--port=8000", "--watch"]
 
 # ---- front-end assets (Vite + Tailwind), built once for the production image ----
 FROM node:22-alpine AS assets

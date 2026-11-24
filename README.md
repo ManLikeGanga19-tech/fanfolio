@@ -24,9 +24,31 @@ The first start installs dependencies, creates `.env`, generates the app key and
 
 Override a host port with `FORWARD_APP_PORT`, `FORWARD_DB_PORT` and the like when one is taken.
 
-### Faster on Windows
+### On Windows: keep the code inside WSL
 
-The Docker stack reads the code through the Windows file system (slower still inside OneDrive). For day-to-day work, run PHP natively with only Postgres in Docker:
+Docker reads a Windows folder (and a OneDrive one even more) slowly. Keep the repo in the WSL file system and run everything from there:
+
+```sh
+# in an Ubuntu (WSL 2) terminal, with Docker Desktop's WSL integration on
+git clone https://github.com/ManLikeGanga19-tech/fanfolio.git ~/projects/fanfolio
+cd ~/projects/fanfolio
+npm install                 # once: chokidar for Octane --watch, Playwright for the browser checks
+docker compose up -d --build
+```
+
+Octane runs with `--watch`, so PHP, config, route and `.env` changes reload by themselves; the `assets` service rebuilds CSS and JS. Restart Horizon after changing a job: `docker compose restart horizon`. Open the folder from Windows as `\\wsl.localhost\Ubuntu\home\<you>\projects\fanfolio`, or with VS Code's WSL extension (`code .` in the WSL terminal).
+
+Run commands in the container, for example:
+
+```sh
+docker compose exec app php artisan fanfolio:dev-staff you@example.test
+docker compose exec app vendor/bin/pest --parallel
+docker compose exec app vendor/bin/phpstan analyse
+```
+
+### Fallback: PHP natively on Windows
+
+When Docker is not an option, run PHP natively with only Postgres in Docker:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\dev.ps1   # app on http://localhost:8088
