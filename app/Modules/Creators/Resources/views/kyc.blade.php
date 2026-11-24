@@ -1,6 +1,7 @@
 {{-- Screens: Creator onboarding 3 · Scan your ID, 4 · Selfie liveness (steps 2–3 of 4), 8 · Action needed.
      The capture runs on the KYC provider's hosted page (decision D-11): images never reach FanFolio (rule 10). --}}
 @use('App\Modules\Creators\Enums\KycStatus')
+@use('App\Modules\Creators\Enums\CreatorStatus')
 @php
     $status = $creator->kyc_status;
     $idTypes = ['national_id' => 'National ID', 'passport' => 'Passport', 'driving_licence' => 'Licence'];
@@ -58,7 +59,11 @@
                     </div>
                 @endif
             </dl>
-            <a href="{{ route('account') }}" class="inline-flex min-h-11 items-center justify-center rounded-md border border-border-strong px-4 font-semibold">Back to your account</a>
+            @if ($creator->status === CreatorStatus::Onboarding)
+                <x-ui.button variant="brand" :href="route('creator.payout')">Continue</x-ui.button>
+            @else
+                <a href="{{ route('account') }}" class="inline-flex min-h-11 items-center justify-center rounded-md border border-border-strong px-4 font-semibold">Back to your account</a>
+            @endif
         @else
             @if ($status === KycStatus::Pending && $latest?->status->value === 'pending')
                 <div class="flex flex-col gap-3 rounded-md bg-surface p-4">
