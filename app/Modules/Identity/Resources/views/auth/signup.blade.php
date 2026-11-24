@@ -12,6 +12,7 @@
             <x-ui.input name="email" label="Email" type="email" autocomplete="email" required />
             <x-ui.input name="username" label="Username" autocomplete="username" hint="Shown to creators instead of your name" required />
             <x-ui.input name="password" label="Password" type="password" autocomplete="new-password" hint="At least 12 characters" minlength="12" required />
+            <x-ui.input name="password_confirmation" label="Confirm password" type="password" autocomplete="new-password" required />
 
             <div class="flex flex-col gap-1">
                 <label class="flex items-start gap-2 text-small">

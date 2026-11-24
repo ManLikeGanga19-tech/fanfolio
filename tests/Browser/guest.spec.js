@@ -59,6 +59,11 @@ test('sign up works from the keyboard alone', async ({ page }) => {
     await page.keyboard.type('keyboard_only');
     await page.keyboard.press('Tab');
     await page.keyboard.type('short');
+    await page.keyboard.press('Tab'); // show password button
+    await expect(page.getByRole('button', { name: 'Show password', exact: true })).toBeFocused();
+    await page.keyboard.press('Tab');
+    await page.keyboard.type('short');
+    await page.keyboard.press('Tab'); // show confirm password button
     await page.keyboard.press('Tab');
     await page.keyboard.press('Space');
     await expect(page.getByRole('checkbox')).toBeChecked();
@@ -71,4 +76,20 @@ test('sign up works from the keyboard alone', async ({ page }) => {
 
     // Too short: the server says so and nothing is created.
     await expect(page.getByText('At least 12 characters.')).toBeVisible();
+});
+
+test('the eye button shows and hides the password', async ({ page }) => {
+    await page.goto('/signup');
+    const field = page.getByLabel('Password', { exact: true });
+    const toggle = page.getByRole('button', { name: 'Show password', exact: true });
+
+    await field.fill('visible-for-a-moment');
+    await expect(field).toHaveAttribute('type', 'password');
+
+    await toggle.click();
+    await expect(field).toHaveAttribute('type', 'text');
+    await expect(page.getByRole('button', { name: 'Hide password', exact: true })).toHaveAttribute('aria-pressed', 'true');
+
+    await page.getByRole('button', { name: 'Hide password', exact: true }).click();
+    await expect(field).toHaveAttribute('type', 'password');
 });
