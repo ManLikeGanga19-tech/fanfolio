@@ -118,11 +118,14 @@ export async function setUpAuthenticator(page) {
 }
 
 /**
- * Decision D-14: makes an account staff with the development-only command. Runs on the
- * same machine as the app, with the same database settings (the environment it inherits).
+ * Decision D-14: makes an account staff with the development-only command. By default it
+ * runs `php artisan` here, with the database settings this process inherits. With the
+ * Docker stack, set A11Y_ARTISAN="docker compose exec -T app php artisan" to run it in
+ * the app container instead.
  */
 export function makeStaff(email, role = 'admin') {
-    execFileSync('php', ['artisan', 'fanfolio:dev-staff', email, `--role=${role}`], {
+    const [command, ...prefix] = (process.env.A11Y_ARTISAN ?? 'php artisan').trim().split(/\s+/);
+    execFileSync(command, [...prefix, 'fanfolio:dev-staff', email, `--role=${role}`], {
         cwd: fileURLToPath(new URL('../..', import.meta.url)),
         stdio: 'pipe',
     });
