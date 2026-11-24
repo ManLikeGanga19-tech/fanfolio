@@ -30,10 +30,14 @@ final class StepUpController
     {
         $user = $this->user($request);
 
+        // D-13: a payout asked for a passkey or authenticator code only.
+        $secondFactorOnly = $request->session()->get(RequireStepUp::NEEDS_SECOND_FACTOR) === true;
+
         return view('identity::account.confirm', [
             'hasPasskey' => $user->hasPasskey(),
             'hasTotp' => $user->hasConfirmedTotp(),
-            'usesPassword' => ! $user->mfa_enabled,
+            'usesPassword' => ! $user->mfa_enabled && ! $secondFactorOnly,
+            'secondFactorOnly' => $secondFactorOnly,
         ]);
     }
 
@@ -64,7 +68,8 @@ final class StepUpController
             throw ValidationException::withMessages(['code' => 'That did not match. Try again.']);
         }
 
-        return $this->confirmed($request, $user, $audit);
+        // Only an authenticator code counts as the second factor payouts need (D-13).
+        return $this->confirmed($request, $user, $audit, secondFactor: $code !== '');
     }
 
     public function passkeyOptions(AssertionRequest $request): Responsable
@@ -82,13 +87,18 @@ final class StepUpController
             return response()->json(['message' => $e->getMessage()], 422);
         }
 
-        return response()->json(['redirect' => $this->confirmed($request, $user, $audit)->getTargetUrl()]);
+        return response()->json(['redirect' => $this->confirmed($request, $user, $audit, secondFactor: true)->getTargetUrl()]);
     }
 
-    private function confirmed(Request $request, User $user, AuditLog $audit): RedirectResponse
+    private function confirmed(Request $request, User $user, AuditLog $audit, bool $secondFactor): RedirectResponse
     {
-        RequireStepUp::confirm($request->session());
-        $audit->record('identity.step_up', $user->id, 'user', $user->id);
+        if ($secondFactor) {
+            RequireStepUp::confirmSecondFactor($request->session());
+        } else {
+            RequireStepUp::confirm($request->session());
+        }
+
+        $audit->record('identity.step_up', $user->id, 'user', $user->id, ['second_factor' => $secondFactor]);
 
         return redirect()->intended(route('account.security'));
     }

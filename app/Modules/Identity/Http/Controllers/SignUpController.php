@@ -40,6 +40,7 @@ final class SignUpController
                 $request->string('email')->toString(),
                 $request->string('username')->toString(),
                 $request->string('password')->toString(),
+                $this->phone($request),
             );
         } catch (IdentityException $e) {
             throw ValidationException::withMessages([$e->field => $e->getMessage()]);
@@ -61,7 +62,16 @@ final class SignUpController
             $request->session(),
             $request->string('email')->toString(),
             $request->string('username')->toString(),
+            $this->phone($request),
         );
+    }
+
+    /** The optional phone number, already normalised by the request (null when left empty). */
+    private function phone(Request $request): ?string
+    {
+        $phone = $request->input('phone');
+
+        return is_string($phone) && $phone !== '' ? $phone : null;
     }
 
     /**

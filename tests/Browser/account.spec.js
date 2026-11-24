@@ -79,7 +79,14 @@ test('signed-in pages pass axe and keep a visible focus ring', async ({ page }) 
     await expectNoAxeViolations(page);
     await page.getByRole('link', { name: 'Continue' }).click();
 
-    // Step 4: payout method (the sign-in a few minutes ago counts as the step-up).
+    // Step 4: payout method. Signing in is not enough: confirm with the authenticator app
+    // (D-13). The next 30-second step, since the set-up code's step cannot be used twice.
+    await expect(page.getByRole('heading', { name: "Confirm it's you" })).toBeVisible();
+    await expect(page.getByText('Payouts need your passkey or authenticator app')).toBeVisible();
+    await expectNoAxeViolations(page);
+    await page.getByLabel('Code from your authenticator app').fill(totpCode(secret, Date.now() + 30_000));
+    await page.getByRole('button', { name: 'Confirm' }).click();
+
     await expect(page.getByRole('heading', { name: 'Where should we send your money?' })).toBeVisible();
     await expectNoAxeViolations(page);
     await expectVisibleFocusOnTab(page);

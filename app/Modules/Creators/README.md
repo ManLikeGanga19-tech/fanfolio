@@ -24,7 +24,7 @@ See `docs/backend-spec.md` for the module's rules and `docs/plans/M2.md` for the
 | GET | `/creator/kyc` | Steps 2–3 of 4: ID document and selfie liveness, "Action needed" (board 8), or the result | none |
 | POST | `/creator/kyc` | Opens a session with the KYC provider and sends the creator to its hosted page (D-11) | 10 per hour per account (each start is a paid provider session) |
 | GET | `/creator/kyc/return?ref=` | The provider sends the creator back here. The result is fetched from the provider for a check that belongs to this creator; nothing in the URL but the reference is read | 20 per minute per account |
-| GET, POST | `/creator/payout` | Step 4 of 4: bank account, USDT (TRC-20) wallet or Paxum. Needs a step-up in the last 10 minutes (SEC-04) and a passed ID check | 20 per minute per account |
+| GET, POST | `/creator/payout` | Step 4 of 4: bank account, USDT (TRC-20) wallet or Paxum. Needs a passkey or authenticator code confirmed in the last 10 minutes (`step-up:second-factor`, SEC-04, D-13) and a passed ID check | 20 per minute per account |
 | GET, POST | `/creator/review` | Review & submit (board 6). Needs the page, a passed ID check, a payout method and both statements; then "We're reviewing your account" | 20 per minute per account |
 
 The routes act only on the signed-in account's own application; no ids appear in URLs.

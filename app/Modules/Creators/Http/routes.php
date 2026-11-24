@@ -20,8 +20,9 @@ Route::middleware('auth')->prefix('creator')->name('creator.')->group(function (
     // The provider sends the creator back here; the result is fetched from the provider.
     Route::get('/kyc/return', [KycController::class, 'return'])->middleware('throttle:creator-onboarding')->name('kyc.return');
 
-    // Step 4 of 4: payout method. Viewing and changing it need a recent step-up (SEC-04).
-    Route::middleware('step-up')->group(function (): void {
+    // Step 4 of 4: payout method. Viewing and changing it need a passkey or authenticator code
+    // confirmed in the last 10 minutes (SEC-04, decision D-13); signing in is not enough.
+    Route::middleware('step-up:second-factor')->group(function (): void {
         Route::get('/payout', [ApplicationController::class, 'payout'])->name('payout');
         Route::post('/payout', [ApplicationController::class, 'savePayout'])->middleware('throttle:creator-onboarding');
     });

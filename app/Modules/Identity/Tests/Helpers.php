@@ -122,3 +122,9 @@ function staleStepUp(): void
 {
     RequireStepUp::forget(session()->driver());
 }
+
+/** A passkey or authenticator code was just confirmed, for "step-up:second-factor" routes (D-13). */
+function confirmedSecondFactor(): void
+{
+    RequireStepUp::confirmSecondFactor(session()->driver());
+}
