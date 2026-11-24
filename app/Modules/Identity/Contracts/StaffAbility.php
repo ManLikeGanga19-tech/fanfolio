@@ -42,6 +42,8 @@ enum StaffAbility: string
 
     // Moderation queue
     case WorkModeration = 'admin.moderation.work';
+    /** Escalated cases and anything that may involve a minor (plan M8a use case 29). */
+    case DecideEscalatedCase = 'admin.moderation.escalated';
 
     // Audit log, staff, settings
     case ViewAuditLog = 'admin.audit.view';
@@ -62,6 +64,7 @@ enum StaffAbility: string
             self::BanUser,
             self::LiftRestriction,
             self::ResetSecondFactor,
+            self::DecideEscalatedCase,
             self::ViewAuditLog,
             self::ExportAuditLog,
             self::ManageStaff,

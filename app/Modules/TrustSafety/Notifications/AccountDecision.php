@@ -29,8 +29,11 @@ final class AccountDecision extends Notification implements ShouldQueue
 
     public const string STRIKE = 'strike';
 
+    /** A moderation warning without a strike (plan M8a use case 27). */
+    public const string WARNING = 'warning';
+
     /**
-     * @param  self::SUSPENDED|self::BANNED|self::LIFTED|self::STRIKE  $kind
+     * @param  self::SUSPENDED|self::BANNED|self::LIFTED|self::STRIKE|self::WARNING  $kind
      */
     public function __construct(
         public readonly string $kind,
@@ -63,6 +66,10 @@ final class AccountDecision extends Notification implements ShouldQueue
             case self::BANNED:
                 $mail->subject("Your {$brand} account is closed")
                     ->line('We have closed your account for breaking our rules. You can no longer sign in.');
+                break;
+            case self::WARNING:
+                $mail->subject("A warning about your {$brand} account")
+                    ->line('We looked into a report about your account. This time it is a warning, with no strike. Please follow our rules so it does not happen again.');
                 break;
             case self::LIFTED:
                 $mail->subject("Your {$brand} account is open again")

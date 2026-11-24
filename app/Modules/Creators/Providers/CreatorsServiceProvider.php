@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Modules\Creators\Providers;
 
 use App\Modules\Creators\Actions\CreatorApprovalQueue;
+use App\Modules\Creators\Actions\CreatorPageLookup;
 use App\Modules\Creators\Actions\Eligibility;
 use App\Modules\Creators\Console\EndCreatorPauses;
 use App\Modules\Creators\Console\SendIdExpiryReminders;
 use App\Modules\Creators\Contracts\ApprovalQueue;
 use App\Modules\Creators\Contracts\CreatorEligibility;
+use App\Modules\Creators\Contracts\CreatorPages;
 use App\Modules\Creators\Listeners\SuspendBannedCreator;
 use App\Modules\TrustSafety\Events\UserBanned;
 use App\Support\Modules\ModuleServiceProvider;
@@ -36,6 +38,7 @@ final class CreatorsServiceProvider extends ModuleServiceProvider
     {
         $this->app->bind(CreatorEligibility::class, Eligibility::class);
         $this->app->bind(ApprovalQueue::class, CreatorApprovalQueue::class);
+        $this->app->bind(CreatorPages::class, CreatorPageLookup::class);
     }
 
     public function boot(): void

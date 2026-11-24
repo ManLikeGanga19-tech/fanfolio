@@ -22,6 +22,7 @@ const ADMIN_ONLY = [
     StaffAbility::BanUser,
     StaffAbility::LiftRestriction,
     StaffAbility::ResetSecondFactor,
+    StaffAbility::DecideEscalatedCase,
     StaffAbility::ViewAuditLog,
     StaffAbility::ExportAuditLog,
     StaffAbility::ManageStaff,

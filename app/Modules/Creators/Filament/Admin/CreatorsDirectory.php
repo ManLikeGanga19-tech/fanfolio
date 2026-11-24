@@ -51,7 +51,7 @@ final class CreatorsDirectory extends Page
 
     protected static ?string $navigationLabel = 'Creators';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 6;
 
     protected static ?string $title = 'Creators';
 

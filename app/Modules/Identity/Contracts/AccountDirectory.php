@@ -18,6 +18,9 @@ interface AccountDirectory
 
     public function find(string $userId): ?AccountSummary;
 
+    /** The public username, with or without the @ (case-insensitive). */
+    public function findByUsername(string $username): ?AccountSummary;
+
     /**
      * Newest first. $onlyIds narrows the list to accounts another module picked (for
      * example the flagged ones); an empty list gives no results.

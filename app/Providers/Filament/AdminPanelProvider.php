@@ -10,6 +10,7 @@ use App\Modules\Creators\Filament\Admin\CreatorsDirectory;
 use App\Modules\Identity\Http\Middleware\ApplyDisplayTimezone;
 use App\Modules\Identity\Http\Middleware\EnsureAdminAccess;
 use App\Modules\Identity\Http\Middleware\EnsureDeviceActive;
+use App\Modules\TrustSafety\Filament\Admin\ModerationBoard;
 use App\Modules\TrustSafety\Filament\Admin\UsersBoard;
 use Filament\Enums\ThemeMode;
 use Filament\FontProviders\LocalFontProvider;
@@ -65,6 +66,7 @@ final class AdminPanelProvider extends PanelProvider
                 Overview::class,
                 CreatorApprovals::class,
                 CreatorsDirectory::class,
+                ModerationBoard::class,
                 UsersBoard::class,
             ])
             ->middleware([

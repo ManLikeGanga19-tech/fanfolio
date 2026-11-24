@@ -8,11 +8,13 @@ use App\Modules\Identity\Contracts\AccountDirectory;
 use App\Modules\Identity\Contracts\Data\AccountSummary;
 use App\Modules\Identity\Contracts\StaffAbility;
 use App\Modules\TrustSafety\Actions\BanAccount;
+use App\Modules\TrustSafety\Actions\FlagAccount;
 use App\Modules\TrustSafety\Actions\LiftRestriction;
 use App\Modules\TrustSafety\Actions\SignOutAccount;
 use App\Modules\TrustSafety\Actions\Strikes;
 use App\Modules\TrustSafety\Actions\SuspendAccount;
 use App\Modules\TrustSafety\Contracts\RestrictionReason;
+use App\Modules\TrustSafety\Enums\ReportReason;
 use App\Modules\TrustSafety\Exceptions\TrustSafetyException;
 use App\Modules\TrustSafety\Models\Strike;
 use BackedEnum;
@@ -236,6 +238,23 @@ final class UsersBoard extends Page
             ->visible(fn (): bool => $this->detailAllows(StaffAbility::SignOutUser, static fn (AccountSummary $a): bool => $a->activeDevices > 0))
             ->action(function (): void {
                 $this->decide(fn (string $staff): mixed => app(SignOutAccount::class)->handle((string) $this->selected, $staff), 'Signed out everywhere.');
+            });
+    }
+
+    public function flagAction(): Action
+    {
+        return Action::make('flag')
+            ->label('Flag for review')
+            ->color('gray')
+            ->requiresConfirmation()
+            ->modalHeading('Flag this account for review?')
+            ->modalDescription('It opens a case in the moderation queue with your note. Nothing happens to the account yet.')
+            ->modalSubmitActionLabel('Flag')
+            ->visible(fn (): bool => $this->detailAllows(StaffAbility::FlagUser, static fn (AccountSummary $a): bool => true))
+            ->action(function (): void {
+                $this->decide(function (string $staff): void {
+                    app(FlagAccount::class)->handle((string) $this->selected, $staff, ReportReason::fromRestriction($this->reasonChosen()), $this->note);
+                }, 'Flagged. The case is in the moderation queue.');
             });
     }
 
