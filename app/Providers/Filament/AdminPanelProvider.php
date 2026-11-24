@@ -6,6 +6,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Admin\Overview;
 use App\Modules\Creators\Filament\Admin\CreatorApprovals;
+use App\Modules\Creators\Filament\Admin\CreatorsDirectory;
 use App\Modules\Identity\Http\Middleware\ApplyDisplayTimezone;
 use App\Modules\Identity\Http\Middleware\EnsureAdminAccess;
 use App\Modules\Identity\Http\Middleware\EnsureDeviceActive;
@@ -63,6 +64,7 @@ final class AdminPanelProvider extends PanelProvider
                 // Canvas AdminOverview sidebar order; later boards join as they are built.
                 Overview::class,
                 CreatorApprovals::class,
+                CreatorsDirectory::class,
                 UsersBoard::class,
             ])
             ->middleware([

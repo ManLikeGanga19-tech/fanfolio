@@ -6,6 +6,7 @@ namespace App\Modules\Creators\Providers;
 
 use App\Modules\Creators\Actions\CreatorApprovalQueue;
 use App\Modules\Creators\Actions\Eligibility;
+use App\Modules\Creators\Console\EndCreatorPauses;
 use App\Modules\Creators\Console\SendIdExpiryReminders;
 use App\Modules\Creators\Contracts\ApprovalQueue;
 use App\Modules\Creators\Contracts\CreatorEligibility;
@@ -51,11 +52,12 @@ final class CreatorsServiceProvider extends ModuleServiceProvider
         RateLimiter::for('creator-kyc', static fn (Request $request): Limit => Limit::perHour(10)->by('creator-kyc:'.self::key($request)));
 
         if ($this->app->runningInConsole()) {
-            $this->commands([SendIdExpiryReminders::class]);
+            $this->commands([SendIdExpiryReminders::class, EndCreatorPauses::class]);
         }
 
         $this->callAfterResolving(Schedule::class, static function (Schedule $schedule): void {
             $schedule->command('creators:id-expiry-reminders')->dailyAt('09:00')->onOneServer()->withoutOverlapping();
+            $schedule->command('creators:end-pauses')->everyFiveMinutes()->onOneServer()->withoutOverlapping();
         });
     }
 

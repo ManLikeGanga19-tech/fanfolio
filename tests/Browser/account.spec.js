@@ -147,6 +147,16 @@ test('signed-in pages pass axe and keep a visible focus ring', async ({ page, br
     // Filament's confirmation modal is an alertdialog (a plain dialog on older versions).
     await staffPage.getByRole('alertdialog').or(staffPage.getByRole('dialog')).getByRole('button', { name: 'Approve', exact: true }).click();
     await expect(staffPage.getByText('Approved.')).toBeVisible();
+
+    // Creators directory, with this run's creator open in the detail pane.
+    await staffPage.goto('/admin/creators');
+    await staffPage.getByRole('searchbox').fill(handle);
+    await staffPage.getByRole('button', { name: new RegExp(`@${handle.replace('.', '\\.')}`) }).click();
+    const creatorDetail = staffPage.getByRole('region', { name: 'Creator detail' });
+    await expect(creatorDetail.getByRole('heading', { name: new RegExp(`@${handle.replace('.', '\\.')}$`) })).toBeVisible();
+    await expect(creatorDetail.getByRole('button', { name: 'Suspend' })).toBeVisible();
+    await expectNoAxeViolations(staffPage);
+    await expectVisibleFocusOnTab(staffPage, { maxSteps: 60 });
     await staffContext.close();
 
     await page.goto('/creator/status');

@@ -29,6 +29,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property CarbonImmutable|null $submitted_at
  * @property CarbonImmutable|null $approved_at
  * @property CarbonImmutable|null $suspended_at
+ * @property CarbonImmutable|null $suspended_until
  * @property CarbonImmutable|null $id_expires_at
  * @property CarbonImmutable|null $id_expiry_reminded_at
  * @property FixKind|null $fix_kind
@@ -132,6 +133,7 @@ final class Creator extends Model
             'submitted_at' => 'immutable_datetime',
             'approved_at' => 'immutable_datetime',
             'suspended_at' => 'immutable_datetime',
+            'suspended_until' => 'immutable_datetime',
             'id_expires_at' => 'immutable_datetime',
             'id_expiry_reminded_at' => 'immutable_datetime',
             'fix_kind' => FixKind::class,
