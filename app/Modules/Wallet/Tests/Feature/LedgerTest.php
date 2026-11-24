@@ -110,7 +110,10 @@ it('refuses to take a personal account below zero, and writes nothing', function
         $this->ledger->post(sale($this->fan, $this->creator, 301, 'sale:too-much'));
         $this->fail('Expected insufficient funds.');
     } catch (LedgerException $e) {
-        expect($e->problem)->toBe(LedgerException::INSUFFICIENT);
+        // A plain message for people; which account was short is kept for logs.
+        expect($e->problem)->toBe(LedgerException::INSUFFICIENT)
+            ->and($e->getMessage())->toBe('Not enough credits.')
+            ->and($e->accountKey)->toBe('fan_wallet:'.$this->fan);
     }
 
     expect($this->ledger->balance(fanWallet($this->fan))->amountMinor)->toBe(300)
@@ -118,7 +121,7 @@ it('refuses to take a personal account below zero, and writes nothing', function
 
     // A fan never seen before has nothing to spend.
     expect(fn () => $this->ledger->post(sale(strtolower((string) Str::ulid()), $this->creator, 1, 'sale:empty')))
-        ->toThrow(LedgerException::class, 'Not enough funds');
+        ->toThrow(LedgerException::class, 'Not enough credits.');
 });
 
 it('lets a transaction go below zero only when it says so (D-20 clawbacks)', function (): void {

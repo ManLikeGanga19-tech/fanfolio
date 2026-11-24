@@ -18,14 +18,17 @@ final class LedgerException extends RuntimeException
 
     public const string KEY_REUSED = 'idempotency_key_reused';
 
-    private function __construct(string $message, public readonly string $problem)
+    /**
+     * @param  string|null  $accountKey  which account was short, for logs only; the message stays plain for people
+     */
+    private function __construct(string $message, public readonly string $problem, public readonly ?string $accountKey = null)
     {
         parent::__construct($message);
     }
 
     public static function insufficient(string $accountKey): self
     {
-        return new self("Not enough funds in {$accountKey}.", self::INSUFFICIENT);
+        return new self('Not enough credits.', self::INSUFFICIENT, $accountKey);
     }
 
     public static function busy(): self
