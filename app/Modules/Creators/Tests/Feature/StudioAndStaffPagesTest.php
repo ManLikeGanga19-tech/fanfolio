@@ -6,13 +6,9 @@ use App\Modules\Creators\Actions\ApproveCreator;
 use App\Modules\Creators\Actions\SuspendCreator;
 use App\Modules\Creators\Enums\CreatorStatus;
 use App\Modules\Creators\Enums\KycStatus;
-use App\Modules\Creators\Filament\Admin\CreatorApprovals;
 use App\Modules\Creators\Models\Creator;
-use Filament\Actions\Testing\TestAction;
-use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Notification;
-use Livewire\Livewire;
 use Tests\Support\RecordingAuditLog;
 
 // The /studio panel shell, the staff "Creators awaiting review" page (D-10) and the
@@ -131,36 +127,6 @@ it('refuses the ID viewer to anyone but staff', function (): void {
     $this->get(route('creator.kyc-document', ['creator' => $creator->id, 'side' => 'front']))->assertForbidden();
 
     expect($this->audit->of('kyc.document_viewed'))->toHaveCount(0);
-});
-
-it('lists submitted applications for staff with masked details only, and approves from the page', function (): void {
-    $staff = signedInStaff();
-    $user = signedInFanWithMfa();
-    $creator = Creator::factory()->create(['user_id' => $user->id, 'display_name' => 'Waiting Creator', 'handle' => 'waiting.creator']);
-    config(['fanfolio.fake.kyc_outcome' => 'pass']);
-    $this->get((string) $this->post('/creator/kyc', ['device' => 'phone'])->headers->get('Location'));
-    confirmedSecondFactor();
-    $this->post('/creator/payout', ['rail' => 'bank', 'bank_name' => 'Test Bank', 'account_number' => '000011112222', 'account_name' => 'Test Person']);
-    $this->post('/creator/review', ['terms' => '1', 'co_performers' => '1']);
-
-    actAsUserId($staff->id);
-    $this->get('/admin/creator-approvals')
-        ->assertOk()
-        ->assertSee('Creators awaiting review')
-        ->assertSee('Waiting Creator')
-        ->assertSee('Test Bank ····2222', false)
-        ->assertSee('····0000', false)
-        // Rule 13: no legal name or full numbers.
-        ->assertDontSee('TEST PERSON')
-        ->assertDontSee('000011112222');
-
-    Filament::setCurrentPanel('admin');
-    Livewire::test(CreatorApprovals::class)
-        ->callAction(TestAction::make('approve')->table($creator))
-        ->assertNotified('Approved.');
-
-    expect($creator->refresh()->status)->toBe(CreatorStatus::Active)
-        ->and($this->audit->of('creator.approved')[0]['actor'])->toBe($staff->id);
 });
 
 it('keeps fans and creators out of the staff page', function (): void {

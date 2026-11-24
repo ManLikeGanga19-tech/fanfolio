@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace App\Modules\Creators\Filament\Admin;
 
 use App\Modules\Creators\Actions\ApproveCreator;
+use App\Modules\Creators\Actions\AssignApplication;
 use App\Modules\Creators\Actions\RejectCreator;
 use App\Modules\Creators\Actions\RequestCreatorFix;
+use App\Modules\Creators\Actions\RevealApplicantDob;
 use App\Modules\Creators\Contracts\ApprovalQueue;
 use App\Modules\Creators\Enums\CreatorStatus;
 use App\Modules\Creators\Enums\FixKind;
 use App\Modules\Creators\Exceptions\CreatorException;
 use App\Modules\Creators\Models\Creator;
 use App\Modules\Creators\Models\CreatorKyc;
-use App\Modules\Creators\Models\PayoutMethod;
-use App\Modules\Identity\Contracts\Data\DocumentSide;
+use App\Modules\Identity\Contracts\Accounts;
 use App\Modules\Identity\Contracts\StaffAbility;
 use BackedEnum;
 use Filament\Actions\Action;
@@ -22,28 +23,23 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\EmbeddedTable;
-use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
-use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Table;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
+use Livewire\Attributes\Url;
 
 /**
- * Decision D-10: the minimal "Creators awaiting review" page, so onboarding can
- * finish in M2. The full approvals board from the canvas replaces it in M8.
+ * Canvas board AdminApprovals (plan M8a, use cases 4–8); replaces the D-10 minimal page.
+ * The queue is oldest first, with a detail pane: the partner's checks, age, document
+ * type and last 4, whether the payout name matches the ID, and the decisions.
  *
- * Rule 13: staff see masked details only (document type and last 4, payout hint,
- * whether the payout name matches the ID), never the legal name, date of birth or
- * payout numbers. The ID image is fetched from the provider on demand (D-01).
- * Every decision is checked again and audited inside its Action.
+ * Rule 13: staff see masked details only. The date of birth needs a logged reveal and
+ * the ID image is fetched from the partner on demand (D-01). The legal name and payout
+ * numbers are never shown. Every decision is checked again and audited in its Action.
  */
-final class CreatorApprovals extends Page implements HasTable
+final class CreatorApprovals extends Page
 {
-    use InteractsWithTable;
+    private const int PER_PAGE = 25;
 
     // Canvas AdminOverview sidebar: text items, no icons, a count of what is waiting.
     protected static string|BackedEnum|null $navigationIcon = null;
@@ -52,9 +48,23 @@ final class CreatorApprovals extends Page implements HasTable
 
     protected static ?int $navigationSort = 2;
 
-    protected static ?string $title = 'Creators awaiting review';
+    protected static ?string $title = 'Creator approvals';
 
     protected static ?string $slug = 'creator-approvals';
+
+    protected string $view = 'creators::admin.approvals';
+
+    #[Url(except: '')]
+    public string $search = '';
+
+    #[Url(as: 'application')]
+    public ?string $selected = null;
+
+    #[Url(except: 1)]
+    public int $page = 1;
+
+    /** Shown after a logged reveal, for the open application only. */
+    public ?string $revealedDob = null;
 
     /** SEC-15: moderators and admins (StaffAbility::ReviewCreators). */
     public static function canAccess(): bool
@@ -74,95 +84,219 @@ final class CreatorApprovals extends Page implements HasTable
         return 'Waiting for review';
     }
 
-    public function content(Schema $schema): Schema
+    public function getSubheading(): string
     {
-        return $schema->components([EmbeddedTable::make()]);
+        return number_format(app(ApprovalQueue::class)->waiting()).' waiting · automatic checks run first; you make the final call.';
     }
 
-    public function table(Table $table): Table
+    public function updatedSearch(): void
     {
-        return $table
-            ->query(Creator::query()->where('status', CreatorStatus::Submitted))
-            ->defaultSort('submitted_at')
-            ->emptyStateHeading('No applications waiting')
-            ->columns([
-                TextColumn::make('display_name')->label('Page')->description(static fn (Creator $record): string => '@'.$record->handle)
-                    ->searchable(['display_name', 'handle']),
-                TextColumn::make('category')->formatStateUsing(static fn (string $state): string => self::categoryLabel($state)),
-                IconColumn::make('is_adult')->label('18+ content')->boolean(),
-                TextColumn::make('document')->label('ID')->state(static fn (Creator $record): string => self::documentLabel($record->latestKyc())),
-                TextColumn::make('payout')->label('Payouts')->state(static fn (Creator $record): string => $record->payoutMethod()->display_hint ?? 'None'),
-                IconColumn::make('payout_name')->label('Payout name matches ID')->boolean()
-                    ->state(static fn (Creator $record): bool => $record->payoutMethod() instanceof PayoutMethod && $record->payoutMethod()->name_matches_kyc),
-                TextColumn::make('submitted_at')->label('Submitted')->since()->sortable(),
-            ])
-            ->recordActions([
-                Action::make('document')
-                    ->label('View ID')
-                    ->icon(Heroicon::OutlinedEye)
-                    ->url(static fn (Creator $record): string => route('creator.kyc-document', ['creator' => $record->id, 'side' => DocumentSide::Front->value]))
-                    ->openUrlInNewTab(),
-                Action::make('approve')
-                    ->label('Approve')
-                    ->color('success')
-                    ->requiresConfirmation()
-                    ->modalDescription('The creator can start posting and earning straight away.')
-                    ->action(fn (Creator $record): mixed => $this->run(static fn (string $staff): Creator => app(ApproveCreator::class)->handle($record->id, $staff), 'Approved.')),
-                Action::make('fix')
-                    ->label('Ask for a fix')
-                    ->color('warning')
-                    ->schema([
-                        Select::make('kind')->label('What to fix')->required()
-                            ->options(collect(FixKind::cases())->mapWithKeys(static fn (FixKind $kind): array => [$kind->value => $kind->label()])->all()),
-                        Textarea::make('note')->label('Note to the creator (optional)')->maxLength(300)
-                            ->helperText('Shown to the creator. No personal data.'),
-                    ])
-                    ->action(fn (Creator $record, array $data): mixed => $this->run(
-                        static fn (string $staff): Creator => app(RequestCreatorFix::class)->handle(
-                            $record->id,
-                            $staff,
-                            FixKind::from(is_string($data['kind'] ?? null) ? $data['kind'] : ''),
-                            is_string($data['note'] ?? null) ? $data['note'] : null,
-                        ),
-                        'Sent back to the creator.',
-                    )),
-                Action::make('reject')
-                    ->label('Reject')
-                    ->color('danger')
-                    ->requiresConfirmation()
-                    ->modalDescription('The creator cannot apply again with this account.')
-                    ->schema([
-                        Select::make('reason')->label('Reason')->required()->options(RejectCreator::REASONS),
-                    ])
-                    ->action(fn (Creator $record, array $data): mixed => $this->run(
-                        static fn (string $staff): Creator => app(RejectCreator::class)->handle($record->id, $staff, is_string($data['reason'] ?? null) ? $data['reason'] : ''),
-                        'Rejected.',
-                    )),
-            ]);
+        // The first match opens, so the pane never shows one the search hides.
+        $this->page = 1;
+        $this->selected = null;
     }
 
-    public static function categoryLabel(string $key): string
+    public function select(string $creatorId): void
     {
-        $label = config()->array('fanfolio.creators.categories')[$key] ?? null;
-
-        return is_string($label) ? $label : $key;
+        $this->selected = $creatorId;
+        $this->revealedDob = null;
     }
 
-    public static function documentLabel(?CreatorKyc $check): string
+    public function goToPage(int $page): void
     {
-        if (! $check instanceof CreatorKyc) {
-            return 'Not checked';
-        }
-
-        $type = ['national_id' => 'National ID', 'passport' => 'Passport', 'driving_licence' => 'Licence'][$check->id_type] ?? 'ID';
-
-        return $type.($check->document_last4 !== null ? ' ····'.$check->document_last4 : '').($check->liveness_passed ? ' · selfie matched' : '');
+        $this->page = max(1, $page);
     }
 
     /**
-     * @param  callable(string): Creator  $decision
+     * @return array<string, mixed>
      */
-    private function run(callable $decision, string $done): null
+    protected function getViewData(): array
+    {
+        $staff = $this->staffId();
+        $term = trim($this->search);
+
+        $queue = Creator::query()
+            ->where('status', CreatorStatus::Submitted)
+            ->where('user_id', '!=', $staff)
+            ->when($term !== '', static fn (Builder $q): Builder => $q->where(static fn (Builder $q): Builder => $q
+                ->where('display_name', 'ilike', '%'.addcslashes($term, '%_\\').'%')
+                ->orWhere('handle', 'ilike', '%'.addcslashes(ltrim($term, '@'), '%_\\').'%')))
+            ->orderBy('submitted_at')
+            ->orderBy('id')
+            ->paginate(self::PER_PAGE, page: $this->page);
+
+        // Like the canvas, the first in the queue is open until another is chosen.
+        $detail = $this->detail();
+        if (! $detail instanceof Creator && $queue->isNotEmpty()) {
+            $first = $queue->getCollection()->first();
+            $this->selected = $first instanceof Creator ? $first->id : null;
+            $this->revealedDob = null;
+            $detail = $this->detail();
+        }
+
+        return [
+            'queue' => $queue,
+            'detail' => $detail,
+            'holder' => $detail instanceof Creator ? $this->holderLabel($detail, $staff) : null,
+        ];
+    }
+
+    public static function categoryLabel(?string $key): string
+    {
+        $label = config()->array('fanfolio.creators.categories')[$key] ?? null;
+
+        return is_string($label) ? $label : (string) $key;
+    }
+
+    public static function documentType(?CreatorKyc $check): string
+    {
+        $types = ['national_id' => 'National ID', 'passport' => 'Passport', 'driving_licence' => 'Driving licence'];
+
+        return $types[(string) $check?->id_type] ?? 'ID';
+    }
+
+    /**
+     * @param  LengthAwarePaginator<int, Creator>  $queue
+     */
+    public static function pageLabel(LengthAwarePaginator $queue): string
+    {
+        return 'Page '.$queue->currentPage().' of '.max(1, $queue->lastPage());
+    }
+
+    public function approveAction(): Action
+    {
+        return Action::make('approve')
+            ->label('Approve creator')
+            ->color('primary')
+            ->requiresConfirmation()
+            ->modalHeading('Approve this creator?')
+            ->modalDescription('They can start posting and earning straight away.')
+            ->modalSubmitActionLabel('Approve')
+            ->visible(fn (): bool => $this->detail() instanceof Creator)
+            ->action(function (): void {
+                $this->run(fn (string $staff): Creator => app(ApproveCreator::class)->handle((string) $this->selected, $staff), 'Approved.');
+            });
+    }
+
+    public function requestChangesAction(): Action
+    {
+        return Action::make('requestChanges')
+            ->label('Request changes')
+            ->color('gray')
+            ->modalHeading('Request changes')
+            ->modalDescription('The creator sees "One thing to fix" and submits again.')
+            ->modalSubmitActionLabel('Send to the creator')
+            ->visible(fn (): bool => $this->detail() instanceof Creator)
+            ->schema([
+                Select::make('kind')->label('What to fix')->required()
+                    ->options(collect(FixKind::cases())->mapWithKeys(static fn (FixKind $kind): array => [$kind->value => $kind->label()])->all()),
+                Textarea::make('note')->label('Note to the creator (optional)')->maxLength(300)
+                    ->helperText('Shown to the creator. No personal data.'),
+            ])
+            ->action(function (array $data): void {
+                $this->run(fn (string $staff): Creator => app(RequestCreatorFix::class)->handle(
+                    (string) $this->selected,
+                    $staff,
+                    FixKind::from(is_string($data['kind'] ?? null) ? $data['kind'] : ''),
+                    is_string($data['note'] ?? null) ? $data['note'] : null,
+                ), 'Sent back to the creator.');
+            });
+    }
+
+    public function rejectAction(): Action
+    {
+        return Action::make('reject')
+            ->label('Reject')
+            ->color('danger')
+            ->outlined()
+            ->modalHeading('Reject this application?')
+            ->modalDescription('The creator cannot apply again with this account. They see a neutral message; the reason stays in the audit log.')
+            ->modalSubmitActionLabel('Reject')
+            ->visible(fn (): bool => $this->detail() instanceof Creator)
+            ->schema([
+                Select::make('reason')->label('Reason')->required()->options(RejectCreator::REASONS),
+            ])
+            ->action(function (array $data): void {
+                $this->run(fn (string $staff): Creator => app(RejectCreator::class)->handle(
+                    (string) $this->selected,
+                    $staff,
+                    is_string($data['reason'] ?? null) ? $data['reason'] : '',
+                ), 'Rejected.');
+            });
+    }
+
+    public function assignAction(): Action
+    {
+        return Action::make('assign')
+            ->label('Assign to me')
+            ->color('gray')
+            ->size('sm')
+            ->visible(fn (): bool => ($detail = $this->detail()) instanceof Creator && $detail->assigned_to !== auth()->id())
+            ->action(function (): void {
+                $this->run(fn (string $staff): Creator => app(AssignApplication::class)->assign((string) $this->selected, $staff), 'Assigned to you.');
+            });
+    }
+
+    public function releaseAction(): Action
+    {
+        return Action::make('release')
+            ->label('Unassign')
+            ->color('gray')
+            ->size('sm')
+            ->visible(fn (): bool => ($detail = $this->detail()) instanceof Creator && $detail->assigned_to === auth()->id())
+            ->action(function (): void {
+                $this->run(fn (string $staff): Creator => app(AssignApplication::class)->release((string) $this->selected, $staff), 'Unassigned.');
+            });
+    }
+
+    public function revealDobAction(): Action
+    {
+        return Action::make('revealDob')
+            ->label('Show date of birth')
+            ->link()
+            ->color('gray')
+            ->requiresConfirmation()
+            ->modalHeading('Show the date of birth?')
+            ->modalDescription('The reveal is written to the audit log with your name.')
+            ->modalSubmitActionLabel('Show')
+            ->visible(fn (): bool => $this->revealedDob === null && $this->detail() instanceof Creator)
+            ->action(function (): void {
+                try {
+                    $this->revealedDob = app(RevealApplicantDob::class)->handle((string) $this->selected, $this->staffId())->format('j M Y');
+                } catch (CreatorException $e) {
+                    Notification::make()->title($e->getMessage())->danger()->send();
+                }
+            });
+    }
+
+    /** The open application: the chosen one while it still waits, never the viewer's own. */
+    private function detail(): ?Creator
+    {
+        if ($this->selected === null) {
+            return null;
+        }
+
+        $creator = Creator::query()->whereKey($this->selected)->where('status', CreatorStatus::Submitted)->first();
+
+        return $creator instanceof Creator && $creator->user_id !== auth()->id() ? $creator : null;
+    }
+
+    private function holderLabel(Creator $creator, string $staff): string
+    {
+        if ($creator->assigned_to === null) {
+            return 'Not assigned';
+        }
+
+        if ($creator->assigned_to === $staff) {
+            return 'Assigned to you';
+        }
+
+        $username = app(Accounts::class)->username($creator->assigned_to);
+
+        return 'Held by '.($username !== null ? '@'.$username : 'another reviewer');
+    }
+
+    private function staffId(): string
     {
         $staff = auth()->id();
 
@@ -170,13 +304,22 @@ final class CreatorApprovals extends Page implements HasTable
             abort(403);
         }
 
+        return $staff;
+    }
+
+    /**
+     * @param  callable(string): Creator  $decision
+     */
+    private function run(callable $decision, string $done): void
+    {
         try {
-            $decision($staff);
-            Notification::make()->title($done)->success()->send();
+            $decision($this->staffId());
         } catch (CreatorException $e) {
             Notification::make()->title($e->getMessage())->danger()->send();
+
+            return;
         }
 
-        return null;
+        Notification::make()->title($done)->success()->send();
     }
 }

@@ -28,7 +28,7 @@ Status: **to do**, **done**, or **later** (the screen arrives with its milestone
 | Studio shell | StudioDashboard | Studio sidebar and dashboard per board | later (with Studio features) |
 | Admin shell and Overview | AdminOverview | Wordmark with red "Admin" label; text sidebar with counts; Today / 7 / 30 days; KPI cards; bar chart; System health with coloured dots. Money tiles and the sales chart wait for M3 (sign-ups chart until then); other sidebar items join as their boards are built | done (M8a PR 1) |
 | Admin: Users & bans | AdminUsers | Search, filter pills, table with status pills, detail pane with required reason and Ban / Suspend / Sign out everywhere. Spend, disputes and leak rows wait for M3 and M4; the note about blocking the verified ID waits for D-17 | done (M8a PR 2) |
-| Admin: creator approvals | AdminApprovals | Sidebar with counts; list + detail pane with checks | to do (M8a PR 3) |
+| Admin: creator approvals | AdminApprovals | Sidebar with counts; list + detail pane with checks | done (M8a PR 3; search box added for long queues, payout name shown as match only (rule 13), face-match score and sanctions lines wait for the KYC provider) |
 | Admin: other boards | Admin* | Built to the board in M8a and their milestones | later |
 
 ## Open items for the owner
