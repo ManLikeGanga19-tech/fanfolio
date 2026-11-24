@@ -12,12 +12,12 @@ Status: **to do**, **done**, or **later** (the screen arrives with its milestone
 |---|---|---|---|
 | Log in (desktop) | AuthLogin | Carousel on the left (1.15 : 1) with logo mark "F" and left-to-right shade; passkey button with key icon; "Keep me logged in"; footer "FanFolio is for adults 18+. Protected by multi-factor sign-in."; 5 slides with their own headline and line | done |
 | Sign up (desktop) | AuthSignup | Same carousel; "I'm a fan / I'm a creator" switch (a creator continues to Become a creator after sign-up); "Free, and it takes under a minute."; "Sign up with a passkey" with key icon. Kept by owner decisions: optional phone (D-13), confirm password and show/hide | done |
-| Log in, sign up, email code, 18+ check (phone) | FanOnboarding | Back arrow; 3-segment progress bar; illustration on the code step (phone with message) and the 18+ step (shield "18+"); 6 code boxes. Step 2 stays email (D-12) | to do |
+| Log in, sign up, email code, 18+ check (phone) | FanOnboarding | Back arrow; 3-segment progress bar; illustration on the code step (phone with message) and the 18+ step (shield "18+"); 6 code boxes. Step 2 stays email (D-12) | done |
 | Landing `/` (desktop) | MarketingHome | Full marketing page: header and nav, hero, trust row, how it works (3), earnings, ways to earn (6), safety (4), categories, FAQ, closing call to action, footer | to do |
 | For creators `/creators` | MarketingCreators | New page: hero, 80% section, four steps, tools (6), payouts (3), protection (3), FAQ, closing call to action | to do |
 | Landing (phone) | FanOnboarding · Landing | Featured creators row shows only once creator pages exist (M5) | later |
-| Account hub | FanMore · Account | Avatar, name, username, "Age verified" pill; grouped rows. Wallet card, Subscriptions, Purchases, Notifications, Currency, Help arrive with their modules; bottom tab bar arrives with the feed (M4/M5) | to do (layout), later (rows) |
-| Devices & security | FanMore · Security | Icon circles for passkey and authenticator; "On" pill; device rows with place and time; "Sign out of all other devices" | to do |
+| Account hub | FanMore · Account | Avatar, name, username, "Age verified" pill; grouped rows. Wallet card, Subscriptions, Purchases, Notifications, Currency, Help arrive with their modules; bottom tab bar arrives with the feed (M4/M5) | done (layout), later (rows) |
+| Devices & security | FanMore · Security | Icon circles for passkey and authenticator; "On" pill; device rows with place and time; "Sign out of all other devices" | done |
 | Become a creator | Main · 1 | Icon circles (wallet, clock, lock) in the benefits card; check badges on "what you'll need"; back arrow. Copy per D-01 ("We never store the image") | done |
 | Set up your page | Main · 2 | 4-segment progress bar; camera upload circle (upload opens with M4 scanning, D-08); "Available" inside the handle field; chevron on category; 18+ as a switch | done |
 | Scan your ID / selfie | Main · 3–4 | Capture runs on the provider's page (D-11) and on a phone (D-14). Our start page gets the progress bar, icons for the tips and the shield note | done |
