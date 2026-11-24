@@ -49,6 +49,20 @@ Each Action checks, inside the Action, that the actor is staff with MFA (`Identi
 
 **ID viewer (D-01).** `GET /admin/kyc-documents/{creator}/{side}` (staff only, `staff` middleware) fetches the front, back or selfie frame from the provider through `IdentityVerifier::fetchDocumentImage` and streams it with `Cache-Control: no-store`. Nothing is kept. Each view is audited as `kyc.document_viewed`.
 
+## Creators directory (plan M8a PR 3b, use cases 9–12)
+
+`/admin/creators` (`Filament\Admin\CreatorsDirectory`, `StaffAbility::ViewCreators`) lists every creator page with a handle, filtered by All, Active, In review, Onboarding, Suspended and Rejected, and searchable by page name or handle. The detail pane shows the page, the account's username, key dates, the last five ID checks (result, date, document type and last 4, failure reason) and the payout methods (`display_hint` and whether the name matches the ID). No legal name, date of birth or full numbers (rule 13). There is no canvas board for it; it follows Users & bans.
+
+| Action | Who | From → to | Audit | Creator is told |
+|---|---|---|---|---|
+| `SuspendCreator` (no `days`) | Admin (`SuspendCreator`) | `active` → `suspended` | `creator.suspended` (reason, note) | `CreatorStatusNotice` with the reason category |
+| `SuspendCreator` (`days` 1–7) | Moderator, admin (`PauseCreator`) | `active` → `suspended` with `suspended_until` | `creator.paused` (reason, note, days) | the same, with the end date |
+| `ReinstateCreator::handle` | Admin (`ReinstateCreator`), note required; refused while the account is suspended or banned | `suspended` → `active` | `creator.reinstated` (note) | "active again" |
+| `ReinstateCreator::endPause` via `creators:end-pauses` (every 5 min) | System | paused → `active` once `suspended_until` has passed; an admin suspension is never ended | `creator.pause_ended` | "active again" |
+| `RequireIdRecheck` | Moderator, admin (`RequireIdRecheck`), note required | `active` → `onboarding`, KYC `action_needed`, fix "Retake ID photo" | `creator.id_recheck_required` (note) | `RequireIdRecheck::MESSAGE` on board 8 and by email |
+
+Suspending dispatches `CreatorSuspended` and reinstating dispatches `CreatorReinstated` (after commit). `CreatorEligibility` reads the database on every call, so publishing and earning stop and resume at once (rule 9). The staff note goes to the audit log only. After a new ID check the creator verifies, submits and comes back through Creator approvals. "Pause payouts only" (use case 13) comes with payouts in M3.
+
 ## Studio
 
 `/studio` is a Filament panel (`App\Providers\Filament\StudioPanelProvider`). `Http\Middleware\EnsureStudioAccess` lets in only accounts with MFA for whom `CreatorEligibility::canPublish` is true. Anyone else (in review, sent back, rejected, ID expired, suspended) goes to `/creator/status`. It shares the admin panel's relaxed CSP (D-07); fan pages keep the strict one. For now it holds only a welcome page; posts, prices, earnings and payouts arrive with their milestones.

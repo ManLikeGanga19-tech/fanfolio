@@ -87,7 +87,7 @@ All migrations are additive, nullable or defaulted, and reversible.
 1. Admin shell and navigation from the canvas, role policies, Overview with real figures, D-15 time zone (built: branch `admin/01-shell-overview`)
 2. Users & bans: account status, suspend, ban, lift, strikes, sign out everywhere, user detail, emails (built: branch `admin/02-users-bans`; D-17 ID hash, flag-to-case, age re-check and second-factor reset follow)
 3. Creator approvals board (canvas page 12): queue, detail pane, assign to me, logged date-of-birth reveal (built: branch `admin/03-approvals`)
-3b. Creators directory with suspend, reinstate and ID re-check (use cases 9–13)
+3b. Creators directory with suspend, pause (moderators, up to 7 days, ends by itself), reinstate and ID re-check, use cases 9–12 (built: branch `admin/04-creators-directory`; use case 13 "pause payouts only" moves to M3)
 4. Moderation engine and queue: reports, cases, assignment, decisions; "Report" sheet for accounts
 5. Audit log board with CSV export; Staff board with two-admin approvals
 6. Settings board (read-only locked values) and network-risk rules if decided

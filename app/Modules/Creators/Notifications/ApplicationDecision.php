@@ -25,7 +25,14 @@ final class ApplicationDecision extends Notification implements ShouldQueue
 
     public const string REJECTED = 'rejected';
 
-    public function __construct(public readonly string $decision, public readonly ?FixKind $fix = null) {}
+    /**
+     * @param  string|null  $message  replaces the fix kind's standard message (no personal data).
+     */
+    public function __construct(
+        public readonly string $decision,
+        public readonly ?FixKind $fix = null,
+        public readonly ?string $message = null,
+    ) {}
 
     /**
      * @return list<string>
@@ -47,7 +54,7 @@ final class ApplicationDecision extends Notification implements ShouldQueue
                 ->action('Open Studio', url('/studio')),
             self::FIX => $mail
                 ->subject("One thing to fix on your {$brand} application")
-                ->line(($this->fix ?? FixKind::Profile)->message())
+                ->line($this->message ?? ($this->fix ?? FixKind::Profile)->message())
                 ->action(($this->fix ?? FixKind::Profile)->label(), route('creator.status')),
             default => $mail
                 ->subject("Your {$brand} creator application")
