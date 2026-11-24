@@ -131,15 +131,21 @@ test('signed-in pages pass axe and keep a visible focus ring', async ({ page, br
     await expectVisibleFocusOnTab(staffPage, { maxSteps: 60 });
 
     await staffPage.goto('/admin/creator-approvals');
-    await expect(staffPage.getByRole('heading', { name: 'Creators awaiting review' })).toBeVisible();
-    await expectNoAxeViolations(staffPage);
-    // Oldest first, so search for this run's creator.
+    await expect(staffPage.getByRole('heading', { name: 'Creator approvals' })).toBeVisible();
+    // Oldest first, so search for this run's creator; the first match opens in the detail pane.
     const handle = account.username.replace('_', '.');
     await staffPage.getByRole('searchbox').fill(handle);
-    const row = staffPage.getByRole('row').filter({ hasText: `@${handle}` });
-    await row.getByRole('button', { name: 'Approve' }).click();
+    const detail = staffPage.getByRole('region', { name: 'Applicant detail' });
+    await expect(detail.getByRole('heading', { name: new RegExp(`@${handle.replace('.', '\\.')}$`) })).toBeVisible();
+    // Checked before acting, so axe never meets a toast that is still fading in.
+    await expectNoAxeViolations(staffPage);
+    await expectVisibleFocusOnTab(staffPage, { maxSteps: 60 });
+    await detail.getByRole('button', { name: 'Assign to me' }).click();
+    await expect(detail.getByText('Assigned to you', { exact: true })).toBeVisible();
+    await expect(detail.getByRole('button', { name: 'Unassign' })).toBeVisible();
+    await detail.getByRole('button', { name: 'Approve creator' }).click();
     // Filament's confirmation modal is an alertdialog (a plain dialog on older versions).
-    await staffPage.getByRole('alertdialog').or(staffPage.getByRole('dialog')).getByRole('button', { name: 'Confirm' }).click();
+    await staffPage.getByRole('alertdialog').or(staffPage.getByRole('dialog')).getByRole('button', { name: 'Approve', exact: true }).click();
     await expect(staffPage.getByText('Approved.')).toBeVisible();
     await staffContext.close();
 

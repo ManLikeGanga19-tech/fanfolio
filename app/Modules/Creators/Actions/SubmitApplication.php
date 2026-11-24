@@ -63,6 +63,9 @@ final readonly class SubmitApplication
                 // Sent back by staff earlier (board 8): fixed now.
                 'fix_kind' => null,
                 'fix_note' => null,
+                // A resubmission joins the queue unassigned (plan M8a use case 5).
+                'assigned_to' => null,
+                'assigned_at' => null,
             ])->save();
 
             $this->audit->record('creator.submitted', $creator->user_id, 'creator', $creator->id, [

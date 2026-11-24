@@ -35,6 +35,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $fix_note
  * @property string|null $reviewed_by
  * @property CarbonImmutable|null $reviewed_at
+ * @property string|null $assigned_to
+ * @property CarbonImmutable|null $assigned_at
  */
 final class Creator extends Model
 {
@@ -134,6 +136,7 @@ final class Creator extends Model
             'id_expiry_reminded_at' => 'immutable_datetime',
             'fix_kind' => FixKind::class,
             'reviewed_at' => 'immutable_datetime',
+            'assigned_at' => 'immutable_datetime',
         ];
     }
 }
