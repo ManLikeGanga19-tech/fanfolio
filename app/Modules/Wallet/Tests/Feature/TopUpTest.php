@@ -143,6 +143,16 @@ it('credits once however often the gateway repeats itself', function (): void {
         ->and($topUp->refresh()->status)->toBe(TopUpStatus::Paid);
 });
 
+it('shows the method the fan chose: a crypto top-up says USDT, not a card', function (): void {
+    $topUp = startTopUpAs(3, 'crypto');
+
+    $this->post('/_fake/checkout/'.$topUp->gateway_ref, ['outcome' => 'pay']);
+
+    expect($topUp->refresh()->payment_hint)->toBe('USDT (TRC-20)');
+    $this->get(route('wallet.topups.show', $topUp->id))->assertSee('USDT (TRC-20)')->assertDontSee('Visa');
+    $this->get('/account/purchases')->assertSee('Top-up · USDT (TRC-20)');
+});
+
 it('marks a declined payment and adds nothing', function (): void {
     $topUp = startTopUpAs(0);
 

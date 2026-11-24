@@ -6,6 +6,7 @@ namespace App\Modules\Wallet\Http\Controllers;
 
 use App\Modules\Wallet\Actions\ReceiveGatewayWebhook;
 use App\Modules\Wallet\Contracts\Data\GatewayEventType;
+use App\Modules\Wallet\Contracts\Data\TopUpMethod;
 use App\Modules\Wallet\Contracts\TopUpGateway;
 use App\Modules\Wallet\Gateways\Fake\FakeTopUpGateway;
 use App\Modules\Wallet\Models\TopUp;
@@ -32,7 +33,9 @@ final class FakeCheckoutController
         abort_unless($gateway instanceof FakeTopUpGateway, 404);
 
         $type = $request->string('outcome')->toString() === 'decline' ? GatewayEventType::PaymentFailed : GatewayEventType::PaymentSucceeded;
-        $webhook = $gateway->signedWebhook($type, $ref, Money::of($topUp->amount_minor, $topUp->currency));
+        // Report the method the fan chose, as a real processor would (found in a browser walk-through).
+        $hint = $topUp->method === TopUpMethod::Crypto ? 'USDT (TRC-20)' : 'Visa ····4242';
+        $webhook = $gateway->signedWebhook($type, $ref, Money::of($topUp->amount_minor, $topUp->currency), null, null, $hint);
 
         $receive->handle($gateway->name(), $webhook['payload'], $webhook['headers']);
 
