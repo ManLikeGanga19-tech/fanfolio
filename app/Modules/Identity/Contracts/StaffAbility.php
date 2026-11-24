@@ -30,6 +30,8 @@ enum StaffAbility: string
     // Users and bans
     case ViewUsers = 'admin.users.view';
     case SuspendUser = 'admin.users.suspend';
+    /** Suspensions longer than 7 days (D-18: moderators suspend for up to 7). */
+    case SuspendUserLong = 'admin.users.suspend_long';
     case BanUser = 'admin.users.ban';
     case LiftRestriction = 'admin.users.lift';
     case GiveStrike = 'admin.users.strike';
@@ -56,6 +58,7 @@ enum StaffAbility: string
             self::SuspendCreator,
             self::ReinstateCreator,
             self::PauseCreatorPayouts,
+            self::SuspendUserLong,
             self::BanUser,
             self::LiftRestriction,
             self::ResetSecondFactor,

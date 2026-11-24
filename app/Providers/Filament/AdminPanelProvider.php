@@ -9,6 +9,7 @@ use App\Modules\Creators\Filament\Admin\CreatorApprovals;
 use App\Modules\Identity\Http\Middleware\ApplyDisplayTimezone;
 use App\Modules\Identity\Http\Middleware\EnsureAdminAccess;
 use App\Modules\Identity\Http\Middleware\EnsureDeviceActive;
+use App\Modules\TrustSafety\Filament\Admin\UsersBoard;
 use Filament\Enums\ThemeMode;
 use Filament\FontProviders\LocalFontProvider;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -62,6 +63,7 @@ final class AdminPanelProvider extends PanelProvider
                 // Canvas AdminOverview sidebar order; later boards join as they are built.
                 Overview::class,
                 CreatorApprovals::class,
+                UsersBoard::class,
             ])
             ->middleware([
                 EncryptCookies::class,

@@ -30,6 +30,8 @@ See `docs/backend-spec.md` for the module's rules and `docs/plans/M2.md` for the
 
 The routes act only on the signed-in account's own application; no ids appear in URLs.
 
+**Restricted accounts (plan M8a).** `CreatorEligibility` also refuses publishing and earning while the account is suspended or banned (`Identity\Contracts\AccountRestrictions::isRestricted`). `Listeners\SuspendBannedCreator` suspends the creator page when it hears `TrustSafety\Events\UserBanned`, so a lifted ban does not reopen the page without staff.
+
 ## Staff review (decision D-10)
 
 `/admin/creator-approvals` (Filament, admin panel) lists submitted applications: page, category, 18+ flag, document type and last 4, whether the selfie matched, the payout hint, whether the payout name matches the ID, and when it was submitted. No legal name, date of birth or full numbers (rule 13). The full approvals board replaces it in M8a PR 3. It opens for staff with `StaffAbility::ReviewCreators`, and its sidebar item shows how many applications wait.

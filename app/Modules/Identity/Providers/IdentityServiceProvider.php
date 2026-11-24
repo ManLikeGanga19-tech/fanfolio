@@ -6,9 +6,14 @@ namespace App\Modules\Identity\Providers;
 
 use App\Modules\Creators\Events\CreatorApproved;
 use App\Modules\Identity\Actions\AccountLookup;
+use App\Modules\Identity\Actions\Directory;
 use App\Modules\Identity\Actions\PhoneHandoffs;
+use App\Modules\Identity\Actions\Restrictions;
 use App\Modules\Identity\Actions\SignUpStats;
+use App\Modules\Identity\Console\EndSuspensions;
 use App\Modules\Identity\Console\MakeDevStaff;
+use App\Modules\Identity\Contracts\AccountDirectory;
+use App\Modules\Identity\Contracts\AccountRestrictions;
 use App\Modules\Identity\Contracts\Accounts;
 use App\Modules\Identity\Contracts\AccountStats;
 use App\Modules\Identity\Contracts\BreachedPasswordChecker;
@@ -32,6 +37,7 @@ use App\Modules\Identity\Policies\UserDevicePolicy;
 use App\Support\Modules\ModuleServiceProvider;
 use App\Support\Security\KeyedHash;
 use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Event;
@@ -71,6 +77,8 @@ final class IdentityServiceProvider extends ModuleServiceProvider
 
         $this->app->bind(Accounts::class, AccountLookup::class);
         $this->app->bind(AccountStats::class, SignUpStats::class);
+        $this->app->bind(AccountDirectory::class, Directory::class);
+        $this->app->bind(AccountRestrictions::class, Restrictions::class);
         $this->app->singleton(KeyedHash::class, static fn (): KeyedHash => KeyedHash::fromConfig());
     }
 
@@ -103,8 +111,13 @@ final class IdentityServiceProvider extends ModuleServiceProvider
         $this->rateLimits();
 
         if ($this->app->runningInConsole()) {
-            $this->commands([MakeDevStaff::class]);
+            $this->commands([MakeDevStaff::class, EndSuspensions::class]);
         }
+
+        // Plan M8a use case 16: suspensions lift themselves.
+        $this->callAfterResolving(Schedule::class, static function (Schedule $schedule): void {
+            $schedule->command('identity:end-suspensions')->everyFiveMinutes()->onOneServer()->withoutOverlapping();
+        });
     }
 
     /**

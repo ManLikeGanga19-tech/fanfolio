@@ -37,6 +37,8 @@ use Laragear\WebAuthn\WebAuthnData;
  * @property CarbonImmutable|null $age_verified_at
  * @property CarbonImmutable|null $last_login_at
  * @property string|null $timezone IANA zone from the browser, for showing times (D-15)
+ * @property CarbonImmutable|null $suspended_until when a suspension ends by itself
+ * @property CarbonImmutable|null $restricted_at when the account was last suspended or banned
  * @property CarbonImmutable $created_at
  */
 final class User extends Authenticatable implements FilamentUser, HasName, WebAuthnAuthenticatable
@@ -80,7 +82,7 @@ final class User extends Authenticatable implements FilamentUser, HasName, WebAu
      */
     public function canAccessPanel(Panel $panel): bool
     {
-        if (! $this->mfa_enabled || ! $this->status->canSignIn()) {
+        if (! $this->mfa_enabled || ! $this->canSignIn()) {
             return false;
         }
 
@@ -94,7 +96,20 @@ final class User extends Authenticatable implements FilamentUser, HasName, WebAu
      */
     public function canStaff(StaffAbility $ability): bool
     {
-        return $this->mfa_enabled && $this->status->canSignIn() && $this->role->allows($ability);
+        return $this->mfa_enabled && $this->canSignIn() && $this->role->allows($ability);
+    }
+
+    /**
+     * Banned accounts never; suspended ones once the suspension has ended, even before
+     * identity:end-suspensions tidies the status (plan M8a, use case 16).
+     */
+    public function canSignIn(): bool
+    {
+        if ($this->status === AccountStatus::Suspended) {
+            return $this->suspended_until instanceof CarbonImmutable && $this->suspended_until->isPast();
+        }
+
+        return $this->status->canSignIn();
     }
 
     /**
@@ -169,6 +184,8 @@ final class User extends Authenticatable implements FilamentUser, HasName, WebAu
             'phone_verified_at' => 'immutable_datetime',
             'age_verified_at' => 'immutable_datetime',
             'last_login_at' => 'immutable_datetime',
+            'suspended_until' => 'immutable_datetime',
+            'restricted_at' => 'immutable_datetime',
             'created_at' => 'immutable_datetime',
             'updated_at' => 'immutable_datetime',
             'password' => 'hashed',

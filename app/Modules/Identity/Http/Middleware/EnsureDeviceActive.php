@@ -35,6 +35,11 @@ final readonly class EnsureDeviceActive
             return $next($request);
         }
 
+        // Plan M8a: a suspended or banned account is signed out on its next request.
+        if (! $user->canSignIn()) {
+            return $this->signOut($request, 'This account cannot be used right now. Check your email for details.');
+        }
+
         $deviceId = $request->session()->get(Devices::SESSION_KEY);
 
         if (! is_string($deviceId)) {

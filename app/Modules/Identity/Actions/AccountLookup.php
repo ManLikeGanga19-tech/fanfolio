@@ -20,7 +20,7 @@ final readonly class AccountLookup implements Accounts
     {
         $user = User::query()->find($userId);
 
-        return $user instanceof User && $user->role->isStaff() && $user->mfa_enabled && $user->status->canSignIn();
+        return $user instanceof User && $user->role->isStaff() && $user->mfa_enabled && $user->canSignIn();
     }
 
     public function can(string $userId, StaffAbility $ability): bool

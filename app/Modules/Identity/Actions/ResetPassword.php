@@ -32,7 +32,7 @@ final readonly class ResetPassword
     {
         $user = User::query()->where('email', $email)->first();
 
-        if ($user === null || ! $user->status->canSignIn()) {
+        if ($user === null || ! $user->canSignIn()) {
             return;
         }
 
