@@ -37,7 +37,7 @@
                 <button type="button" data-slide-dot="{{ $i }}"
                     @if ($i === $start) aria-current="true" @endif
                     class="group flex h-11 w-7 items-center">
-                    <span class="sr-only">Slide {{ $i + 1 }} of {{ count($slides) }}</span><span class="block h-1 w-full rounded-full {{ $i === $start ? 'bg-brand' : 'bg-border-strong' }} group-aria-[current=true]:bg-brand"></span>
+                    <span class="sr-only">Slide {{ $i + 1 }} of {{ count($slides) }}</span><span class="relative block h-1 w-full overflow-hidden rounded-full bg-border-strong" aria-hidden="true"><span data-dot-fill class="absolute inset-0 origin-left rounded-full bg-brand {{ $i === $start ? '' : 'hidden' }}"></span></span>
                 </button>
             @endforeach
         </div>

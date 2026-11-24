@@ -169,11 +169,24 @@
             <p class="{{ $eyebrow }}">Explore</p>
             <h2 id="cats" class="{{ $d2 }}">Something for every fan</h2>
         </div>
-        <ul class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            @foreach (['Music' => false, 'Fitness' => false, 'Fashion and beauty' => false, 'After dark' => true] as $category => $adult)
-                <li>
-                    <a href="{{ route('signup') }}" class="flex h-[220px] items-end rounded-lg border border-border bg-surface-raised p-5 text-ink hover:border-border-strong">
-                        <strong class="font-display text-lg leading-6 font-semibold">{{ $category }}@if ($adult)<span class="ml-2 inline-flex h-6 items-center rounded-full border border-border bg-bg px-2.5 font-sans text-xs font-semibold text-ink-muted">18+ verified</span>@endif</strong>
+        {{-- Bento grid of large photo tiles (owner, 24 Nov 2026: bigger than the canvas's 220 px cards).
+             Tiles rise in with Motion as they scroll into view (resources/js/reveal.js). --}}
+        @php
+            $categories = [
+                ['name' => 'Music', 'image' => 'music', 'adult' => false, 'tile' => 'sm:col-span-2 lg:row-span-2'],
+                ['name' => 'Fitness', 'image' => 'fitness', 'adult' => false, 'tile' => 'lg:col-span-2'],
+                ['name' => 'Fashion and beauty', 'image' => 'fashion', 'adult' => false, 'tile' => ''],
+                ['name' => 'After dark', 'image' => 'after-dark', 'adult' => true, 'tile' => 'sm:col-span-2 lg:col-span-1'],
+            ];
+        @endphp
+        <ul class="grid auto-rows-[320px] gap-5 sm:grid-cols-2 sm:auto-rows-[300px] lg:grid-cols-4 lg:auto-rows-[290px]" data-reveal-group>
+            @foreach ($categories as $category)
+                <li class="{{ $category['tile'] }}" data-reveal>
+                    <a href="{{ route('signup') }}" class="group relative flex size-full items-end overflow-hidden rounded-lg border border-border bg-surface-raised p-6 text-ink hover:border-border-strong lg:p-7">
+                        <img src="{{ Vite::asset('resources/images/explore/'.$category['image'].'.webp') }}" alt="" loading="lazy" decoding="async"
+                            class="absolute inset-0 size-full object-cover transition-transform duration-700 ease-out group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100">
+                        <span class="absolute inset-0 bg-linear-to-t from-bg/90 via-bg/25 via-50% to-transparent" aria-hidden="true"></span>
+                        <strong class="relative flex flex-wrap items-center gap-2 font-display text-2xl leading-8 font-semibold lg:text-[28px] lg:leading-9">{{ $category['name'] }}@if ($category['adult'])<span class="inline-flex h-6 items-center rounded-full border border-border bg-bg px-2.5 font-sans text-xs font-semibold text-ink-muted">18+ verified</span>@endif</strong>
                     </a>
                 </li>
             @endforeach

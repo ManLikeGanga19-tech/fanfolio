@@ -7,8 +7,8 @@ namespace App\Support\View;
 /**
  * Slides of the auth carousel (canvas boards AuthLogin and AuthSignup). The canvas draws five
  * slides but gives the copy of only two ("Create on your terms.", "Closer to the creators you
- * love."); the third uses the landing headline. The owner supplies two more photos and their
- * copy to reach five (docs/screens/conformance.md).
+ * love."); the third uses the landing headline. Slides 4 and 5 use the owner's photos (24 Nov
+ * 2026) with copy from the landing page's safety cards, pending the owner's approval.
  */
 final class AuthSlides
 {
@@ -37,6 +37,16 @@ final class AuthSlides
                 'image' => 'resources/images/auth/phone-glow.webp',
                 'headline' => 'Support the creators you love, directly.',
                 'line' => 'Pay by card or crypto; creators get paid fast.',
+            ],
+            [
+                'image' => 'resources/images/auth/collab.webp',
+                'headline' => 'Create together, with consent.',
+                'line' => 'Tag your co-creators. Everyone is ID-verified and approves the post before it goes live.',
+            ],
+            [
+                'image' => 'resources/images/auth/protected.webp',
+                'headline' => 'Your content, protected.',
+                'line' => 'Media is encrypted and watermarked to each viewer, so leaks can be traced and taken down.',
             ],
         ];
     }
