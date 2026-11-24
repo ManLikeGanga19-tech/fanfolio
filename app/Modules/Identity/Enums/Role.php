@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Modules\Identity\Enums;
 
+use App\Modules\Identity\Contracts\StaffAbility;
+
 enum Role: string
 {
     case Fan = 'fan';
@@ -20,5 +22,11 @@ enum Role: string
     public function isStaff(): bool
     {
         return $this === self::Moderator || $this === self::Admin;
+    }
+
+    /** The role matrix in docs/plans/M8a.md: staff only; admin-only abilities for admins. */
+    public function allows(StaffAbility $ability): bool
+    {
+        return $this->isStaff() && (! $ability->adminOnly() || $this === self::Admin);
     }
 }

@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace App\Modules\Creators\Providers;
 
+use App\Modules\Creators\Actions\CreatorApprovalQueue;
 use App\Modules\Creators\Actions\Eligibility;
 use App\Modules\Creators\Console\SendIdExpiryReminders;
+use App\Modules\Creators\Contracts\ApprovalQueue;
 use App\Modules\Creators\Contracts\CreatorEligibility;
 use App\Support\Modules\ModuleServiceProvider;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -29,6 +31,7 @@ final class CreatorsServiceProvider extends ModuleServiceProvider
     public function register(): void
     {
         $this->app->bind(CreatorEligibility::class, Eligibility::class);
+        $this->app->bind(ApprovalQueue::class, CreatorApprovalQueue::class);
     }
 
     public function boot(): void

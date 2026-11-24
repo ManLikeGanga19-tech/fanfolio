@@ -6,6 +6,7 @@ namespace App\Providers\Filament;
 
 use App\Modules\Creators\Filament\Studio\StudioHome;
 use App\Modules\Creators\Http\Middleware\EnsureStudioAccess;
+use App\Modules\Identity\Http\Middleware\ApplyDisplayTimezone;
 use App\Modules\Identity\Http\Middleware\EnsureDeviceActive;
 use Filament\Enums\ThemeMode;
 use Filament\FontProviders\LocalFontProvider;
@@ -22,6 +23,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 /**
@@ -46,7 +48,13 @@ final class StudioPanelProvider extends PanelProvider
                 'success' => Color::hex(config()->string('fanfolio.design.success')),
             ])
             ->font('Inter', provider: LocalFontProvider::class)
-            ->renderHook(PanelsRenderHook::HEAD_END, static fn (): string => Blade::render("@vite('resources/css/admin.css')"))
+            // Filament's theme plus the design tokens and self-hosted fonts (no outside font CDN).
+            ->viteTheme('resources/css/filament/panels.css')
+            ->defaultAvatarProvider(InitialsAvatarProvider::class)
+            ->brandLogo(static fn (): HtmlString => new HtmlString(view('filament.brand', ['panel' => 'Studio'])->render()))
+            // D-15: the saved time zone, and the script that sends the browser's.
+            ->renderHook(PanelsRenderHook::HEAD_END, static fn (): string => Blade::render('<x-ui.timezone-meta />'))
+            ->renderHook(PanelsRenderHook::BODY_END, static fn (): string => Blade::render("@vite('resources/js/panel.js')"))
             ->pages([
                 StudioHome::class,
             ])
@@ -55,6 +63,7 @@ final class StudioPanelProvider extends PanelProvider
                 AddQueuedCookiesToResponse::class,
                 StartSession::class,
                 AuthenticateSession::class,
+                ApplyDisplayTimezone::class,
                 ShareErrorsFromSession::class,
                 VerifyCsrfToken::class,
                 SubstituteBindings::class,

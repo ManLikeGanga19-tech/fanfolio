@@ -7,16 +7,20 @@ namespace App\Modules\Identity\Providers;
 use App\Modules\Creators\Events\CreatorApproved;
 use App\Modules\Identity\Actions\AccountLookup;
 use App\Modules\Identity\Actions\PhoneHandoffs;
+use App\Modules\Identity\Actions\SignUpStats;
 use App\Modules\Identity\Console\MakeDevStaff;
 use App\Modules\Identity\Contracts\Accounts;
+use App\Modules\Identity\Contracts\AccountStats;
 use App\Modules\Identity\Contracts\BreachedPasswordChecker;
 use App\Modules\Identity\Contracts\IdentityVerifier;
 use App\Modules\Identity\Contracts\PhoneHandoff;
 use App\Modules\Identity\Contracts\SmsSender;
+use App\Modules\Identity\Contracts\StaffAbility;
 use App\Modules\Identity\Gateways\Fake\FakeBreachedPasswordChecker;
 use App\Modules\Identity\Gateways\Fake\FakeIdentityVerifier;
 use App\Modules\Identity\Gateways\Fake\FakeSmsSender;
 use App\Modules\Identity\Gateways\Hibp\HibpBreachedPasswordChecker;
+use App\Modules\Identity\Http\Middleware\ApplyDisplayTimezone;
 use App\Modules\Identity\Http\Middleware\EnsureAdminAccess;
 use App\Modules\Identity\Http\Middleware\EnsureDeviceActive;
 use App\Modules\Identity\Http\Middleware\EnsureMfaEnrolled;
@@ -66,6 +70,7 @@ final class IdentityServiceProvider extends ModuleServiceProvider
         ]);
 
         $this->app->bind(Accounts::class, AccountLookup::class);
+        $this->app->bind(AccountStats::class, SignUpStats::class);
         $this->app->singleton(KeyedHash::class, static fn (): KeyedHash => KeyedHash::fromConfig());
     }
 
@@ -81,6 +86,14 @@ final class IdentityServiceProvider extends ModuleServiceProvider
         $router->pushMiddlewareToGroup('web', EnsureMfaEnrolled::class);
 
         Gate::policy(UserDevice::class, UserDevicePolicy::class);
+
+        // SEC-15: one Gate per staff ability (the role matrix in docs/plans/M8a.md).
+        foreach (StaffAbility::cases() as $ability) {
+            Gate::define($ability->value, static fn (User $user): bool => $user->canStaff($ability));
+        }
+
+        // D-15: times on every page in the signed-in user's own time zone.
+        $router->pushMiddlewareToGroup('web', ApplyDisplayTimezone::class);
 
         // An approved creator gets the creator role (opens Studio).
         Event::listen(CreatorApproved::class, GrantCreatorRole::class);
@@ -131,6 +144,9 @@ final class IdentityServiceProvider extends ModuleServiceProvider
         RateLimiter::for('phone-handoff', static fn (Request $request): Limit => Limit::perMinute(20)->by('phone-handoff:'.$request->ip()));
 
         RateLimiter::for('otp-verify', static fn (Request $request): Limit => Limit::perMinute(10)->by('otp-verify:'.self::userKey($request)));
+
+        // D-15: the browser reports its time zone when it differs from the saved one.
+        RateLimiter::for('timezone', static fn (Request $request): Limit => Limit::perHour(20)->by('timezone:'.self::userKey($request)));
     }
 
     private static function mfaKey(Request $request): string

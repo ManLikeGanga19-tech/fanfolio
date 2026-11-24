@@ -64,6 +64,7 @@ Each step-up is audited as `identity.step_up` with `second_factor` true or false
 - Every refusal writes `admin.access_denied` with a reason; each new admin session writes `admin.panel_opened`.
 - Decision D-07: `/admin` and the Livewire endpoints it calls use a relaxed CSP (`unsafe-eval`, inline styles). Fan pages keep the strict CSP.
 - Behind a load balancer or Cloudflare, trusted proxies must be configured so the allow-list sees the real client address (infrastructure, M9).
+- **Staff abilities (SEC-15, plan M8a).** `Contracts\StaffAbility` lists what staff may do in `/admin`. Moderators have every ability except the admin-only ones (system health, suspending and reinstating creators, pausing payouts, bans and lifting them, second-factor resets, audit log, staff, settings; D-18). Each ability is a Gate of the same name; `User::canStaff()` also needs MFA on and an account allowed to sign in. Other modules ask `Gate::allows(StaffAbility::X->value)` in pages and `Accounts::can($userId, $ability)` inside Actions.
 
 ## Age verification
 
@@ -82,7 +83,13 @@ Each step-up is audited as `identity.step_up` with `second_factor` true or false
 
 ## For other modules
 
-`Contracts\Accounts` answers what other modules may ask about an account by user id: `hasMfa`, `isStaff` (moderator or admin with MFA, allowed to sign in; for staff checks inside other modules' Actions), `username`, and `notify`, which sends a notification to the account without giving the caller its email address or phone number (rule 13).
+`Contracts\Accounts` answers what other modules may ask about an account by user id: `hasMfa`, `isStaff` (moderator or admin with MFA, allowed to sign in; for staff checks inside other modules' Actions), `can` (one staff ability, see above), `username`, and `notify`, which sends a notification to the account without giving the caller its email address or phone number (rule 13).
+
+`Contracts\AccountStats` gives the admin Overview counts only: sign-ups in a range, how many of them passed the 18+ check, and sign-ups per calendar day in the viewer's time zone.
+
+## Time zone (D-15)
+
+`users.timezone` holds the browser's IANA zone. `resources/js/timezone.js` compares it with `<meta name="ff-timezone">` (`<x-ui.timezone-meta />`, in every layout and both panels) and, when they differ, sends `POST /account/timezone` (signed in, 20 per hour, validated with `timezone:all`). `Http\Middleware\ApplyDisplayTimezone` (web group and both panels) sets Filament's display zone on every request, back to the app zone for guests, since Filament keeps it in a singleton under Octane. Stored times stay UTC; show them with `<x-ui.time :at="..." />` or Filament columns.
 
 ## ID and face scan on a phone (D-14)
 

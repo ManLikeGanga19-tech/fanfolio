@@ -84,7 +84,7 @@ All migrations are additive, nullable or defaulted, and reversible.
 
 ## Proposed PRs
 
-1. Admin shell and navigation from the canvas, role policies, Overview with real figures, D-15 time zone
+1. Admin shell and navigation from the canvas, role policies, Overview with real figures, D-15 time zone (built: branch `admin/01-shell-overview`)
 2. Users & bans: account status, suspend, ban, lift, strikes, sign out everywhere, user detail, emails
 3. Creator approvals board (canvas page 12) and Creators directory with suspend, reinstate and ID re-check
 4. Moderation engine and queue: reports, cases, assignment, decisions; "Report" sheet for accounts
