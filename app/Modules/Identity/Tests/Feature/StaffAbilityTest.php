@@ -18,6 +18,7 @@ const ADMIN_ONLY = [
     StaffAbility::SuspendCreator,
     StaffAbility::ReinstateCreator,
     StaffAbility::PauseCreatorPayouts,
+    StaffAbility::SuspendUserLong,
     StaffAbility::BanUser,
     StaffAbility::LiftRestriction,
     StaffAbility::ResetSecondFactor,

@@ -87,6 +87,8 @@ Each step-up is audited as `identity.step_up` with `second_factor` true or false
 
 `Contracts\AccountStats` gives the admin Overview counts only: sign-ups in a range, how many of them passed the 18+ check, and sign-ups per calendar day in the viewer's time zone.
 
+`Contracts\AccountDirectory` (search and `AccountSummary` for the Users & bans board) and `Contracts\AccountRestrictions` (suspend, ban, lift, sign out everywhere, `isRestricted`) serve Trust & Safety. `User::canSignIn()` refuses banned accounts and suspended ones until `suspended_until` passes; `EnsureDeviceActive` signs a restricted account out on its next request; `identity:end-suspensions` (every 5 minutes) sets ended suspensions back to active and audits `account.suspension_ended`.
+
 ## Time zone (D-15)
 
 `users.timezone` holds the browser's IANA zone. `resources/js/timezone.js` compares it with `<meta name="ff-timezone">` (`<x-ui.timezone-meta />`, in every layout and both panels) and, when they differ, sends `POST /account/timezone` (signed in, 20 per hour, validated with `timezone:all`). `Http\Middleware\ApplyDisplayTimezone` (web group and both panels) sets Filament's display zone on every request, back to the app zone for guests, since Filament keeps it in a singleton under Octane. Stored times stay UTC; show them with `<x-ui.time :at="..." />` or Filament columns.

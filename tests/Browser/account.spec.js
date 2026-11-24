@@ -122,6 +122,14 @@ test('signed-in pages pass axe and keep a visible focus ring', async ({ page, br
     await expectNoAxeViolations(staffPage);
     await expectVisibleFocusOnTab(staffPage);
 
+    // Users & bans (canvas AdminUsers), with this run's creator open in the detail pane.
+    await staffPage.goto('/admin/accounts');
+    await staffPage.getByRole('searchbox').fill(account.username);
+    await staffPage.getByRole('button', { name: `@${account.username}` }).click();
+    await expect(staffPage.getByRole('heading', { name: `@${account.username}` })).toBeVisible();
+    await expectNoAxeViolations(staffPage);
+    await expectVisibleFocusOnTab(staffPage, { maxSteps: 60 });
+
     await staffPage.goto('/admin/creator-approvals');
     await expect(staffPage.getByRole('heading', { name: 'Creators awaiting review' })).toBeVisible();
     await expectNoAxeViolations(staffPage);

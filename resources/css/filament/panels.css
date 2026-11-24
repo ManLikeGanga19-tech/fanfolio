@@ -12,7 +12,8 @@
 @import '@fontsource/sora/700.css';
 
 @source '../../../app/Filament';
-@source '../../../app/Modules/*/Filament';
+/* Module panel pages and their views (app/Modules/<Name>/Filament, Resources/views/admin). */
+@source '../../../app/Modules';
 @source '../../../resources/views/filament';
 
 /* Canvas board AdminOverview: the shell. */
@@ -66,4 +67,27 @@
 .fi-body :focus-visible {
     outline: 2px solid var(--ff-focus);
     outline-offset: 2px;
+}
+
+/* Canvas buttons: filled red and amber buttons carry dark text, for contrast (WCAG AA). */
+.fi-body .fi-btn.fi-color-danger:not(.fi-outlined):not(.fi-link),
+.fi-body .fi-btn.fi-color-primary:not(.fi-outlined):not(.fi-link) {
+    color: var(--ff-on-brand);
+}
+
+.fi-body .fi-btn.fi-color-danger:not(.fi-outlined):not(.fi-link) {
+    background-color: var(--ff-danger);
+}
+
+.fi-body .fi-btn.fi-color-primary:not(.fi-outlined):not(.fi-link) {
+    background-color: var(--ff-brand);
+}
+
+.fi-body .fi-btn.fi-color-primary:not(.fi-outlined):not(.fi-link):hover {
+    background-color: var(--ff-brand-hover);
+}
+
+.fi-body .fi-btn.fi-color-danger:not(.fi-outlined):not(.fi-link) .fi-icon,
+.fi-body .fi-btn.fi-color-primary:not(.fi-outlined):not(.fi-link) .fi-icon {
+    color: inherit;
 }

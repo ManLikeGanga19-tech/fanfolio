@@ -54,7 +54,7 @@ final readonly class LoginWithPassword
             throw new IdentityException(self::FAILED, 'email');
         }
 
-        if (! $user->status->canSignIn()) {
+        if (! $user->canSignIn()) {
             $this->audit->record('identity.login_refused', $user->id, 'user', $user->id, ['status' => $user->status->value]);
 
             throw new IdentityException('This account cannot sign in. Contact support.', 'email');
