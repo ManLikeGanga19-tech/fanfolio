@@ -31,3 +31,6 @@ yarn-error.log
 
 # Local Claude Code settings: never committed.
 .claude/
+
+# CI coverage reports (Wallet gate)
+/build
