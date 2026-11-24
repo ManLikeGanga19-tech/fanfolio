@@ -34,10 +34,10 @@
 
         <div class="mt-3 flex gap-2" role="group" aria-label="Choose slide">
             @foreach ($slides as $i => $slide)
-                <button type="button" data-slide-dot="{{ $i }}" aria-label="Slide {{ $i + 1 }} of {{ count($slides) }}"
+                <button type="button" data-slide-dot="{{ $i }}"
                     @if ($i === $start) aria-current="true" @endif
                     class="group flex h-11 w-7 items-center">
-                    <span class="block h-1 w-full rounded-full {{ $i === $start ? 'bg-brand' : 'bg-border-strong' }} group-aria-[current=true]:bg-brand"></span>
+                    <span class="sr-only">Slide {{ $i + 1 }} of {{ count($slides) }}</span><span class="block h-1 w-full rounded-full {{ $i === $start ? 'bg-brand' : 'bg-border-strong' }} group-aria-[current=true]:bg-brand"></span>
                 </button>
             @endforeach
         </div>
