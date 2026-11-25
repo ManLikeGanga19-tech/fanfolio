@@ -259,7 +259,7 @@ final class Disputes extends Page
             return app(DisputeEvidence::class)->lines($dispute);
         }
 
-        return array_map(static fn (string $line): array => ['text' => $line, 'tone' => 'ok'], $dispute->evidence ?? []);
+        return $dispute->evidence ?? [];
     }
 
     /**

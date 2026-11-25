@@ -148,7 +148,7 @@ it('shows a case with its evidence and what was taken back', function (): void {
     Livewire::test(Disputes::class)
         ->assertSee(['CB-2291 · $50 top-up', 'Visa ····9012', '5,000 credits', 'reason: cardholder doesn&#039;t recognise it'], false)
         ->assertSee(['Evidence to send', '3-D Secure authentication passed', '4,750 credits spent after the top-up (unlock log)', 'Statement descriptor FF*DIGITAL shown at checkout'])
-        ->assertSee(['Taken back when it arrived', '250 unspent credits from the wallet', '$47.50 from 1 sale'])
+        ->assertSee(['Taken back when it arrived', '5,000 credits from the wallet', 'To cover it, 1 sale was reversed first (4,750 credits, newest first, D-20)'])
         ->assertSee(['Submit evidence', 'Accept &amp; refund', 'frozen', 'The freeze can be lifted once no dispute of this fan is open.'], false)
         ->assertSet('selected', $dispute->id);
 });
@@ -206,10 +206,11 @@ it('shows the processor failing instead of pretending it worked', function (): v
 it('says what happened to a won dispute', function (): void {
     signedInStaff();
     $dispute = boardDispute(anAccount());
-    Dispute::query()->whereKey($dispute->id)->update(['status' => 'won', 'decided_at' => now(), 'evidence' => json_encode(['3-D Secure authentication passed']), 'evidence_sent_at' => now()]);
+    Dispute::query()->whereKey($dispute->id)->update(['status' => 'won', 'decided_at' => now(), 'evidence' => json_encode([['text' => 'Paid from a device added in the last 7 days', 'tone' => 'warning']]), 'evidence_sent_at' => now()]);
 
     Livewire::test(Disputes::class)->set('tab', 'decided')
-        ->assertSee(['Evidence sent', '3-D Secure authentication passed', 'Won on 25 Nov', 'were returned'])
+        ->assertSee(['Evidence sent', 'Paid from a device added in the last 7 days', 'Won on 25 Nov', 'were returned'])
+        ->assertSeeHtml('<span class="sr-only">Weak: </span>Paid from a device added in the last 7 days')
         ->assertDontSee('Submit evidence');
 
     Dispute::query()->whereKey($dispute->id)->update(['status' => 'lost', 'evidence' => null]);
@@ -317,5 +318,6 @@ it('tells a frozen fan why on the wallet page', function (): void {
 
     DB::table('wallet_freezes')->insert(['fan_id' => $fan->id, 'reason' => 'chargeback', 'frozen_at' => now()]);
 
-    $this->get('/wallet')->assertSee('Your wallet is on hold while we look into a payment dispute.');
+    $this->get('/wallet')->assertSee('Your wallet is on hold while we look into a payment dispute.')
+        ->assertDontSee('Continue to secure checkout');
 });

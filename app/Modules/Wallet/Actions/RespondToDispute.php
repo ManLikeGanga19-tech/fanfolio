@@ -51,12 +51,13 @@ final readonly class RespondToDispute
                 throw new WalletException('The deadline to respond has passed. The bank will decide without evidence.', 'dispute');
             }
 
-            $lines = array_column($this->evidence->lines($dispute), 'text');
+            $evidence = $this->evidence->lines($dispute);
+            $lines = array_column($evidence, 'text');
             $this->call(fn () => $this->gateway->submitEvidence($dispute->gateway_case_ref, $lines));
 
             $dispute->forceFill([
                 'status' => DisputeStatus::EvidenceSent,
-                'evidence' => $lines,
+                'evidence' => $evidence,
                 'evidence_sent_at' => now(),
                 'evidence_sent_by' => $staffId,
             ])->save();

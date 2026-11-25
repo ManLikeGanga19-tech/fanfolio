@@ -11,9 +11,11 @@ use App\Modules\Wallet\Contracts\Data\LedgerTransaction;
 use App\Modules\Wallet\Contracts\Data\Posting;
 use App\Modules\Wallet\Contracts\Ledger;
 use App\Modules\Wallet\Enums\DisputeStatus;
+use App\Modules\Wallet\Enums\TopUpStatus;
 use App\Modules\Wallet\Events\DisputeDecided;
 use App\Modules\Wallet\Models\Dispute;
 use App\Modules\Wallet\Models\GatewayWebhook;
+use App\Modules\Wallet\Models\TopUp;
 use App\Support\Money\Money;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -27,7 +29,8 @@ use function array_reverse;
  * chargeback arrived). Won: the processor returns the money, so what ReceiveChargeback
  * took is returned with reversing entries (rule 2): the credits go back to the fan's
  * wallet, then each clawed-back sale is charged again, oldest first, while the wallet
- * covers it (it may not, if an admin lifted the freeze and the fan spent since).
+ * covers it (it may not, if an admin lifted the freeze and the fan spent since), and the
+ * top-up counts as paid again.
  * A dispute already decided (accepted by us, or a repeated decision) is left as it is.
  */
 final readonly class SettleDispute
@@ -54,6 +57,9 @@ final readonly class SettleDispute
         }
 
         $restored = $won ? $this->giveBack($dispute) : [];
+        if ($won) {
+            TopUp::query()->whereKey($dispute->topup_id)->update(['status' => TopUpStatus::Paid]);
+        }
         $outcome = $won ? DisputeStatus::Won : DisputeStatus::Lost;
 
         $dispute->forceFill(['status' => $outcome, 'decided_at' => now()])->save();

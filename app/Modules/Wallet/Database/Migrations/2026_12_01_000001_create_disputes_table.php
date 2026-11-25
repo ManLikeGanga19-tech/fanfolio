@@ -34,7 +34,7 @@ return new class extends Migration
             $table->string('status', 15)->default('open');
             // What D-20 took back when the chargeback arrived, so a won dispute can return it exactly.
             $table->jsonb('recovery');
-            // The evidence lines sent to the processor.
+            // The evidence sent to the processor: each line's text and how it reads for us.
             $table->jsonb('evidence')->nullable();
             $table->timestamp('evidence_sent_at')->nullable();
             $table->ulid('evidence_sent_by')->nullable();

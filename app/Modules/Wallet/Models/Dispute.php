@@ -26,7 +26,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property CarbonImmutable $respond_by
  * @property DisputeStatus $status
  * @property array{wallet_minor: int, unspent_minor: int, bonus_minor: int, clawed_minor: int, written_off_minor: int, sales: list<string>, transactions: list<string>} $recovery
- * @property list<string>|null $evidence
+ * @property list<array{text: string, tone: 'ok'|'warning'|'danger'|'muted'}>|null $evidence
  * @property CarbonImmutable|null $evidence_sent_at
  * @property string|null $evidence_sent_by
  * @property CarbonImmutable|null $decided_at

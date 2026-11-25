@@ -131,14 +131,11 @@
                     <div class="rounded-md bg-surface-raised p-3 text-sm">
                         <p class="font-semibold">Taken back when it arrived</p>
                         <ul class="mt-1 flex flex-col gap-0.5 text-small text-ink-muted">
-                            <li>{{ number_format($recovery['unspent_minor'] ?? 0) }} unspent credits from the wallet</li>
-                            @if (($recovery['clawed_minor'] ?? 0) > 0)
-                                <li>{{ PayoutReviews::money($recovery['clawed_minor']) }} from {{ count($recovery['sales']) }} {{ count($recovery['sales']) === 1 ? 'sale' : 'sales' }} (newest first, D-20)</li>
+                            <li>{{ number_format($recovery['wallet_minor']) }} credits from the wallet{{ $recovery['bonus_minor'] > 0 ? ', '.number_format($recovery['bonus_minor']).' of them bonus credits' : '' }}</li>
+                            @if ($recovery['clawed_minor'] > 0)
+                                <li>To cover it, {{ count($recovery['sales']) }} {{ count($recovery['sales']) === 1 ? 'sale was' : 'sales were' }} reversed first ({{ number_format($recovery['clawed_minor']) }} credits, newest first, D-20)</li>
                             @endif
-                            @if (($recovery['bonus_minor'] ?? 0) > 0)
-                                <li>{{ number_format($recovery['bonus_minor']) }} bonus credits reversed</li>
-                            @endif
-                            @if (($recovery['written_off_minor'] ?? 0) > 0)
+                            @if ($recovery['written_off_minor'] > 0)
                                 <li class="text-warning">{{ PayoutReviews::money($recovery['written_off_minor']) }} could not be recovered (absorbed by FanFolio)</li>
                             @endif
                         </ul>

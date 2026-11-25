@@ -240,6 +240,7 @@ it('gives everything back exactly when the bank sides with us, then lets held sa
     expect($hook->refresh()->error)->toBeNull()
         ->and($dispute->refresh()->status)->toBe(DisputeStatus::Won)
         ->and($dispute->decided_at)->not->toBeNull()
+        ->and($topUp->refresh()->status)->toBe(TopUpStatus::Paid)
         // Back to how it was before the chargeback.
         ->and(bal(AccountType::FanWallet, $this->fan))->toBe(496)
         ->and(bal(AccountType::CreatorPending, $this->c1))->toBe(1_604)
@@ -464,7 +465,8 @@ it('sends the evidence to the processor, once, before the deadline', function ()
     expect($sent->status)->toBe(DisputeStatus::EvidenceSent)
         ->and($sent->evidence)->toHaveCount(5)
         ->and($sent->evidence_sent_by)->toBe($this->admin->id)
-        ->and(disputeGateway()->answered['CB-2291'])->toBe(['action' => 'evidence', 'evidence' => $sent->evidence])
+        ->and($sent->evidence[0])->toBe(['text' => '3-D Secure authentication passed', 'tone' => 'ok'])
+        ->and(disputeGateway()->answered['CB-2291'])->toBe(['action' => 'evidence', 'evidence' => array_column($sent->evidence, 'text')])
         ->and($this->audit->of('wallet.dispute_evidence_sent')[0]['context']['case'])->toBe('CB-2291')
         ->and(fn () => $respond->submitEvidence($dispute->id, $this->admin->id))->toThrow(WalletException::class, 'already sent')
         ->and(fn () => $respond->accept($dispute->id, $this->admin->id, 'Too late'))->toThrow(WalletException::class, 'already sent');
