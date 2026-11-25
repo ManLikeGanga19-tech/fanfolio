@@ -6,6 +6,7 @@ namespace App\Modules\Wallet\Providers;
 
 use App\Modules\Wallet\Actions\ChargePurchase;
 use App\Modules\Wallet\Actions\LedgerService;
+use App\Modules\Wallet\Actions\MoneyStatsService;
 use App\Modules\Wallet\Actions\WalletDisplayService;
 use App\Modules\Wallet\Console\CheckPayouts;
 use App\Modules\Wallet\Console\CreateLedgerPartitions;
@@ -13,6 +14,7 @@ use App\Modules\Wallet\Console\ReleaseEarnings;
 use App\Modules\Wallet\Console\VerifyLedger;
 use App\Modules\Wallet\Contracts\FxRateProvider;
 use App\Modules\Wallet\Contracts\Ledger;
+use App\Modules\Wallet\Contracts\MoneyStats;
 use App\Modules\Wallet\Contracts\PayoutGateways;
 use App\Modules\Wallet\Contracts\Purchases;
 use App\Modules\Wallet\Contracts\TopUpGateway;
@@ -59,6 +61,7 @@ final class WalletServiceProvider extends ModuleServiceProvider
         $this->app->singleton(Ledger::class, LedgerService::class);
         $this->app->bind(WalletDisplay::class, WalletDisplayService::class);
         $this->app->bind(Purchases::class, ChargePurchase::class);
+        $this->app->bind(MoneyStats::class, MoneyStatsService::class);
     }
 
     public function boot(): void

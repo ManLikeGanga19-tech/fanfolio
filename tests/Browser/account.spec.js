@@ -211,6 +211,13 @@ test('signed-in pages pass axe and keep a visible focus ring', async ({ page, br
     await caseDetail.getByRole('button', { name: 'No action' }).click();
     await staffPage.getByRole('alertdialog').or(staffPage.getByRole('dialog')).getByRole('button', { name: 'No action', exact: true }).click();
     await expect(caseDetail.getByText('Decided: No action')).toBeVisible();
+
+    // Payout reviews (canvas AdminPayouts, M3 PR 5): tiles, queue and detail pane.
+    await staffPage.goto('/admin/payouts');
+    await expect(staffPage.getByRole('heading', { name: 'Payout reviews' })).toBeVisible();
+    await expect(staffPage.getByText('Payout clearing balance')).toBeVisible();
+    await expectNoAxeViolations(staffPage);
+    await expectVisibleFocusOnTab(staffPage, { maxSteps: 60 });
     await staffContext.close();
 
     await page.goto('/creator/status');

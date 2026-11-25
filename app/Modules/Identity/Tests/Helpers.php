@@ -111,6 +111,12 @@ function signedInFan(): User
     return $user;
 }
 
+/** Another account's id, without signing in as it, for other modules' tests. */
+function anAccount(): string
+{
+    return User::factory()->create()->id;
+}
+
 /** "Confirm it's you" just happened, for other modules' step-up routes. */
 function confirmedStepUp(): void
 {
