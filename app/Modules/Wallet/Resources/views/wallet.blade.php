@@ -18,6 +18,10 @@
             @endif
         </section>
 
+        @if ($frozen)
+            <p role="status" class="rounded-md border border-warning bg-surface p-4 text-sm">Your wallet is on hold while we look into a payment dispute. You cannot top up or spend credits until it is resolved. Contact support if you have questions.</p>
+        @endif
+
         <form method="POST" action="{{ route('wallet.topups.store') }}" class="flex flex-col gap-5">
             @csrf
             <input type="hidden" name="idempotency_key" value="{{ $idempotencyKey }}">

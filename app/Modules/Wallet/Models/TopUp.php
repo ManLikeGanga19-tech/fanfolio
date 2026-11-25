@@ -30,6 +30,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property CarbonImmutable|null $paid_at
  * @property CarbonImmutable|null $failed_at
  * @property CarbonImmutable $created_at
+ * @property string|null $ip
+ * @property bool|null $known_device
  */
 final class TopUp extends Model
 {
@@ -69,6 +71,7 @@ final class TopUp extends Model
             'status' => TopUpStatus::class,
             'paid_at' => 'immutable_datetime',
             'failed_at' => 'immutable_datetime',
+            'known_device' => 'boolean',
             'created_at' => 'immutable_datetime',
             'updated_at' => 'immutable_datetime',
         ];

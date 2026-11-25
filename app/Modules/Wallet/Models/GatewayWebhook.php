@@ -25,6 +25,8 @@ use Illuminate\Database\Eloquent\Model;
  * @property CarbonImmutable $received_at
  * @property CarbonImmutable|null $processed_at
  * @property string|null $error
+ * @property string|null $case_ref
+ * @property array{reason: string, respond_by: string|null, three_ds: string|null}|null $details
  */
 final class GatewayWebhook extends Model
 {
@@ -46,6 +48,7 @@ final class GatewayWebhook extends Model
             'type' => GatewayEventType::class,
             'amount_minor' => 'integer',
             'payload' => 'encrypted',
+            'details' => 'array',
             'received_at' => 'immutable_datetime',
             'processed_at' => 'immutable_datetime',
         ];

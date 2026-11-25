@@ -58,6 +58,16 @@
                     <span class="text-small text-ink-muted">{{ $payouts['count'] === 0 ? 'None waiting' : $payouts['count'].' '.($payouts['count'] === 1 ? 'request' : 'requests') }}</span>
                 </a>
 
+                {{-- Canvas "Chargeback rate (30d) · Below 0.75% target" (spec alert threshold). --}}
+                @php
+                    $rateTone = \App\Modules\Wallet\Filament\Admin\Disputes::rateTone($chargebacks['bps']);
+                @endphp
+                <a href="{{ $disputesUrl }}" class="flex flex-col gap-2 rounded-lg border border-border bg-surface p-5 text-ink hover:border-border-strong">
+                    <span class="text-small text-ink-muted">Chargeback rate (30d)</span>
+                    <span class="font-display text-h1">{{ \App\Modules\Wallet\Filament\Admin\Disputes::percent($chargebacks['bps']) }}</span>
+                    <span @class(['text-small', 'text-success' => $rateTone === 'ok', 'text-warning' => $rateTone === 'warning', 'text-danger' => $rateTone === 'danger'])>{{ $rateTone === 'ok' ? 'Below 0.75% target' : ($rateTone === 'warning' ? 'Above 0.75% target' : 'Near the 1% processors act on') }}</span>
+                </a>
+
                 {!! $signUpsTile !!}
             @else
                 <div class="flex flex-col gap-2 rounded-lg border border-border bg-surface p-5">

@@ -457,3 +457,19 @@ it('shows a busy wallet on the Studio form instead of failing', function (): voi
         $lock->release();
     }
 });
+
+it('makes a creator repay sales a chargeback took below zero before withdrawing (D-20)', function (): void {
+    earnings($this->creator, 10_000);
+    // A chargeback clawed back $30 of sales still on hold, taking pending below zero.
+    app(Ledger::class)->post(LedgerTransaction::make('chargeback.clawback', 'claw:'.Str::ulid(), [
+        Posting::debit(AccountRef::of(AccountType::CreatorPending, $this->creator), Money::of(3_000, 'USD')),
+        Posting::credit(AccountRef::platform(AccountType::ProcessorClearing), Money::of(3_000, 'USD')),
+    ])->allowingNegativeBalances());
+
+    expect(fn (): Payout => withdraw($this->creator, 7_001))->toThrow(WalletException::class, 'A chargeback took back $30.00 of sales still on hold');
+
+    $payout = withdraw($this->creator, 7_000, 'w2');
+
+    expect($payout->amount_minor)->toBe(7_000)
+        ->and(balance(AccountType::CreatorEarnings, $this->creator))->toBe(3_000);
+});

@@ -151,6 +151,8 @@ return [
     // A fake driver refuses to run in production.
     'drivers' => [
         'topup' => env('FANFOLIO_TOPUP_DRIVER', 'fake'),
+        // Answers chargeback cases at the top-up processor (not chosen).
+        'disputes' => env('FANFOLIO_DISPUTES_DRIVER', 'fake'),
         'payout' => [
             'bank' => env('FANFOLIO_PAYOUT_BANK_DRIVER', 'fake'),
             'usdt' => env('FANFOLIO_PAYOUT_USDT_DRIVER', 'fake'),

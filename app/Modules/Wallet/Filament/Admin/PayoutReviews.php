@@ -23,6 +23,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Facades\FilamentTimezone;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Url;
 
@@ -31,7 +32,7 @@ use Livewire\Attributes\Url;
  * with a risk flag wait here, oldest first. The detail lists the checks behind the
  * request; an admin approves and sends, holds (asks the creator for more information,
  * funds stay locked) or declines (the money returns to the creator's earnings), all
- * through ReviewPayout, audited. The chargeback line arrives with disputes (PR 6).
+ * through ReviewPayout, audited.
  */
 final class PayoutReviews extends Page
 {
@@ -271,6 +272,7 @@ final class PayoutReviews extends Page
                 ? ['text' => 'Earnings are '.self::money($left).' after refunds since the request', 'tone' => 'danger']
                 : ['text' => 'Reserved from available earnings; '.self::money($left).' left after this', 'tone' => 'ok'],
             ['text' => 'Paid only from sales past the 7-day hold', 'tone' => 'ok'],
+            $this->chargebackCheck($payout->creator_id),
             in_array(Payout::NEW_METHOD, $flags, true)
                 ? ['text' => 'Payout method added in the last 7 days', 'tone' => 'warning']
                 : ['text' => 'Payout method in use for more than 7 days', 'tone' => 'ok'],
@@ -285,6 +287,27 @@ final class PayoutReviews extends Page
                 : ['text' => $sent.' earlier '.($sent === 1 ? 'payout' : 'payouts').' sent', 'tone' => 'ok'],
             ['text' => 'Confirmed by the creator with a second factor', 'tone' => 'ok'],
         ];
+    }
+
+    /**
+     * Canvas "Chargebacks on her sales: 0.2% (90d)": the share of the creator's sales in the
+     * last 90 days that a chargeback clawed back (D-20).
+     *
+     * @return array{text: string, tone: 'ok'|'warning'|'danger'|'muted'}
+     */
+    private function chargebackCheck(string $creatorId): array
+    {
+        $sales = DB::table('earning_holds')->where('creator_id', $creatorId)->where('created_at', '>=', now()->subDays(90));
+        $total = (clone $sales)->count();
+
+        if ($total === 0) {
+            return ['text' => 'No sales in the last 90 days', 'tone' => 'muted'];
+        }
+
+        // Clawed back and not returned by a won dispute.
+        $bps = intdiv($sales->whereNotNull('dispute_id')->whereNotNull('refunded_at')->count() * 10_000, $total);
+
+        return ['text' => 'Chargebacks on their sales: '.Disputes::percent($bps).' (90 days)', 'tone' => Disputes::rateTone($bps)];
     }
 
     private function detail(): ?Payout

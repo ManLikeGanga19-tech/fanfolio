@@ -167,9 +167,13 @@ final class EarningsPage extends Page
         return intdiv($cents, 100).'.'.str_pad((string) ($cents % 100), 2, '0', STR_PAD_LEFT);
     }
 
+    /** Earnings, less what a chargeback took below zero in pending sales (D-20: repaid first). */
     private function available(): int
     {
-        return app(Ledger::class)->balance(AccountRef::of(AccountType::CreatorEarnings, $this->creatorId()))->amountMinor;
+        $ledger = app(Ledger::class);
+        $pending = $ledger->balance(AccountRef::of(AccountType::CreatorPending, $this->creatorId()))->amountMinor;
+
+        return $ledger->balance(AccountRef::of(AccountType::CreatorEarnings, $this->creatorId()))->amountMinor + min(0, $pending);
     }
 
     /**

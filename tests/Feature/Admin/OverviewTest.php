@@ -143,6 +143,12 @@ function fixedMoneyStats(?LedgerCheck $check = null): void
             return ['count' => 3, 'amount' => 984_000];
         }
 
+        public function chargebackRate(CarbonImmutable $since): array
+        {
+            // Canvas "0.42%" over the last 30 days.
+            return ['bps' => $since->diffInDays(CarbonImmutable::now()) > 29 ? 42 : 0, 'chargebacks' => 21, 'topups' => 5_000];
+        }
+
         public function lastLedgerCheck(): ?LedgerCheck
         {
             return $this->check;
@@ -157,7 +163,7 @@ it('shows admins the money tiles and the sales chart (use case 3)', function ():
     Livewire::test(Overview::class)
         ->assertViewHas('sales', 1_842_000)
         ->assertViewHas('payouts', ['count' => 3, 'amount' => 984_000])
-        ->assertSeeInOrder(['Sales (GMV)', '$18,420', '+8% vs yesterday by this time', 'Creators awaiting review', 'Open cases', 'Payouts to review', '$9,840', '3 requests', 'Sign-ups'])
+        ->assertSeeInOrder(['Sales (GMV)', '$18,420', '+8% vs yesterday by this time', 'Creators awaiting review', 'Open cases', 'Payouts to review', '$9,840', '3 requests', 'Chargeback rate (30d)', '0.42%', 'Below 0.75% target', 'Sign-ups'])
         ->assertDontSee('Passed the 18+ check')
         ->assertSee('Sales, last 14 days (USD)')
         ->assertViewHas('chart', fn (array $chart): bool => str_starts_with($chart['label'], 'Daily sales (USD) from 11 Nov to 24 Nov: $18,420.50 in total'))
@@ -173,6 +179,7 @@ it('keeps money off the Overview for moderators', function (): void {
         ->assertViewHas('payouts', fn (?array $payouts): bool => $payouts === null)
         ->assertDontSee('Sales (GMV)')
         ->assertDontSee('Payouts to review')
+        ->assertDontSee('Chargeback rate')
         ->assertSee(['Sign-ups', 'Passed the 18+ check', 'Creators approved', 'Sign-ups, last 14 days']);
 });
 

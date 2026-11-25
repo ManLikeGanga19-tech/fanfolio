@@ -96,6 +96,12 @@ final readonly class RequestPayout
                 throw new WalletException('You already have a withdrawal in progress.', 'amount');
             }
 
+            // D-20: a chargeback can take pending sales below zero; that is repaid before anything is withdrawn.
+            $owed = $this->ledger->balance(AccountRef::of(AccountType::CreatorPending, $creatorId))->amountMinor;
+            if ($owed < 0 && $amountMinor > $this->ledger->balance(AccountRef::of(AccountType::CreatorEarnings, $creatorId))->amountMinor + $owed) {
+                throw new WalletException('A chargeback took back '.WalletDisplayService::dollars(-$owed).' of sales still on hold. That is repaid from your earnings first.', 'amount');
+            }
+
             $payout = new Payout;
             $payout->forceFill([
                 'creator_id' => $creatorId,

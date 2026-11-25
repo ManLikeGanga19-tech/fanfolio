@@ -12,6 +12,7 @@ use App\Modules\TrustSafety\Contracts\ModerationStats;
 use App\Modules\TrustSafety\Filament\Admin\ModerationBoard;
 use App\Modules\Wallet\Contracts\Data\LedgerCheck;
 use App\Modules\Wallet\Contracts\MoneyStats;
+use App\Modules\Wallet\Filament\Admin\Disputes;
 use App\Modules\Wallet\Filament\Admin\PayoutReviews;
 use App\Support\Health\HealthCheck;
 use App\Support\Health\SystemHealth;
@@ -27,8 +28,8 @@ use Livewire\Attributes\Url;
 /**
  * Canvas board AdminOverview (plan M8a, use cases 1 to 3). Figures come from each module
  * through its contracts. Admins also see the money tiles, the sales chart and the ledger
- * check (use case 3); moderators see the sign-ups chart instead. The chargeback-rate tile
- * arrives with disputes (M3 PR 6). Days and dates are the viewer's own (D-15).
+ * check (use case 3) and the chargeback rate; moderators see the sign-ups chart instead.
+ * Days and dates are the viewer's own (D-15).
  */
 final class Overview extends Page
 {
@@ -135,6 +136,8 @@ final class Overview extends Page
             'salesChange' => $money === null || $sales === null ? null : self::change($sales, $money->salesBetween($from->subDays($days), $now->subDays($days)), self::PREVIOUS[$range]),
             'payouts' => $money?->payoutsWaiting(),
             'payoutsUrl' => PayoutReviews::getUrl(),
+            'chargebacks' => $money?->chargebackRate($now->subDays(30)),
+            'disputesUrl' => Disputes::getUrl(),
             'chart' => $money === null
                 ? self::chart($accounts->signUpsPerDay($chartStart, self::CHART_DAYS), $chartStart)
                 : self::chart($money->salesPerDay($chartStart, self::CHART_DAYS), $chartStart, 'sales (USD)', self::dollars(...)),

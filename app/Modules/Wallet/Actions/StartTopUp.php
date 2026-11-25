@@ -14,6 +14,7 @@ use App\Modules\Wallet\Models\TopUp;
 use App\Modules\Wallet\Support\TopUpPack;
 use Illuminate\Support\Facades\DB;
 
+use function filter_var;
 use function in_array;
 use function strlen;
 use function trim;
@@ -35,7 +36,10 @@ final readonly class StartTopUp
         private AuditLog $audit,
     ) {}
 
-    public function handle(string $fanId, int $packIndex, TopUpMethod $method, string $idempotencyKey, string $ip): TopUp
+    /**
+     * @param  bool|null  $knownDevice  started from a device on the account for more than 7 days (dispute evidence); null when unknown
+     */
+    public function handle(string $fanId, int $packIndex, TopUpMethod $method, string $idempotencyKey, string $ip, ?bool $knownDevice = null): TopUp
     {
         $idempotencyKey = trim($idempotencyKey);
         if ($idempotencyKey === '' || strlen($idempotencyKey) > 100) {
@@ -71,6 +75,9 @@ final readonly class StartTopUp
             'currency' => $pack->price->currency,
             'credits' => $pack->credits,
             'bonus_credits' => $pack->bonusCredits,
+            // Evidence if the card holder later disputes it (canvas AdminDisputes).
+            'ip' => filter_var($ip, FILTER_VALIDATE_IP) === false ? null : $ip,
+            'known_device' => $knownDevice,
         ])->save();
 
         $session = $this->gateway->createCheckout(new CheckoutRequest(

@@ -218,6 +218,14 @@ test('signed-in pages pass axe and keep a visible focus ring', async ({ page, br
     await expect(staffPage.getByText('Payout clearing balance')).toBeVisible();
     await expectNoAxeViolations(staffPage);
     await expectVisibleFocusOnTab(staffPage, { maxSteps: 60 });
+
+    // Disputes & chargebacks (canvas AdminDisputes, M3 PR 6): tiles, tabs, detail and the refund search.
+    await staffPage.goto('/admin/disputes');
+    await expect(staffPage.getByRole('heading', { name: 'Disputes & chargebacks' })).toBeVisible();
+    await expect(staffPage.getByText('Chargeback rate (30d)')).toBeVisible();
+    await expect(staffPage.getByRole('heading', { name: 'Refund a sale' })).toBeVisible();
+    await expectNoAxeViolations(staffPage);
+    await expectVisibleFocusOnTab(staffPage, { maxSteps: 60 });
     await staffContext.close();
 
     await page.goto('/creator/status');
