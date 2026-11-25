@@ -94,7 +94,9 @@ final readonly class ReviewPayout
             }
 
             $apply($payout);
-            $payout->forceFill(['reviewed_by' => $staffId, 'reviewed_at' => now(), 'review_note' => $note === '' ? null : $note])->save();
+            // Approving a held payout without a note keeps the hold's note on the payout
+            // (every note, empty or not, is also in the audit log).
+            $payout->forceFill(['reviewed_by' => $staffId, 'reviewed_at' => now(), 'review_note' => $note === '' ? $payout->review_note : $note])->save();
             $this->audit->record($action, $staffId, 'payout', $payout->id, ['note' => $note, 'amount_minor' => $payout->amount_minor]);
 
             return $payout;

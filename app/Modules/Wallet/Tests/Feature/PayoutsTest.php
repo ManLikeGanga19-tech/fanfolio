@@ -335,7 +335,7 @@ it('shows Earnings & withdrawals from the canvas and requests a withdrawal from 
         ->assertSee('Pending · releases after 7 days')
         ->assertSee('Paid out all time')
         ->assertSee('Test Bank ····2222', false)
-        ->assertSee("You'll confirm with your passkey. Requests over $1,000 are reviewed within 24 hours.", false)
+        ->assertSee("You'll confirm with your passkey or authenticator app. Requests over $1,000 are reviewed within 24 hours.", false)
         ->assertSee('No withdrawals yet.')
         ->call('fillMax')
         ->assertSet('amount', '1920.00')
@@ -365,6 +365,41 @@ it('says a large request goes to review, and sends a stale session to confirm fi
 
     $this->freshSecondFactor = false;
     Livewire::test(EarningsPage::class)->set('amount', '20')->call('requestWithdrawal')->assertRedirect(route('wallet.payouts.confirm'));
+});
+
+it('finishes the withdrawal after the second-factor step, once, without typing it again (D-13)', function (): void {
+    earnings($this->creator, 192000);
+    Filament::setCurrentPanel('studio');
+
+    $this->freshSecondFactor = false;
+    Livewire::test(EarningsPage::class)->set('amount', '40')->call('requestWithdrawal')->assertRedirect(route('wallet.payouts.confirm'));
+    expect(Payout::query()->count())->toBe(0)
+        ->and(session(EarningsPage::DRAFT_KEY))->toMatchArray(['amount' => '40']);
+
+    // Back from the confirmation: the same request completes with its own key.
+    $this->freshSecondFactor = true;
+    Livewire::test(EarningsPage::class)
+        ->assertNotified('Withdrawal requested. It is on its way.')
+        ->assertSet('amount', '')
+        ->assertSee('$40');
+
+    // The draft is used up: opening Earnings again asks for nothing.
+    Livewire::test(EarningsPage::class)->assertNotNotified();
+
+    expect(Payout::query()->count())->toBe(1)
+        ->and(Payout::query()->sole()->amount_minor)->toBe(4000)
+        ->and(session()->has(EarningsPage::DRAFT_KEY))->toBeFalse()
+        ->and(balance(AccountType::CreatorEarnings, $this->creator))->toBe(192000 - 4000);
+});
+
+it('drops a malformed draft instead of acting on it', function (): void {
+    earnings($this->creator, 192000);
+    Filament::setCurrentPanel('studio');
+    session()->put(EarningsPage::DRAFT_KEY, ['amount' => 40]);
+
+    Livewire::test(EarningsPage::class)->assertSet('amount', '')->assertNotNotified();
+
+    expect(Payout::query()->count())->toBe(0)->and(session()->has(EarningsPage::DRAFT_KEY))->toBeFalse();
 });
 
 it('turns typed dollars into cents without floats', function (string $typed, ?int $cents): void {

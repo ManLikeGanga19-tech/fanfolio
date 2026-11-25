@@ -62,7 +62,7 @@
                         </fieldset>
 
                         <x-filament::button type="submit" size="lg">Request withdrawal</x-filament::button>
-                        <p class="text-small text-ink-muted">You'll confirm with your passkey. Requests over {{ EarningsPage::money($reviewAbove) }} are reviewed within 24 hours.</p>
+                        <p class="text-small text-ink-muted">You'll confirm with your passkey or authenticator app. Requests over {{ EarningsPage::money($reviewAbove) }} are reviewed within 24 hours.</p>
                     </form>
                 @endif
             </section>

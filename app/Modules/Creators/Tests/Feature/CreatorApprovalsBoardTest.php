@@ -184,6 +184,7 @@ it('approves from the board, as a moderator too', function (): void {
     Livewire::test(CreatorApprovals::class)
         ->callAction('approve')
         ->assertNotified('Approved.')
+        ->assertDispatched('refresh-sidebar')
         ->assertSee('Nothing to review.');
 
     expect($creator->refresh()->status)->toBe(CreatorStatus::Active)

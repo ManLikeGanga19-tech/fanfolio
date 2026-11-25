@@ -26,7 +26,7 @@ Route::middleware('auth')->group(function (): void {
 // Studio sends the creator here; the step-up middleware has them confirm, then they return.
 Route::middleware(['auth', 'step-up:second-factor'])->get('/wallet/payouts/confirm', static fn () => redirect()
     ->to(EarningsPage::getUrl(panel: 'studio'))
-    ->with('status', 'Confirmed. Request your withdrawal.'))->name('wallet.payouts.confirm');
+    ->with('status', 'Confirmed.'))->name('wallet.payouts.confirm');
 
 // Spec "Inbound webhooks": signed by the gateway; no session or CSRF (see bootstrap/app.php).
 Route::post('/webhooks/{gateway}', WebhookController::class)->middleware('throttle:webhooks')->name('webhooks.gateway');

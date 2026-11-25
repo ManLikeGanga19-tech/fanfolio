@@ -276,6 +276,9 @@ it('submits for review once, audited, without letting the creator publish or ear
     $this->get('/creator/review')->assertRedirect(route('creator.status'));
     $this->get('/creator/status')->assertOk()->assertSee("We're reviewing your account", false)->assertDontSee('Submit for review');
 
+    // The account hub shows where the application stands, not "Become a creator".
+    $this->get('/account')->assertOk()->assertSee('Creator application')->assertSee('In review')->assertDontSee('Become a creator');
+
     $eligibility = app(CreatorEligibility::class);
     expect($eligibility->canPublish($creator->user_id))->toBeFalse()
         ->and($eligibility->canEarn($creator->user_id))->toBeFalse();

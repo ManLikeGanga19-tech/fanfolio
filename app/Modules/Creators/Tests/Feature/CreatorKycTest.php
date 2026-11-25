@@ -104,6 +104,18 @@ it('sends the creator to the provider and keeps only the reference', function ()
         ->and($this->audit->of('creator.kyc_started'))->toHaveCount(1);
 });
 
+it('counts a passed creator ID check as the 18+ check, once, audited', function (): void {
+    applicant();
+    $this->get('/account')->assertOk()->assertSee('Finish your creator application')->assertSee('Verify your age to see adult creators');
+
+    runKyc('pass');
+
+    // A real request loads the account afresh; the test keeps one signed-in model.
+    auth()->user()?->refresh();
+    $this->get('/account')->assertOk()->assertSee('Age verified')->assertDontSee('Verify your age to see adult creators');
+    expect($this->audit->of('identity.age_verified_by_creator_kyc'))->toHaveCount(1);
+});
+
 it('passes the ID and selfie to manual review, with an event after commit', function (): void {
     Event::fake([CreatorKycPassed::class]);
     $creator = applicant();

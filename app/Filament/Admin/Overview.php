@@ -34,7 +34,7 @@ final class Overview extends Page
 {
     public const array RANGES = ['today' => 'Today', '7d' => '7 days', '30d' => '30 days'];
 
-    private const array PREVIOUS = ['today' => 'yesterday', '7d' => 'the 7 days before', '30d' => 'the 30 days before'];
+    private const array PREVIOUS = ['today' => 'yesterday by this time', '7d' => 'the 7 days before', '30d' => 'the 30 days before'];
 
     /** Days in the sign-ups chart. */
     public const int CHART_DAYS = 14;

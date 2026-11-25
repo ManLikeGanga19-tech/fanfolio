@@ -103,21 +103,16 @@
                         @endforeach
                     </ul>
 
-                    @if ($detail->status === PayoutState::Held)
+                    @if ($detail->status === PayoutState::Held || ($detail->reviewed_by !== null && $detail->review_note !== null))
                         <div class="rounded-md bg-surface-raised p-3 text-sm">
-                            <p class="font-semibold">On hold</p>
+                            <p class="font-semibold">{{ $detail->status === PayoutState::Held ? 'On hold' : 'Reviewer\'s note' }}</p>
                             <p class="text-small text-ink-muted">{{ $reviewer !== null ? '@'.$reviewer : 'Staff' }} · {{ $detail->reviewed_at?->setTimezone($zone)->format('j M, H:i') }}</p>
                             @if ($detail->review_note !== null)<p class="mt-1">{{ $detail->review_note }}</p>@endif
                         </div>
                     @endif
 
                     @if ($waiting)
-                        <div class="flex flex-col gap-1.5">
-                            <label for="payout-note" class="text-sm font-semibold">Note (saved to the audit log)</label>
-                            <textarea id="payout-note" wire:model="note" rows="3" maxlength="500" class="rounded-md border border-border-strong bg-surface-raised px-3 py-2 text-ink" aria-describedby="payout-note-help @error('note') payout-note-error @enderror" @error('note') aria-invalid="true" @enderror></textarea>
-                            <p id="payout-note-help" class="text-small text-ink-muted">Needed to hold or decline. The creator never sees it.</p>
-                            @error('note')<p id="payout-note-error" class="text-small text-danger">{{ $message }}</p>@enderror
-                        </div>
+                        {{-- The note is asked for in each decision's dialog (needed to hold or decline). --}}
                         @error('payout')<p class="text-small text-danger">{{ $message }}</p>@enderror
                         @error('staff')<p class="text-small text-danger">{{ $message }}</p>@enderror
 

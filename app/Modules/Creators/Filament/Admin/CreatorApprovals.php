@@ -321,5 +321,7 @@ final class CreatorApprovals extends Page
         }
 
         Notification::make()->title($done)->success()->send();
+        // The sidebar counts (waiting applications) are drawn with the page: redraw them.
+        $this->dispatch('refresh-sidebar');
     }
 }

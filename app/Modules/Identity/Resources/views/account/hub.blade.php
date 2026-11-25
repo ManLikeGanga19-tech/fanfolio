@@ -54,6 +54,10 @@
                     <a href="{{ url('/admin') }}" class="{{ $row }}"><span class="flex-1">Admin</span><span class="text-ink-muted" aria-hidden="true">›</span></a>
                 @elseif ($user->role === \App\Modules\Identity\Enums\Role::Creator)
                     <a href="{{ url('/studio') }}" class="{{ $row }}"><span class="flex-1">Creator Studio</span><span class="text-ink-muted" aria-hidden="true">›</span></a>
+                @elseif ($application === \App\Modules\Creators\Contracts\Data\ApplicationStage::InReview)
+                    <a href="{{ route('creator.start') }}" class="{{ $row }}"><span class="flex-1">Creator application</span><span class="text-small text-ink-muted">In review</span></a>
+                @elseif ($application === \App\Modules\Creators\Contracts\Data\ApplicationStage::Started)
+                    <a href="{{ route('creator.start') }}" class="{{ $row }}"><span class="flex-1">Finish your creator application</span><span class="text-ink-muted" aria-hidden="true">›</span></a>
                 @else
                     <a href="{{ route('creator.start') }}" class="{{ $row }}"><span class="flex-1">Become a creator</span><span class="text-ink-muted" aria-hidden="true">›</span></a>
                 @endif

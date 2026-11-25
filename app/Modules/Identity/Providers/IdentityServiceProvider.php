@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Modules\Identity\Providers;
 
 use App\Modules\Creators\Events\CreatorApproved;
+use App\Modules\Creators\Events\CreatorKycPassed;
 use App\Modules\Identity\Actions\AccountLookup;
 use App\Modules\Identity\Actions\Directory;
 use App\Modules\Identity\Actions\PhoneHandoffs;
@@ -35,6 +36,7 @@ use App\Modules\Identity\Http\Middleware\EnsureDeviceActive;
 use App\Modules\Identity\Http\Middleware\EnsureMfaEnrolled;
 use App\Modules\Identity\Http\Middleware\EnsureRecentStepUp;
 use App\Modules\Identity\Listeners\GrantCreatorRole;
+use App\Modules\Identity\Listeners\MarkAgeVerifiedFromCreatorKyc;
 use App\Modules\Identity\Models\User;
 use App\Modules\Identity\Models\UserDevice;
 use App\Modules\Identity\Policies\UserDevicePolicy;
@@ -111,6 +113,9 @@ final class IdentityServiceProvider extends ModuleServiceProvider
 
         // An approved creator gets the creator role (opens Studio).
         Event::listen(CreatorApproved::class, GrantCreatorRole::class);
+
+        // The creator ID check proves 18+ too: the account is not asked for the fan age check again.
+        Event::listen(CreatorKycPassed::class, MarkAgeVerifiedFromCreatorKyc::class);
 
         parent::boot();
 

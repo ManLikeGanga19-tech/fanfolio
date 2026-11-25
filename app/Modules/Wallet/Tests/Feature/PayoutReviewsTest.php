@@ -207,11 +207,10 @@ it('approves and sends, audited', function (): void {
     $payout = reviewPayout(anAccount(), 420_000);
 
     Livewire::test(PayoutReviews::class)
-        ->set('note', 'Checked the bank letter')
-        ->callAction('approve')
-        ->assertHasNoErrors()
+        ->callAction('approve', data: ['note' => 'Checked the bank letter'])
+        ->assertHasNoActionErrors()
         ->assertNotified('Approved. Sending now.')
-        ->assertSet('note', '');
+        ->assertDispatched('refresh-sidebar');
 
     expect($payout->refresh()->status)->toBe(PayoutState::Approved)
         ->and($payout->reviewed_by)->toBe($admin->id)
@@ -226,30 +225,53 @@ it('holds with a note, then approves or declines the held payout', function (): 
     signedInStaff();
     $payout = reviewPayout(anAccount(), 420_000);
 
-    // A hold needs a note.
+    // A hold needs a note: the dialog refuses before anything changes.
     Livewire::test(PayoutReviews::class)
-        ->callAction('hold')
-        ->assertHasErrors('note')
-        ->assertNotified('Write a note for the audit log.');
+        ->callAction('hold', data: ['note' => ''])
+        ->assertHasActionErrors(['note' => 'required'])
+        ->assertNotNotified('On hold. The creator has been asked for more information.');
+    Livewire::test(PayoutReviews::class)
+        ->callAction('decline', data: ['note' => 'ab'])
+        ->assertHasActionErrors(['note' => 'min']);
     expect($payout->refresh()->status)->toBe(PayoutState::Review);
 
     Livewire::test(PayoutReviews::class)
-        ->set('note', 'Need a bank letter')
-        ->callAction('hold')
+        ->callAction('hold', data: ['note' => 'Need a bank letter'])
         ->assertNotified('On hold. The creator has been asked for more information.');
     expect($payout->refresh()->status)->toBe(PayoutState::Held);
 
     Livewire::test(PayoutReviews::class)
         ->assertSee(['On hold', 'Need a bank letter', 'Approve & send', 'Decline'])
         ->assertActionVisible('approve')
-        ->set('note', 'No letter after 7 days')
-        ->callAction('decline')
+        ->callAction('decline', data: ['note' => 'No letter after 7 days'])
         ->assertNotified('Declined. The money is back in the creator\'s earnings.');
 
     expect($payout->refresh()->status)->toBe(PayoutState::Rejected)
         ->and(app(Ledger::class)->balance(AccountRef::of(AccountType::CreatorEarnings, $payout->creator_id))->amountMinor)->toBe(420_000)
         ->and($this->audit->has('wallet.payout_held', $payout->id))->toBeTrue()
         ->and($this->audit->has('wallet.payout_declined', $payout->id))->toBeTrue();
+});
+
+it('keeps the hold note on the payout when it is approved without a note', function (): void {
+    signedInStaff();
+    $payout = reviewPayout(anAccount(), 420_000);
+
+    Livewire::test(PayoutReviews::class)->callAction('hold', data: ['note' => 'Asked for a bank letter']);
+    Livewire::test(PayoutReviews::class)->callAction('approve', data: ['note' => ''])->assertNotified('Approved. Sending now.');
+
+    expect($payout->refresh()->status)->toBe(PayoutState::Approved)
+        ->and($payout->review_note)->toBe('Asked for a bank letter')
+        ->and($this->audit->has('wallet.payout_approved', $payout->id))->toBeTrue();
+
+    // The decided payout still shows the note to the next reviewer who opens it.
+    Livewire::withQueryParams(['payout' => $payout->id])->test(PayoutReviews::class)
+        ->assertSee(["Reviewer's note", 'Asked for a bank letter', 'Sending. This payout is no longer waiting for review.']);
+
+    // Once sent, it is still this creator's first payout: it never counts itself.
+    $payout->forceFill(['status' => PayoutState::Sent, 'sent_at' => now()])->save();
+    Livewire::withQueryParams(['payout' => $payout->id])->test(PayoutReviews::class)
+        ->assertSee('First payout for this creator')
+        ->assertDontSee('1 earlier payout sent');
 });
 
 it('shows a payout that is no longer waiting, and refuses to decide it', function (): void {
@@ -259,7 +281,7 @@ it('shows a payout that is no longer waiting, and refuses to decide it', functio
 
     // Another admin approved it in the meantime.
     $payout->forceFill(['status' => PayoutState::Approved])->save();
-    $page->set('note', 'Fine')->callAction('approve')
+    $page->callAction('approve', data: ['note' => 'Fine'])
         ->assertHasErrors('payout')
         ->assertNotified('This payout is no longer waiting for review.');
 
