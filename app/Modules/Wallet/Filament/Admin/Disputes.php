@@ -121,29 +121,48 @@ final class Disputes extends Page
         $queue = $queue->paginate(self::PER_PAGE, page: $this->page);
 
         $detail = $this->detail() ?? $queue->getCollection()->first();
-        if ($detail instanceof Dispute && $this->selected !== $detail->id) {
-            $this->selected = $detail->id;
-        }
 
         $accounts = app(Accounts::class);
         $names = [];
-        foreach ([...$queue->items(), ...($detail instanceof Dispute ? [$detail] : [])] as $dispute) {
+        foreach ($queue->items() as $dispute) {
             $names[$dispute->fan_id] ??= $accounts->username($dispute->fan_id);
         }
 
-        $frozen = $detail instanceof Dispute && DB::table('wallet_freezes')->where('fan_id', $detail->fan_id)->whereNull('lifted_at')->exists();
-
+        // Kept apart: Xdebug's path coverage (CI) multiplies with every branch in one method.
         return [
             'tiles' => $this->tiles(),
             'queue' => $queue,
-            'detail' => $detail,
-            'topUp' => $detail instanceof Dispute ? TopUp::query()->find($detail->topup_id) : null,
             'names' => $names,
-            'evidence' => $detail instanceof Dispute ? $this->evidence($detail) : [],
-            'frozen' => $frozen,
-            'canLift' => $frozen && ! Dispute::query()->where('fan_id', $detail->fan_id)->whereIn('status', DisputeStatus::UNDECIDED)->exists(),
             'refund' => $this->refundSearch(),
             'canRefund' => Gate::allows(StaffAbility::RefundPurchase->value),
+            ...$this->detailData($detail, $names),
+        ];
+    }
+
+    /**
+     * The detail pane for the chosen case (or the first one in the list).
+     *
+     * @param  array<string, string|null>  $names
+     * @return array{detail: Dispute|null, topUp: TopUp|null, evidence: list<array{text: string, tone: 'ok'|'warning'|'danger'|'muted'}>, frozen: bool, canLift: bool, names: array<string, string|null>}
+     */
+    private function detailData(?Dispute $detail, array $names): array
+    {
+        if (! $detail instanceof Dispute) {
+            return ['detail' => null, 'topUp' => null, 'evidence' => [], 'frozen' => false, 'canLift' => false, 'names' => $names];
+        }
+
+        $this->selected = $detail->id;
+        $names[$detail->fan_id] ??= app(Accounts::class)->username($detail->fan_id);
+        $frozen = DB::table('wallet_freezes')->where('fan_id', $detail->fan_id)->whereNull('lifted_at')->exists();
+        $open = Dispute::query()->where('fan_id', $detail->fan_id)->whereIn('status', DisputeStatus::UNDECIDED)->exists();
+
+        return [
+            'detail' => $detail,
+            'topUp' => TopUp::query()->find($detail->topup_id),
+            'evidence' => $this->evidence($detail),
+            'frozen' => $frozen,
+            'canLift' => $frozen && ! $open,
+            'names' => $names,
         ];
     }
 

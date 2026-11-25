@@ -321,3 +321,19 @@ it('tells a frozen fan why on the wallet page', function (): void {
     $this->get('/wallet')->assertSee('Your wallet is on hold while we look into a payment dispute.')
         ->assertDontSee('Continue to secure checkout');
 });
+
+it('opens the case you choose and pages through long lists', function (): void {
+    signedInStaff();
+    $first = boardDispute(anAccount(), 'CB-1', 500, CarbonImmutable::now()->addDay());
+    $second = boardDispute(anAccount(), 'CB-2', 500, CarbonImmutable::now()->addDays(2));
+
+    $page = Livewire::test(Disputes::class)
+        ->assertSet('selected', $first->id)
+        ->call('select', $second->id)
+        ->assertSet('selected', $second->id)
+        ->assertSee('CB-2 · $5 top-up')
+        ->call('goToPage', 0)
+        ->assertSet('page', 1);
+
+    expect(Disputes::pageLabel($page->viewData('queue')))->toBe('Page 1 of 1');
+});
