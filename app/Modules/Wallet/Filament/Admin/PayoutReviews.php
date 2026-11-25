@@ -18,6 +18,7 @@ use App\Modules\Wallet\Models\Payout;
 use BackedEnum;
 use Carbon\CarbonImmutable;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Facades\FilamentTimezone;
@@ -54,8 +55,6 @@ final class PayoutReviews extends Page
     #[Url(except: 1)]
     public int $page = 1;
 
-    public string $note = '';
-
     public static function canAccess(): bool
     {
         return Gate::allows(StaffAbility::ReviewPayouts->value);
@@ -81,7 +80,6 @@ final class PayoutReviews extends Page
     public function select(string $payoutId): void
     {
         $this->selected = $payoutId;
-        $this->note = '';
         $this->resetErrorBag();
     }
 
@@ -173,10 +171,11 @@ final class PayoutReviews extends Page
             ->color('primary')
             ->requiresConfirmation()
             ->modalHeading(fn (): string => 'Approve and send '.self::money($this->detail()->amount_minor ?? 0).'?')
-            ->modalDescription('It goes to the payout provider straight away. The creator gets an email when it is sent. Your note, if any, is saved to the audit log.')
+            ->modalDescription('It goes to the payout provider straight away. The creator gets an email when it is sent.')
+            ->schema([$this->noteField(required: false)])
             ->modalSubmitActionLabel('Approve & send')
-            ->action(function (): void {
-                $this->decide(fn (ReviewPayout $review, string $staff): Payout => $review->approve((string) $this->selected, $staff, $this->note), 'Approved. Sending now.');
+            ->action(function (array $data): void {
+                $this->decide(fn (ReviewPayout $review, string $staff): Payout => $review->approve((string) $this->selected, $staff, $this->noteFrom($data)), 'Approved. Sending now.');
             });
     }
 
@@ -188,9 +187,10 @@ final class PayoutReviews extends Page
             ->requiresConfirmation()
             ->modalHeading('Hold this payout?')
             ->modalDescription('The creator gets an email asking for more information. The money stays locked until you approve or decline it.')
+            ->schema([$this->noteField(required: true)])
             ->modalSubmitActionLabel('Hold')
-            ->action(function (): void {
-                $this->decide(fn (ReviewPayout $review, string $staff): Payout => $review->hold((string) $this->selected, $staff, $this->note), 'On hold. The creator has been asked for more information.');
+            ->action(function (array $data): void {
+                $this->decide(fn (ReviewPayout $review, string $staff): Payout => $review->hold((string) $this->selected, $staff, $this->noteFrom($data)), 'On hold. The creator has been asked for more information.');
             });
     }
 
@@ -203,10 +203,32 @@ final class PayoutReviews extends Page
             ->requiresConfirmation()
             ->modalHeading('Decline this payout?')
             ->modalDescription('The money goes back to the creator\'s available earnings and they get an email. They can ask again.')
+            ->schema([$this->noteField(required: true)])
             ->modalSubmitActionLabel('Decline')
-            ->action(function (): void {
-                $this->decide(fn (ReviewPayout $review, string $staff): Payout => $review->decline((string) $this->selected, $staff, $this->note), 'Declined. The money is back in the creator\'s earnings.');
+            ->action(function (array $data): void {
+                $this->decide(fn (ReviewPayout $review, string $staff): Payout => $review->decline((string) $this->selected, $staff, $this->noteFrom($data)), 'Declined. The money is back in the creator\'s earnings.');
             });
+    }
+
+    /** The note is asked for in the dialog and checked before anything changes. */
+    private function noteField(bool $required): Textarea
+    {
+        return Textarea::make('note')
+            ->label($required ? 'Note (saved to the audit log)' : 'Note (optional, saved to the audit log)')
+            ->helperText('The creator never sees it.')
+            ->rows(3)
+            ->required($required)
+            ->minLength($required ? 3 : 0)
+            ->maxLength(500)
+            ->validationMessages(['required' => 'Write a note for the audit log.', 'min' => 'Write a note for the audit log.']);
+    }
+
+    /**
+     * @param  array<array-key, mixed>  $data
+     */
+    private function noteFrom(array $data): string
+    {
+        return is_string($data['note'] ?? null) ? $data['note'] : '';
     }
 
     /**
@@ -240,7 +262,8 @@ final class PayoutReviews extends Page
     private function checks(Payout $payout): array
     {
         $left = app(Ledger::class)->balance(AccountRef::of(AccountType::CreatorEarnings, $payout->creator_id))->amountMinor;
-        $sent = Payout::query()->where('creator_id', $payout->creator_id)->where('status', PayoutState::Sent)->count();
+        // Earlier payouts only: once this one is sent it must not count itself.
+        $sent = Payout::query()->where('creator_id', $payout->creator_id)->whereKeyNot($payout->id)->where('status', PayoutState::Sent)->count();
         $flags = $payout->flags;
 
         return [
@@ -288,7 +311,8 @@ final class PayoutReviews extends Page
             return;
         }
 
-        $this->note = '';
         Notification::make()->title($done)->success()->send();
+        // The sidebar badge (payouts waiting) is drawn with the page: redraw it.
+        $this->dispatch('refresh-sidebar');
     }
 }

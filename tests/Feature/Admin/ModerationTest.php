@@ -185,6 +185,7 @@ it('decides: note required; warn emails the category; strike and suspend go thro
         ->set('note', 'Spam links confirmed in 3 reports')
         ->callAction('warn')
         ->assertNotified('Decided: warn.')
+        ->assertDispatched('refresh-sidebar')
         ->assertSee('Decided: Warn');
 
     expect($case->refresh()->status)->toBe(CaseStatus::Closed)

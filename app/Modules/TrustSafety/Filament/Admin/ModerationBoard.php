@@ -345,5 +345,7 @@ final class ModerationBoard extends Page
         }
 
         Notification::make()->title($done)->success()->send();
+        // The sidebar counts (open cases) are drawn with the page: redraw them.
+        $this->dispatch('refresh-sidebar');
     }
 }

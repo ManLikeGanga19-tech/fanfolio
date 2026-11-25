@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
+use App\Modules\Creators\Events\CreatorKycPassed;
 use App\Modules\Identity\Contracts\Data\VerificationStatus;
 use App\Modules\Identity\Contracts\IdentityVerifier;
 use App\Modules\Identity\Events\AgeVerified;
 use App\Modules\Identity\Gateways\Fake\FakeIdentityVerifier;
+use App\Modules\Identity\Listeners\MarkAgeVerifiedFromCreatorKyc;
 use App\Modules\Identity\Models\AgeVerification;
 use App\Modules\Identity\Models\User;
 use Illuminate\Support\Facades\Event;
@@ -133,4 +135,24 @@ it('sends verified fans past step 3', function (): void {
 it('rejects an unknown method', function (): void {
     $this->post('/signup/age', ['method' => 'astrology'])->assertSessionHasErrors('method');
     expect(AgeVerification::query()->count())->toBe(0);
+});
+
+it('takes a passed creator ID check as the age check, once, without touching a verified account', function (): void {
+    Event::fake([AgeVerified::class]);
+    $listener = app(MarkAgeVerifiedFromCreatorKyc::class);
+    $event = new CreatorKycPassed('creator-1', $this->user->id);
+
+    $listener->handle($event);
+    $verifiedAt = $this->user->refresh()->age_verified_at;
+    expect($verifiedAt)->not->toBeNull()
+        ->and($this->audit->of('identity.age_verified_by_creator_kyc'))->toHaveCount(1);
+    Event::assertDispatchedTimes(AgeVerified::class, 1);
+
+    // A replay, an unknown account: nothing more.
+    $this->travel(1)->hours();
+    $listener->handle($event);
+    $listener->handle(new CreatorKycPassed('creator-2', 'no-such-user'));
+    expect($this->user->refresh()->age_verified_at?->equalTo($verifiedAt))->toBeTrue()
+        ->and($this->audit->of('identity.age_verified_by_creator_kyc'))->toHaveCount(1);
+    Event::assertDispatchedTimes(AgeVerified::class, 1);
 });

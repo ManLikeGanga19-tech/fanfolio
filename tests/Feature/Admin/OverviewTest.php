@@ -157,7 +157,7 @@ it('shows admins the money tiles and the sales chart (use case 3)', function ():
     Livewire::test(Overview::class)
         ->assertViewHas('sales', 1_842_000)
         ->assertViewHas('payouts', ['count' => 3, 'amount' => 984_000])
-        ->assertSeeInOrder(['Sales (GMV)', '$18,420', '+8% vs yesterday', 'Creators awaiting review', 'Open cases', 'Payouts to review', '$9,840', '3 requests', 'Sign-ups'])
+        ->assertSeeInOrder(['Sales (GMV)', '$18,420', '+8% vs yesterday by this time', 'Creators awaiting review', 'Open cases', 'Payouts to review', '$9,840', '3 requests', 'Sign-ups'])
         ->assertDontSee('Passed the 18+ check')
         ->assertSee('Sales, last 14 days (USD)')
         ->assertViewHas('chart', fn (array $chart): bool => str_starts_with($chart['label'], 'Daily sales (USD) from 11 Nov to 24 Nov: $18,420.50 in total'))

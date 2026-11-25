@@ -47,13 +47,27 @@ final class EarningsPage extends Page
 
     public string $method = '';
 
+    /** The withdrawal waiting for the second-factor step, in the session. */
+    public const string DRAFT_KEY = 'wallet.payout_draft';
+
     /** One per form: a double click or a resend asks for one withdrawal. */
     public string $requestKey = '';
 
-    public function mount(): void
+    public function mount(RequestPayout $request): void
     {
         $this->requestKey = (string) Str::ulid();
         $this->method = $this->destinations()[0]->id ?? '';
+
+        // Back from the second-factor step (D-13): finish the withdrawal the creator asked
+        // for, with the same key, so they do not type it again and nothing is asked twice.
+        // Pulled, so a failed confirmation never loops.
+        $draft = app(Session::class)->pull(self::DRAFT_KEY);
+        if (is_array($draft) && is_string($draft['amount'] ?? null) && is_string($draft['method'] ?? null) && is_string($draft['key'] ?? null)) {
+            $this->amount = $draft['amount'];
+            $this->method = $draft['method'];
+            $this->requestKey = $draft['key'];
+            $this->requestWithdrawal($request);
+        }
     }
 
     public function getSubheading(): string
@@ -81,7 +95,9 @@ final class EarningsPage extends Page
             $payout = $request->handle($this->creatorId(), $this->method, $cents, $this->requestKey, app(Session::class), (string) request()->ip());
         } catch (WalletException $e) {
             if ($e->field === 'confirm') {
-                // D-13: confirm with the passkey or authenticator app, then come straight back.
+                // D-13: confirm with the passkey or authenticator app, then come straight back
+                // and finish this request (kept server-side, never in the URL).
+                app(Session::class)->put(self::DRAFT_KEY, ['amount' => $this->amount, 'method' => $this->method, 'key' => $this->requestKey]);
                 $this->redirectRoute('wallet.payouts.confirm');
 
                 return;
