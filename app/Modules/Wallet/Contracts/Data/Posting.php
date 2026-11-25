@@ -26,6 +26,27 @@ final readonly class Posting
         return new self($account, false, self::positive($amount));
     }
 
+    /**
+     * A debit when there is an amount, none when it is zero: for optional lines such as a fee
+     * that rounds to nothing (spread it into the postings: `...Posting::debitIfAny(...)`).
+     *
+     * @return list<self>
+     */
+    public static function debitIfAny(AccountRef $account, Money $amount): array
+    {
+        return $amount->isZero() ? [] : [self::debit($account, $amount)];
+    }
+
+    /**
+     * @return list<self>
+     *
+     * @see debitIfAny()
+     */
+    public static function creditIfAny(AccountRef $account, Money $amount): array
+    {
+        return $amount->isZero() ? [] : [self::credit($account, $amount)];
+    }
+
     /** Credits minus debits: the effect on the account's balance. */
     public function delta(): int
     {

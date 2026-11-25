@@ -56,11 +56,13 @@ final readonly class SettleDispute
             return null;
         }
 
-        $restored = $won ? $this->giveBack($dispute) : [];
+        $restored = [];
+        $outcome = DisputeStatus::Lost;
         if ($won) {
+            $restored = $this->giveBack($dispute);
+            $outcome = DisputeStatus::Won;
             TopUp::query()->whereKey($dispute->topup_id)->update(['status' => TopUpStatus::Paid]);
         }
-        $outcome = $won ? DisputeStatus::Won : DisputeStatus::Lost;
 
         $dispute->forceFill(['status' => $outcome, 'decided_at' => now()])->save();
         $this->unfreeze->handle($dispute->fan_id);
@@ -82,43 +84,45 @@ final readonly class SettleDispute
     {
         $recovery = $dispute->recovery;
         $currency = $dispute->currency;
-        $wallet = AccountRef::of(AccountType::FanWallet, $dispute->fan_id);
 
-        $postings = [Posting::debit(AccountRef::platform(AccountType::ProcessorClearing), Money::of($dispute->amount_minor, $currency))];
-        if ($recovery['wallet_minor'] > 0) {
-            $postings[] = Posting::credit($wallet, Money::of($recovery['wallet_minor'], $currency));
-        }
-        if ($recovery['bonus_minor'] > 0) {
-            $postings[] = Posting::debit(AccountRef::platform(AccountType::PlatformPromotions), Money::of($recovery['bonus_minor'], $currency));
-        }
-        if ($recovery['written_off_minor'] > 0) {
-            $postings[] = Posting::credit(AccountRef::platform(AccountType::PlatformRevenue), Money::of($recovery['written_off_minor'], $currency));
-        }
-
-        $this->ledger->post(LedgerTransaction::make('chargeback.won', 'chargeback-won:'.$dispute->id, $postings, 'dispute', $dispute->id));
+        $this->ledger->post(LedgerTransaction::make('chargeback.won', 'chargeback-won:'.$dispute->id, [
+            Posting::debit(AccountRef::platform(AccountType::ProcessorClearing), Money::of($dispute->amount_minor, $currency)),
+            ...Posting::creditIfAny(AccountRef::of(AccountType::FanWallet, $dispute->fan_id), Money::of($recovery['wallet_minor'], $currency)),
+            ...Posting::debitIfAny(AccountRef::platform(AccountType::PlatformPromotions), Money::of($recovery['bonus_minor'], $currency)),
+            ...Posting::creditIfAny(AccountRef::platform(AccountType::PlatformRevenue), Money::of($recovery['written_off_minor'], $currency)),
+        ], 'dispute', $dispute->id));
 
         $restored = [];
         foreach (array_reverse($recovery['sales']) as $saleId) {
-            /** @var object{id: string, creator_id: string, gross_minor: int|string, creator_minor: int|string, fee_minor: int|string, released_at: string|null}|null $hold */
-            $hold = DB::table('earning_holds')->where('transaction_id', $saleId)->where('dispute_id', $dispute->id)->whereNotNull('refunded_at')->lockForUpdate()->first();
-
-            if ($hold === null || $this->ledger->balance($wallet, $currency)->amountMinor < (int) $hold->gross_minor) {
-                continue;
+            if ($this->chargeAgain($dispute, $saleId)) {
+                $restored[] = $saleId;
             }
-
-            $sale = [
-                Posting::debit($wallet, Money::of((int) $hold->gross_minor, $currency)),
-                Posting::credit(AccountRef::of($hold->released_at === null ? AccountType::CreatorPending : AccountType::CreatorEarnings, $hold->creator_id), Money::of((int) $hold->creator_minor, $currency)),
-            ];
-            if ((int) $hold->fee_minor > 0) {
-                $sale[] = Posting::credit(AccountRef::platform(AccountType::PlatformRevenue), Money::of((int) $hold->fee_minor, $currency));
-            }
-
-            $this->ledger->post(LedgerTransaction::make('chargeback.won.sale', 'chargeback-won:'.$dispute->id.':'.$saleId, $sale, 'ledger_transaction', $saleId, 'sale'));
-            DB::table('earning_holds')->where('id', $hold->id)->update(['refunded_at' => null]);
-            $restored[] = $saleId;
         }
 
         return $restored;
+    }
+
+    /** One clawed-back sale charged again, if it is still linked to the dispute and the wallet covers it. */
+    private function chargeAgain(Dispute $dispute, string $saleId): bool
+    {
+        $currency = $dispute->currency;
+        $wallet = AccountRef::of(AccountType::FanWallet, $dispute->fan_id);
+
+        /** @var object{id: string, creator_id: string, gross_minor: int|string, creator_minor: int|string, fee_minor: int|string, released_at: string|null}|null $hold */
+        $hold = DB::table('earning_holds')->where('transaction_id', $saleId)->where('dispute_id', $dispute->id)->whereNotNull('refunded_at')->lockForUpdate()->first();
+
+        if ($hold === null || $this->ledger->balance($wallet, $currency)->amountMinor < (int) $hold->gross_minor) {
+            return false;
+        }
+
+        $to = $hold->released_at === null ? AccountType::CreatorPending : AccountType::CreatorEarnings;
+        $this->ledger->post(LedgerTransaction::make('chargeback.won.sale', 'chargeback-won:'.$dispute->id.':'.$saleId, [
+            Posting::debit($wallet, Money::of((int) $hold->gross_minor, $currency)),
+            Posting::credit(AccountRef::of($to, $hold->creator_id), Money::of((int) $hold->creator_minor, $currency)),
+            ...Posting::creditIfAny(AccountRef::platform(AccountType::PlatformRevenue), Money::of((int) $hold->fee_minor, $currency)),
+        ], 'ledger_transaction', $saleId, 'sale'));
+        DB::table('earning_holds')->where('id', $hold->id)->update(['refunded_at' => null]);
+
+        return true;
     }
 }

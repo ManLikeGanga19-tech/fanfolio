@@ -220,7 +220,7 @@ it('allows one withdrawal in progress at a time, and a repeat of the same reques
 it('passes on a busy wallet as is', function (): void {
     earnings($this->creator, 10000);
     config(['fanfolio.money.wallet_lock_wait_seconds' => 0]);
-    $lock = Cache::lock('wallet:'.$this->creator, 10);
+    $lock = Cache::lock('wallet:'.$this->creator, 60);
     $lock->get();
 
     try {
@@ -447,7 +447,7 @@ it('shows a busy wallet on the Studio form instead of failing', function (): voi
     earnings($this->creator, 10000);
     Filament::setCurrentPanel('studio');
     config(['fanfolio.money.wallet_lock_wait_seconds' => 0]);
-    $lock = Cache::lock('wallet:'.$this->creator, 10);
+    $lock = Cache::lock('wallet:'.$this->creator, 60);
     $lock->get();
 
     try {

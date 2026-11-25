@@ -36,7 +36,7 @@ final readonly class DisputeEvidence
             match ($topUp->known_device) {
                 true => ['text' => 'Paid from a device on the account for more than 7 days', 'tone' => 'ok'],
                 false => ['text' => 'Paid from a device added in the last 7 days', 'tone' => 'warning'],
-                null => ['text' => 'No device recorded for this top-up', 'tone' => 'muted'],
+                default => ['text' => 'No device recorded for this top-up', 'tone' => 'muted'],
             },
             $this->spent($dispute, $topUp),
             ['text' => 'Statement descriptor '.config()->string('fanfolio.brand.statement_descriptor').' shown at checkout', 'tone' => 'ok'],

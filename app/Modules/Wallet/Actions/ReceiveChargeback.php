@@ -132,77 +132,24 @@ final readonly class ReceiveChargeback
     {
         $currency = $dispute->currency;
         $amount = $dispute->amount_minor;
-        $bonus = intdiv($topUp->bonus_credits * $amount, $topUp->amount_minor);
-        $need = $amount + $bonus;
+        $need = $amount + intdiv($topUp->bonus_credits * $amount, $topUp->amount_minor);
         $wallet = AccountRef::of(AccountType::FanWallet, $topUp->fan_id);
         $available = $this->ledger->balance($wallet, $currency)->amountMinor;
 
-        $sales = [];
-        $transactions = [];
-        $clawed = 0;
-
-        if ($available < $need) {
-            /** @var list<object{id: string, transaction_id: string, creator_id: string, gross_minor: int|string, creator_minor: int|string, fee_minor: int|string, released_at: string|null, reference_type: string|null, reference_id: string|null}> $holds */
-            $holds = DB::table('earning_holds')
-                ->where('fan_id', $topUp->fan_id)
-                ->whereNull('refunded_at')
-                ->where('created_at', '>=', $topUp->paid_at)
-                ->orderByDesc('created_at')
-                ->orderByDesc('id')
-                ->lockForUpdate()
-                ->get()
-                ->all();
-
-            foreach ($holds as $hold) {
-                if ($available + $clawed >= $need) {
-                    break;
-                }
-
-                $from = $hold->released_at === null ? AccountType::CreatorPending : AccountType::CreatorEarnings;
-                $postings = [
-                    Posting::debit(AccountRef::of($from, $hold->creator_id), Money::of((int) $hold->creator_minor, $currency)),
-                    Posting::credit($wallet, Money::of((int) $hold->gross_minor, $currency)),
-                ];
-                if ((int) $hold->fee_minor > 0) {
-                    $postings[] = Posting::debit(AccountRef::platform(AccountType::PlatformRevenue), Money::of((int) $hold->fee_minor, $currency));
-                }
-
-                // D-20: the creator's account may go below zero; future sales repay it first.
-                $transactions[] = $this->ledger->post(LedgerTransaction::make(
-                    'chargeback.clawback',
-                    'chargeback:'.$dispute->id.':'.$hold->transaction_id,
-                    $postings,
-                    'ledger_transaction',
-                    $hold->transaction_id,
-                    'sale',
-                )->allowingNegativeBalances())->id;
-
-                DB::table('earning_holds')->where('id', $hold->id)->update(['refunded_at' => now(), 'dispute_id' => $dispute->id]);
-                PurchaseRefunded::dispatch($hold->transaction_id, $topUp->fan_id, $hold->creator_id, $hold->reference_type, $hold->reference_id);
-
-                $clawed += (int) $hold->gross_minor;
-                $sales[] = $hold->transaction_id;
-            }
-        }
+        [$clawed, $sales, $transactions] = $this->clawBack($dispute, $topUp, $need - $available);
 
         $taken = min($available + $clawed, $need);
         $paidTaken = min($taken, $amount);
         $bonusTaken = $taken - $paidTaken;
         $writtenOff = $amount - $paidTaken;
 
-        $postings = [Posting::credit(AccountRef::platform(AccountType::ProcessorClearing), Money::of($amount, $currency))];
-        if ($taken > 0) {
-            $postings[] = Posting::debit($wallet, Money::of($taken, $currency));
-        }
-        if ($bonusTaken > 0) {
-            $postings[] = Posting::credit(AccountRef::platform(AccountType::PlatformPromotions), Money::of($bonusTaken, $currency));
-        }
-        if ($writtenOff > 0) {
-            $postings[] = Posting::debit(AccountRef::platform(AccountType::PlatformRevenue), Money::of($writtenOff, $currency));
-        }
-
         // The fan's wallet keeps its guard: it can never go below zero here.
-        $transactions[] = $this->ledger->post(LedgerTransaction::make('chargeback', 'chargeback:'.$dispute->id, $postings, 'dispute', $dispute->id))->id;
+        $transactions[] = $this->ledger->post(LedgerTransaction::make('chargeback', 'chargeback:'.$dispute->id, [
+            Posting::credit(AccountRef::platform(AccountType::ProcessorClearing), Money::of($amount, $currency)),
+            ...Posting::debitIfAny($wallet, Money::of($taken, $currency)),
+            ...Posting::creditIfAny(AccountRef::platform(AccountType::PlatformPromotions), Money::of($bonusTaken, $currency)),
+            ...Posting::debitIfAny(AccountRef::platform(AccountType::PlatformRevenue), Money::of($writtenOff, $currency)),
+        ], 'dispute', $dispute->id))->id;
 
         return [
             'wallet_minor' => $taken,
@@ -214,5 +161,63 @@ final readonly class ReceiveChargeback
             'sales' => $sales,
             'transactions' => $transactions,
         ];
+    }
+
+    /**
+     * Whole sales since the top-up, newest first, until `$short` credits are back in the wallet.
+     *
+     * @return array{int, list<string>, list<string>} credits clawed back, sale ids, ledger transaction ids
+     */
+    private function clawBack(Dispute $dispute, TopUp $topUp, int $short): array
+    {
+        $clawed = 0;
+        $sales = [];
+        $transactions = [];
+
+        /** @var list<object{id: string, transaction_id: string, creator_id: string, gross_minor: int|string, creator_minor: int|string, fee_minor: int|string, released_at: string|null, reference_type: string|null, reference_id: string|null}> $holds */
+        $holds = $short <= 0 ? [] : DB::table('earning_holds')
+            ->where('fan_id', $topUp->fan_id)
+            ->whereNull('refunded_at')
+            ->where('created_at', '>=', $topUp->paid_at)
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->lockForUpdate()
+            ->get()
+            ->all();
+
+        foreach ($holds as $hold) {
+            if ($clawed >= $short) {
+                break;
+            }
+
+            $transactions[] = $this->clawOne($dispute, $topUp->fan_id, $hold);
+            $clawed += (int) $hold->gross_minor;
+            $sales[] = $hold->transaction_id;
+        }
+
+        return [$clawed, $sales, $transactions];
+    }
+
+    /**
+     * One sale back to the fan's credits, as an admin refund would reverse it. D-20: the
+     * creator's account may go below zero; future sales repay it first.
+     *
+     * @param  object{id: string, transaction_id: string, creator_id: string, gross_minor: int|string, creator_minor: int|string, fee_minor: int|string, released_at: string|null, reference_type: string|null, reference_id: string|null}  $hold
+     */
+    private function clawOne(Dispute $dispute, string $fanId, object $hold): string
+    {
+        $currency = $dispute->currency;
+        $from = $hold->released_at === null ? AccountType::CreatorPending : AccountType::CreatorEarnings;
+
+        $id = $this->ledger->post(LedgerTransaction::make('chargeback.clawback', 'chargeback:'.$dispute->id.':'.$hold->transaction_id, [
+            Posting::debit(AccountRef::of($from, $hold->creator_id), Money::of((int) $hold->creator_minor, $currency)),
+            Posting::credit(AccountRef::of(AccountType::FanWallet, $fanId), Money::of((int) $hold->gross_minor, $currency)),
+            ...Posting::debitIfAny(AccountRef::platform(AccountType::PlatformRevenue), Money::of((int) $hold->fee_minor, $currency)),
+        ], 'ledger_transaction', $hold->transaction_id, 'sale')->allowingNegativeBalances())->id;
+
+        DB::table('earning_holds')->where('id', $hold->id)->update(['refunded_at' => now(), 'dispute_id' => $dispute->id]);
+        PurchaseRefunded::dispatch($hold->transaction_id, $fanId, $hold->creator_id, $hold->reference_type, $hold->reference_id);
+
+        return $id;
     }
 }
