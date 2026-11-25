@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Wallet\Actions;
 
+use App\Modules\Wallet\Contracts\Data\AccountType;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -42,5 +43,17 @@ final readonly class LedgerIntegrity
             ->all();
 
         return ['unbalanced' => $unbalanced, 'mismatched' => $mismatched];
+    }
+
+    /**
+     * The cached balances of every account of one type added up, for reconciling a clearing
+     * account with the records it should match (canvas AdminPayouts "Payout clearing balance").
+     */
+    public function totalOf(AccountType $type): int
+    {
+        return (int) DB::table('ledger_balances')
+            ->join('ledger_accounts', 'ledger_accounts.id', '=', 'ledger_balances.account_id')
+            ->where('ledger_accounts.type', $type->value)
+            ->sum('ledger_balances.balance_minor');
     }
 }

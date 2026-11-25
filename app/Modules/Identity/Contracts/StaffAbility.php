@@ -17,6 +17,8 @@ enum StaffAbility: string
     // Overview
     case ViewOverview = 'admin.overview.view';
     case ViewSystemHealth = 'admin.overview.health';
+    /** Sales, payouts to review and the ledger check (plan M8a use case 3). */
+    case ViewMoneyFigures = 'admin.overview.money';
 
     // Creator approvals and the creators directory
     case ReviewCreators = 'admin.creators.review';
@@ -63,6 +65,7 @@ enum StaffAbility: string
     {
         return match ($this) {
             self::ViewSystemHealth,
+            self::ViewMoneyFigures,
             self::SuspendCreator,
             self::ReinstateCreator,
             self::PauseCreatorPayouts,

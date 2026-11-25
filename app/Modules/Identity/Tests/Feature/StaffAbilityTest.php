@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Gate;
 
 const ADMIN_ONLY = [
     StaffAbility::ViewSystemHealth,
+    StaffAbility::ViewMoneyFigures,
     StaffAbility::SuspendCreator,
     StaffAbility::ReinstateCreator,
     StaffAbility::PauseCreatorPayouts,

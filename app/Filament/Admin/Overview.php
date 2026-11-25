@@ -10,6 +10,9 @@ use App\Modules\Identity\Contracts\AccountStats;
 use App\Modules\Identity\Contracts\StaffAbility;
 use App\Modules\TrustSafety\Contracts\ModerationStats;
 use App\Modules\TrustSafety\Filament\Admin\ModerationBoard;
+use App\Modules\Wallet\Contracts\Data\LedgerCheck;
+use App\Modules\Wallet\Contracts\MoneyStats;
+use App\Modules\Wallet\Filament\Admin\PayoutReviews;
 use App\Support\Health\HealthCheck;
 use App\Support\Health\SystemHealth;
 use BackedEnum;
@@ -22,10 +25,10 @@ use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Url;
 
 /**
- * Canvas board AdminOverview (plan M8a, use cases 1 and 2). Figures come from each module
- * through its contracts. The money tiles and the sales chart on the board (sales, payouts
- * to review, chargeback rate) arrive with M3; until then the chart shows sign-ups.
- * Days and dates are the viewer's own (D-15).
+ * Canvas board AdminOverview (plan M8a, use cases 1 to 3). Figures come from each module
+ * through its contracts. Admins also see the money tiles, the sales chart and the ledger
+ * check (use case 3); moderators see the sign-ups chart instead. The chargeback-rate tile
+ * arrives with disputes (M3 PR 6). Days and dates are the viewer's own (D-15).
  */
 final class Overview extends Page
 {
@@ -109,7 +112,8 @@ final class Overview extends Page
         $oldest = $approvals->oldestWaitingSince();
 
         $chartStart = $now->startOfDay()->subDays(self::CHART_DAYS - 1);
-        $perDay = $accounts->signUpsPerDay($chartStart, self::CHART_DAYS);
+        $money = Gate::allows(StaffAbility::ViewMoneyFigures->value) ? app(MoneyStats::class) : null;
+        $sales = $money?->salesBetween($from, $to);
 
         return [
             'ranges' => self::RANGES,
@@ -127,7 +131,14 @@ final class Overview extends Page
             'urgentCases' => $moderation->urgent(),
             'oldestCase' => $moderation->oldestPendingSince()?->diffForHumans(syntax: CarbonInterface::DIFF_ABSOLUTE, short: true),
             'moderationUrl' => ModerationBoard::getUrl(),
-            'chart' => self::chart($perDay, $chartStart),
+            'sales' => $sales,
+            'salesChange' => $money === null || $sales === null ? null : self::change($sales, $money->salesBetween($from->subDays($days), $now->subDays($days)), self::PREVIOUS[$range]),
+            'payouts' => $money?->payoutsWaiting(),
+            'payoutsUrl' => PayoutReviews::getUrl(),
+            'chart' => $money === null
+                ? self::chart($accounts->signUpsPerDay($chartStart, self::CHART_DAYS), $chartStart)
+                : self::chart($money->salesPerDay($chartStart, self::CHART_DAYS), $chartStart, 'sales (USD)', self::dollars(...)),
+            'chartTitle' => $money === null ? 'Sign-ups' : 'Sales',
             'health' => $this->health(),
         ];
     }
@@ -153,14 +164,22 @@ final class Overview extends Page
         ];
     }
 
+    /** Whole dollars when the amount is round, otherwise with cents ("$18,420", "$12.50"). */
+    public static function dollars(int $cents): string
+    {
+        return PayoutReviews::money($cents);
+    }
+
     /**
      * Bar heights in a 0–100 scale for the SVG, plus the text alternative.
      *
      * @param  list<int>  $perDay
-     * @return array{bars: list<array{day: string, count: int, height: int}>, total: int, label: string, ticks: list<string>}
+     * @param  (callable(int): string)|null  $format  how a value is read out (sales in dollars)
+     * @return array{bars: list<array{day: string, count: int, value: string, height: int}>, total: int, label: string, ticks: list<string>}
      */
-    public static function chart(array $perDay, CarbonImmutable $start): array
+    public static function chart(array $perDay, CarbonImmutable $start, string $what = 'sign-ups', ?callable $format = null): array
     {
+        $format ??= static fn (int $n): string => (string) $n;
         $max = max([1, ...$perDay]);
         $total = array_sum($perDay);
         $bars = [];
@@ -169,6 +188,7 @@ final class Overview extends Page
             $bars[] = [
                 'day' => $start->addDays($i)->format('j M'),
                 'count' => $count,
+                'value' => $format($count),
                 'height' => $count === 0 ? 0 : max(2, intdiv($count * 100, $max)),
             ];
         }
@@ -181,7 +201,7 @@ final class Overview extends Page
             'total' => $total,
             'label' => $first === null || $last === null
                 ? 'No data'
-                : sprintf('Daily sign-ups from %s to %s: %d in total, %d on %s, %d on %s, highest %d in a day.', $first['day'], $last['day'], $total, $first['count'], $first['day'], $last['count'], $last['day'], $max),
+                : sprintf('Daily %s from %s to %s: %s in total, %s on %s, %s on %s, highest %s in a day.', $what, $first['day'], $last['day'], $format($total), $first['value'], $first['day'], $last['value'], $last['day'], $format(max([0, ...$perDay]))),
             'ticks' => $first === null || $last === null ? [] : [$first['day'], $bars[intdiv(count($bars), 2)]['day'], $last['day']],
         ];
     }
@@ -195,7 +215,26 @@ final class Overview extends Page
             return null;
         }
 
-        return $this->healthChecks ??= app(SystemHealth::class)->checks();
+        return $this->healthChecks ??= [...app(SystemHealth::class)->checks(), $this->ledgerHealth()];
+    }
+
+    /** Canvas "Ledger reconciliation passed · 02:00 · 0 mismatches" (spec "Integrity checks"). */
+    private function ledgerHealth(): HealthCheck
+    {
+        $check = app(MoneyStats::class)->lastLedgerCheck();
+
+        if (! $check instanceof LedgerCheck) {
+            return new HealthCheck('Ledger check', 'Not run yet (php artisan wallet:verify-ledger, nightly)', HealthCheck::WARNING);
+        }
+
+        $at = $check->checkedAt->setTimezone(FilamentTimezone::get());
+        $when = ($at->isToday() ? '' : $at->format('j M').', ').$at->format('H:i');
+
+        if ($check->ok) {
+            return new HealthCheck('Ledger check passed', $when.' · 0 mismatches', HealthCheck::OK);
+        }
+
+        return new HealthCheck('Ledger check failed', $when.' · '.$check->mismatches.' '.($check->mismatches === 1 ? 'mismatch' : 'mismatches').' (see the critical log)', HealthCheck::PROBLEM);
     }
 
     private function now(): CarbonImmutable
