@@ -9,7 +9,9 @@ use App\Modules\Creators\Contracts\CreatorEligibility;
 use App\Modules\Creators\Contracts\Data\PayoutDestination;
 use App\Modules\Creators\Contracts\PayoutDestinations;
 use App\Modules\Identity\Contracts\NetworkRiskCheck;
+use App\Modules\Identity\Contracts\PlatformSettings;
 use App\Modules\Identity\Contracts\SessionSecurity;
+use App\Modules\Identity\Contracts\Setting;
 use App\Modules\Wallet\Contracts\Data\AccountRef;
 use App\Modules\Wallet\Contracts\Data\AccountType;
 use App\Modules\Wallet\Contracts\Data\LedgerTransaction;
@@ -51,6 +53,7 @@ final readonly class RequestPayout
         private PayoutDestinations $destinations,
         private SessionSecurity $sessions,
         private NetworkRiskCheck $network,
+        private PlatformSettings $settings,
         private AuditLog $audit,
     ) {}
 
@@ -70,7 +73,7 @@ final readonly class RequestPayout
             throw new WalletException('Withdrawals are not available on your account right now. Contact support.', 'account');
         }
 
-        $minimum = config()->integer('fanfolio.money.payout_min_minor');
+        $minimum = $this->settings->integer(Setting::PayoutMinimum);
         if ($amountMinor < $minimum) {
             throw new WalletException('The minimum withdrawal is '.WalletDisplayService::dollars($minimum).'.', 'amount');
         }
@@ -79,7 +82,7 @@ final readonly class RequestPayout
             throw new WalletException('Confirm with your passkey or authenticator app first.', 'confirm');
         }
 
-        if ($this->network->refuses('payouts') && $this->network->isAnonymised($ip)) {
+        if ($this->settings->enabled(Setting::VpnPayouts) && $this->network->isAnonymised($ip)) {
             throw new WalletException('Turn off your VPN or proxy to continue.', 'network');
         }
 

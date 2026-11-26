@@ -6,6 +6,8 @@ namespace App\Modules\Wallet\Filament\Studio;
 
 use App\Modules\Creators\Contracts\Data\PayoutDestination;
 use App\Modules\Creators\Contracts\PayoutDestinations;
+use App\Modules\Identity\Contracts\PlatformSettings;
+use App\Modules\Identity\Contracts\Setting;
 use App\Modules\Wallet\Actions\RequestPayout;
 use App\Modules\Wallet\Actions\WalletDisplayService;
 use App\Modules\Wallet\Contracts\Data\AccountRef;
@@ -139,7 +141,7 @@ final class EarningsPage extends Page
             'firstSent' => is_string($firstSent) ? CarbonImmutable::parse($firstSent, 'UTC') : null,
             'destinations' => $this->destinations(),
             'history' => Payout::query()->where('creator_id', $creator)->latest('requested_at')->limit(20)->get(),
-            'minimum' => config()->integer('fanfolio.money.payout_min_minor'),
+            'minimum' => app(PlatformSettings::class)->integer(Setting::PayoutMinimum),
             'reviewAbove' => config()->integer('fanfolio.money.payout_manual_review_above_minor'),
         ];
     }

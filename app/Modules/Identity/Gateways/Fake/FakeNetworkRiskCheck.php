@@ -22,9 +22,4 @@ final readonly class FakeNetworkRiskCheck implements FakeDriver, NetworkRiskChec
 
         return is_array($listed) && in_array($ip, $listed, true);
     }
-
-    public function refuses(string $area): bool
-    {
-        return $this->config->get('fanfolio.network_risk.refuse.'.$area) === true;
-    }
 }

@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Modules\Wallet\Support;
 
+use App\Modules\Identity\Contracts\PlatformSettings;
+use App\Modules\Identity\Contracts\Setting;
 use App\Modules\Wallet\Actions\WalletDisplayService;
 use App\Support\Money\Money;
 
 /**
- * A top-up pack from `fanfolio.topup.packs` (D-04): what the fan pays, the credits it
- * buys (100 credits = $1) and the bonus credits on top. Integers only.
+ * A top-up pack (D-04): what the fan pays, the credits it buys (100 credits = $1) and the
+ * bonus credits on top. Integers only. Packs and the crypto switch are platform settings
+ * (Identity PlatformSettings, changed with two-admin approval; defaults in config).
  */
 final readonly class TopUpPack
 {
@@ -27,8 +30,7 @@ final readonly class TopUpPack
     public static function all(): array
     {
         $packs = [];
-        foreach (config()->array('fanfolio.topup.packs') as $index => $pack) {
-            /** @var array{amount_minor: int, bonus_bps: int} $pack */
+        foreach (app(PlatformSettings::class)->topUpPacks() as $index => $pack) {
             $credits = intdiv($pack['amount_minor'] * config()->integer('fanfolio.money.credits_per_usd'), 100);
             $packs[] = new self(
                 (int) $index,
@@ -40,6 +42,20 @@ final readonly class TopUpPack
         }
 
         return $packs;
+    }
+
+    /**
+     * How fans may pay: card, and USDT while crypto top-ups are switched on.
+     *
+     * @return list<string>
+     */
+    public static function methods(): array
+    {
+        $crypto = app(PlatformSettings::class)->enabled(Setting::CryptoTopUps);
+        /** @var list<string> $methods */
+        $methods = config()->array('fanfolio.topup.methods');
+
+        return array_values(array_filter($methods, static fn (string $method): bool => $method !== 'crypto' || $crypto));
     }
 
     public static function find(int $index): ?self

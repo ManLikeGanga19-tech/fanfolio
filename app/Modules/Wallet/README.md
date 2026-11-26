@@ -30,7 +30,7 @@ See `docs/backend-spec.md` ("Wallet and ledger") and the plan in `docs/plans/M3.
 
 **Integrity** (spec "Integrity checks"). `wallet:verify-ledger` (nightly at 02:30, `Actions\LedgerIntegrity`) checks that every transaction balances with at least two entries and that every cached balance equals the sum of its entries. A mismatch is logged as critical; the result is kept under `VerifyLedger::RESULT_KEY` and shown under System health on the admin Overview. `LedgerIntegrity::totalOf()` adds up one account type; the Payout reviews board uses it to check that payout_clearing holds exactly the payouts in progress. Reconciling processor_clearing with gateway settlement reports waits for a contracted processor.
 
-**Tests.** Every Wallet feature test ends with `expectLedgerBalanced()` (in `Tests/Helpers.php`, available to other modules' money tests). CI runs `phpunit.wallet.xml` with Xdebug: 100% of lines in the module and 100% of branches on the money paths (`Actions/`), checked by `scripts/check-branch-coverage.php`. Xdebug counts some compiler paths no test can take (a loop that always runs once, enum constant fetches), so branches are gated where money moves rather than on data objects and fake drivers. In `Actions/`, import the global functions a class calls (`use function in_array;`): PHP 8.4 otherwise compiles such calls inside a namespace with a check for a namespaced function of the same name, a branch no test can take.
+**Tests.** Every Wallet feature test ends with `expectLedgerBalanced()` (in `Tests/Helpers.php`, available to other modules' money tests). CI runs `phpunit.wallet.xml` with Xdebug for 100% of lines in the module, then `phpunit.wallet-paths.xml` with path coverage for 100% of branches on the money paths (`Actions/`, D-25), checked by `scripts/check-branch-coverage.php`. Keep methods in `Actions/` small: Xdebug's path count multiplies with every branch in one method. Xdebug counts some compiler paths no test can take (a loop that always runs once, enum constant fetches), so branches are gated where money moves rather than on data objects and fake drivers. In `Actions/`, import the global functions a class calls (`use function in_array;`): PHP 8.4 otherwise compiles such calls inside a namespace with a check for a namespaced function of the same name, a branch no test can take.
 
 ## Top-ups (M3 PR 2)
 
@@ -67,6 +67,8 @@ See `docs/backend-spec.md` ("Wallet and ledger") and the plan in `docs/plans/M3.
 **Sending** (`Jobs\SendPayoutJob` on the `payments` queue, `Actions\SendPayout`): the decrypted destination comes from `PayoutDestinations::instructionFor` only at this moment and is never stored or logged; the call is outside any database transaction and idempotent per payout. Sent: `payout.sent` payout_clearing → processor_clearing, `PayoutSent`. Refused: `payout.failed` back to creator_earnings, `PayoutFailed`. Pending: `wallet:payout-status` (every 15 minutes) asks the provider again. The creator is emailed (`Notifications\PayoutUpdate`: sent, failed, held, declined), never with a staff note.
 
 **Gateways.** `TopUpGateway`, `PayoutGateways` (one driver per rail) and `FxRateProvider` sit behind interfaces with Fake drivers; tests never call a real processor.
+
+**Settings** (D-24). The minimum withdrawal, the top-up packs and bonuses, crypto top-ups and the VPN rules for withdrawals and top-ups are read through Identity's `PlatformSettings` (two-admin approval on `/admin/settings`); the defaults stay in `config/fanfolio.php`.
 
 ## Admin money boards (M3 PR 5)
 

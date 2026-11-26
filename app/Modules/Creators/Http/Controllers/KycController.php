@@ -87,7 +87,7 @@ final class KycController
         try {
             $url = $start->handle($creator, $onPhone
                 ? route('creator.kyc.return')
-                : $handoff->returnUrl($creator->user_id, route('creator.kyc.return')));
+                : $handoff->returnUrl($creator->user_id, route('creator.kyc.return')), (string) $request->ip());
         } catch (CreatorException $e) {
             return redirect()->route($e->field === 'profile' ? 'creator.profile' : 'creator.kyc')->withErrors([$e->field => $e->getMessage()]);
         }

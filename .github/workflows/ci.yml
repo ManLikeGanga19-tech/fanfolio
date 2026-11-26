@@ -148,11 +148,16 @@ jobs:
           php artisan key:generate
           PGPASSWORD=fanfolio-ci-only psql -h 127.0.0.1 -U fanfolio -d template1 -c 'CREATE EXTENSION IF NOT EXISTS citext;'
           PGPASSWORD=fanfolio-ci-only psql -h 127.0.0.1 -U fanfolio -d fanfolio_test -c 'CREATE EXTENSION IF NOT EXISTS citext;'
-      - name: Wallet suite with line and branch coverage
+      # D-25: lines across the whole module, then paths (branches) only where money moves.
+      - name: 100% of lines in the Wallet module
         env:
           XDEBUG_MODE: coverage
-        run: vendor/bin/pest -c phpunit.wallet.xml --coverage --min=100 --path-coverage --coverage-cobertura=build/wallet-coverage.xml
-      - name: 100% of lines, 100% of branches on the money paths
+        run: vendor/bin/pest -c phpunit.wallet.xml --coverage --min=100
+      - name: Money paths with branch coverage
+        env:
+          XDEBUG_MODE: coverage
+        run: vendor/bin/pest -c phpunit.wallet-paths.xml --coverage --path-coverage --coverage-cobertura=build/wallet-coverage.xml
+      - name: 100% of lines and branches on the money paths
         run: php scripts/check-branch-coverage.php build/wallet-coverage.xml
 
   accessibility:

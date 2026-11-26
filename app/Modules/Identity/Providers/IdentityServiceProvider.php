@@ -9,6 +9,7 @@ use App\Modules\Creators\Events\CreatorKycPassed;
 use App\Modules\Identity\Actions\AccountLookup;
 use App\Modules\Identity\Actions\Directory;
 use App\Modules\Identity\Actions\PhoneHandoffs;
+use App\Modules\Identity\Actions\PlatformSettingsStore;
 use App\Modules\Identity\Actions\Restrictions;
 use App\Modules\Identity\Actions\SessionChecks;
 use App\Modules\Identity\Actions\SignUpStats;
@@ -22,6 +23,7 @@ use App\Modules\Identity\Contracts\BreachedPasswordChecker;
 use App\Modules\Identity\Contracts\IdentityVerifier;
 use App\Modules\Identity\Contracts\NetworkRiskCheck;
 use App\Modules\Identity\Contracts\PhoneHandoff;
+use App\Modules\Identity\Contracts\PlatformSettings;
 use App\Modules\Identity\Contracts\SessionSecurity;
 use App\Modules\Identity\Contracts\SmsSender;
 use App\Modules\Identity\Contracts\StaffAbility;
@@ -64,6 +66,8 @@ final class IdentityServiceProvider extends ModuleServiceProvider
         'mfa_totp',
         'mfa_recovery_codes',
         'age_verifications',
+        'platform_settings',
+        'settings_proposals',
     ];
 
     public static function moduleName(): string
@@ -78,6 +82,7 @@ final class IdentityServiceProvider extends ModuleServiceProvider
         $this->bindDriver(SmsSender::class, 'sms', ['fake' => FakeSmsSender::class]);
         $this->bindDriver(NetworkRiskCheck::class, 'network_risk', ['fake' => FakeNetworkRiskCheck::class]);
         $this->app->bind(SessionSecurity::class, SessionChecks::class);
+        $this->app->bind(PlatformSettings::class, PlatformSettingsStore::class);
         $this->bindDriver(BreachedPasswordChecker::class, 'breached_passwords', [
             'fake' => FakeBreachedPasswordChecker::class,
             'hibp' => HibpBreachedPasswordChecker::class,

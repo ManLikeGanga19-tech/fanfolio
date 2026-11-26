@@ -2,7 +2,7 @@
 
 Sign-up, login, MFA, passkeys, devices, sessions, age verification.
 
-- **Owns tables:** `users`, `user_devices`, `sessions`, `password_reset_tokens`, `email_verifications`, `phone_verifications` (unused since D-12), `webauthn_credentials`, `mfa_totp`, `mfa_recovery_codes`, `age_verifications`
+- **Owns tables:** `users`, `user_devices`, `sessions`, `password_reset_tokens`, `email_verifications`, `phone_verifications` (unused since D-12), `webauthn_credentials`, `mfa_totp`, `mfa_recovery_codes`, `age_verifications`, `platform_settings`, `settings_proposals`
 - **Publishes events:** `UserRegistered`, `AgeVerified`, `DeviceRevoked`
 - **Public surface:** `App\Modules\Identity\Contracts\*` and `App\Modules\Identity\Events\*`. Everything else is private to this module.
 
@@ -139,3 +139,13 @@ Forms that start a check send `device` (`phone` or `computer`), set by `resource
 - Logins, failed logins, logouts, sign-ups and email verification write to Audit through `AuditLog`.
 
 See `docs/backend-spec.md` for the module's rules.
+
+## Platform settings (M3 PR 7, D-24)
+
+**Reading.** `Contracts\PlatformSettings` (`Actions\PlatformSettingsStore`): `integer(Setting::PayoutMinimum)`, `enabled(Setting::CryptoTopUps)` and the D-16 switches `Setting::Vpn*`, `topUpPacks()`. Only settings an admin changed have a row in `platform_settings`; the rest read their default from `config/fanfolio.php`, so tests that set config still work. Values are cached under one key and the cache is cleared when a change is approved.
+
+**Changing** (`Actions\SettingProposals`, admins with `StaffAbility::ProposeSettings`, audited): one admin proposes with a reason (`settings.proposed`); a different admin approves (`settings.changed`, live at once) or rejects with a note (`settings.rejected`); the proposer may withdraw. One open proposal per setting (also a partial unique index). Approval is refused if the setting changed after the proposal. `Actions\SettingValues` checks each value (minimum withdrawal $1 to the $1,000 review line; one to six rising packs of whole dollars up to $1,000, whole-percent bonuses up to 50%; switches on or off) and writes it the way the board shows it.
+
+**Board.** `/admin/settings` (`Filament\Admin\SettingsBoard`, canvas AdminSettings, plan M8a use cases 34, 35 and 42). The brief's locked values are shown read-only. The editable ones are a form; "Request approval" sends every edited setting for approval with one reason, all or none. Pending proposals sit at the top with Approve and Reject for other admins, Withdraw for the proposer; recent decisions are listed below.
+
+**D-16 VPN rules.** `NetworkRiskCheck` only answers whether an address is a VPN or proxy; whether a rule is on is a setting. Staff sign-in is refused in `Http\Controllers\SignsIn` (`identity.login_refused`, reason `vpn`), creator ID checks in Creators' `StartCreatorKyc`, withdrawals and top-ups in Wallet.
