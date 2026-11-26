@@ -226,6 +226,13 @@ test('signed-in pages pass axe and keep a visible focus ring', async ({ page, br
     await expect(staffPage.getByRole('heading', { name: 'Refund a sale' })).toBeVisible();
     await expectNoAxeViolations(staffPage);
     await expectVisibleFocusOnTab(staffPage, { maxSteps: 60 });
+
+    // Fees & settings (canvas AdminSettings, M3 PR 7): locked values, the form, switches.
+    await staffPage.goto('/admin/settings');
+    await expect(staffPage.getByRole('heading', { name: 'Fees & settings' })).toBeVisible();
+    await expect(staffPage.getByRole('switch', { name: /Crypto top-ups/ })).toBeVisible();
+    await expectNoAxeViolations(staffPage);
+    await expectVisibleFocusOnTab(staffPage, { maxSteps: 60 });
     await staffContext.close();
 
     await page.goto('/creator/status');

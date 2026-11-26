@@ -36,7 +36,7 @@ final class WalletController
             'credits' => $credits,
             'approximate' => $display->approximate($credits, $currency),
             'packs' => TopUpPack::all(),
-            'methods' => config()->array('fanfolio.topup.methods'),
+            'methods' => TopUpPack::methods(),
             // D-20: a chargeback freezes the wallet until an admin lifts it.
             'frozen' => DB::table('wallet_freezes')->where('fan_id', $userId)->whereNull('lifted_at')->exists(),
             // One key per page view: a double tap or a resent form starts one top-up only.

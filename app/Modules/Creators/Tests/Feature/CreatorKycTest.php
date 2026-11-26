@@ -364,3 +364,20 @@ it('rate limits starting checks', function (): void {
 
     $this->post('/creator/kyc', ['device' => 'phone'])->assertTooManyRequests();
 });
+
+it('refuses to start an ID check through a VPN while the rule is on (D-16)', function (): void {
+    applicant();
+    config(['fanfolio.fake.anonymised_ips' => ['198.51.100.30']]);
+
+    $this->withServerVariables(['REMOTE_ADDR' => '198.51.100.30'])
+        ->post('/creator/kyc', ['device' => 'phone'])
+        ->assertRedirect(route('creator.kyc'))
+        ->assertSessionHasErrors(['kyc' => 'Turn off your VPN or proxy to verify your ID.']);
+
+    expect(CreatorKyc::query()->count())->toBe(0);
+
+    config(['fanfolio.network_risk.refuse.creator_kyc' => false]);
+    $this->withServerVariables(['REMOTE_ADDR' => '198.51.100.30'])->post('/creator/kyc', ['device' => 'phone']);
+
+    expect(CreatorKyc::query()->count())->toBe(1);
+});

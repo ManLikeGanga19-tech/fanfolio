@@ -14,6 +14,9 @@ use App\Modules\Identity\Contracts\Data\VerificationPurpose;
 use App\Modules\Identity\Contracts\Data\VerificationRequest;
 use App\Modules\Identity\Contracts\Data\VerificationStatus;
 use App\Modules\Identity\Contracts\IdentityVerifier;
+use App\Modules\Identity\Contracts\NetworkRiskCheck;
+use App\Modules\Identity\Contracts\PlatformSettings;
+use App\Modules\Identity\Contracts\Setting;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -29,10 +32,16 @@ final readonly class StartCreatorKyc
     public function __construct(
         private IdentityVerifier $verifier,
         private AuditLog $audit,
+        private NetworkRiskCheck $network,
+        private PlatformSettings $settings,
     ) {}
 
-    public function handle(Creator $creator, string $returnUrl): string
+    public function handle(Creator $creator, string $returnUrl, string $ip): string
     {
+        if ($this->settings->enabled(Setting::VpnCreatorKyc) && $this->network->isAnonymised($ip)) {
+            throw new CreatorException('Turn off your VPN or proxy to verify your ID.', 'kyc');
+        }
+
         if (! $creator->hasProfile()) {
             throw new CreatorException('Set up your page first.', 'profile');
         }

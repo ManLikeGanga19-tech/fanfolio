@@ -6,6 +6,8 @@ namespace App\Modules\Wallet\Actions;
 
 use App\Modules\Audit\Contracts\AuditLog;
 use App\Modules\Identity\Contracts\NetworkRiskCheck;
+use App\Modules\Identity\Contracts\PlatformSettings;
+use App\Modules\Identity\Contracts\Setting;
 use App\Modules\Wallet\Contracts\Data\CheckoutRequest;
 use App\Modules\Wallet\Contracts\Data\TopUpMethod;
 use App\Modules\Wallet\Contracts\TopUpGateway;
@@ -33,6 +35,7 @@ final readonly class StartTopUp
     public function __construct(
         private TopUpGateway $gateway,
         private NetworkRiskCheck $network,
+        private PlatformSettings $settings,
         private AuditLog $audit,
     ) {}
 
@@ -53,7 +56,7 @@ final readonly class StartTopUp
 
         $pack = TopUpPack::find($packIndex) ?? throw new WalletException('Choose a top-up amount.', 'pack');
 
-        if (! in_array($method->value, config()->array('fanfolio.topup.methods'), true)) {
+        if (! in_array($method->value, TopUpPack::methods(), true)) {
             throw new WalletException('That payment method is not available right now.', 'method');
         }
 
@@ -61,7 +64,7 @@ final readonly class StartTopUp
             throw new WalletException('Your wallet is on hold while we look into a payment. Contact support.', 'wallet');
         }
 
-        if ($this->network->refuses('topups') && $this->network->isAnonymised($ip)) {
+        if ($this->settings->enabled(Setting::VpnTopUps) && $this->network->isAnonymised($ip)) {
             throw new WalletException('Turn off your VPN or proxy to continue.', 'network');
         }
 

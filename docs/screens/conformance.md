@@ -38,6 +38,7 @@ Status: **to do**, **done**, or **later** (the screen arrives with its milestone
 | Admin: creator approvals | AdminApprovals | Sidebar with counts; list + detail pane with checks | done (M8a PR 3; search box added for long queues, payout name shown as match only (rule 13), face-match score and sanctions lines wait for the KYC provider) |
 | Admin: moderation queue | AdminModeration | Tabs by source with counts, case list with priority dot, detail with signals, decision note and buttons | done (M8a PR 4; account cases only: the blurred preview, Reveal and Remove buttons come with posts in M4; "Assign to me" sits in the detail pane next to who holds the case) |
 | Report sheet | FanMore · Report content | Anonymous note, five reasons with "under 18" in red, optional details, Submit report | built (M8a PR 4); shown on creator pages and profiles when they arrive in M5 |
+| Admin: fees & settings | AdminSettings | Heading with Request approval; Pending banner with the proposer, from → to and Review; Fees & payouts, Credits & top-ups and Safety & features cards; switches | done (M3 PR 7; Review is Approve and Reject in the banner, Withdraw for the proposer; bonuses are one field per pack; the four D-16 VPN switches join Safety & features; the device row says a new device is refused (D-03) instead of "the oldest is signed out"; Recent decisions added below) |
 | Admin: other boards | Admin* | Built to the board in M8a and their milestones | later |
 
 ## Open items for the owner

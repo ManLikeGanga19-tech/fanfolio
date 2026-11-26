@@ -7,6 +7,7 @@ namespace App\Providers\Filament;
 use App\Filament\Admin\Overview;
 use App\Modules\Creators\Filament\Admin\CreatorApprovals;
 use App\Modules\Creators\Filament\Admin\CreatorsDirectory;
+use App\Modules\Identity\Filament\Admin\SettingsBoard;
 use App\Modules\Identity\Http\Middleware\ApplyDisplayTimezone;
 use App\Modules\Identity\Http\Middleware\EnsureAdminAccess;
 use App\Modules\Identity\Http\Middleware\EnsureDeviceActive;
@@ -72,6 +73,7 @@ final class AdminPanelProvider extends PanelProvider
                 PayoutReviews::class,
                 Disputes::class,
                 UsersBoard::class,
+                SettingsBoard::class,
             ])
             ->middleware([
                 EncryptCookies::class,

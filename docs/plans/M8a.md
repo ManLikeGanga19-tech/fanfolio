@@ -90,7 +90,7 @@ All migrations are additive, nullable or defaulted, and reversible.
 3b. Creators directory with suspend, pause (moderators, up to 7 days, ends by itself), reinstate and ID re-check, use cases 9–12 (built: branch `admin/04-creators-directory`; use case 13 "pause payouts only" moves to M3)
 4. Moderation engine and queue: reports, cases, assignment, decisions; "Report" sheet for accounts (built: branch `admin/05-moderation`; the sheet is mounted on creator pages and profiles in M5)
 5. Audit log board with CSV export; Staff board with two-admin approvals
-6. Settings board (read-only locked values) and network-risk rules if decided
+6. Settings board (read-only locked values) and network-risk rules if decided. (Built with M3 PR 7, branch `wallet/07-settings`: D-24. Two-admin approval for staff roles stays with PR 5, the Staff board.)
 
 ## Tests
 
