@@ -24,13 +24,18 @@ use Illuminate\Support\Facades\Log;
  * the top-up (`processor_clearing → fan_wallet`) and its bonus as a separate balanced
  * transaction (`platform_promotions → fan_wallet`, D-04), keyed to the top-up so a
  * second confirmation never credits twice. The amount must match what the fan chose.
- * Chargebacks and refunds are stored and wait for M3 PR 6 (D-20).
+ * A chargeback opens a dispute and takes the money back (D-20, ReceiveChargeback); the
+ * network's decision settles it (SettleDispute). Card refunds are never issued by us
+ * (fans' credits are not refunded to cards; see [CREDIT REFUND POLICY]), so a refund
+ * event is stored and logged for a person to look at.
  */
 final readonly class ApplyGatewayEvent
 {
     public function __construct(
         private Ledger $ledger,
         private AuditLog $audit,
+        private ReceiveChargeback $chargeback,
+        private SettleDispute $settle,
     ) {}
 
     public function handle(string $webhookId): void
@@ -45,7 +50,10 @@ final readonly class ApplyGatewayEvent
             match ($hook->type) {
                 GatewayEventType::PaymentSucceeded => $this->paid($hook),
                 GatewayEventType::PaymentFailed => $this->failed($hook),
-                default => $hook->forceFill(['error' => 'Waiting for chargeback and refund handling (M3 PR 6).'])->save(),
+                GatewayEventType::Chargeback => $this->done($hook, $this->chargeback->handle($hook)),
+                GatewayEventType::DisputeWon => $this->done($hook, $this->settle->handle($hook, won: true)),
+                GatewayEventType::DisputeLost => $this->done($hook, $this->settle->handle($hook, won: false)),
+                GatewayEventType::Refund => $this->refunded($hook),
             };
         });
     }
@@ -111,6 +119,12 @@ final readonly class ApplyGatewayEvent
         }
 
         $this->done($hook);
+    }
+
+    private function refunded(GatewayWebhook $hook): void
+    {
+        Log::critical('The processor reported a card refund FanFolio did not ask for', ['webhook' => $hook->id]);
+        $this->done($hook, 'Card refund reported by the processor; not posted. Needs a person.');
     }
 
     private function topUp(GatewayWebhook $hook): ?TopUp

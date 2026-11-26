@@ -173,6 +173,7 @@ it('lists the checks behind a request', function (): void {
         ->assertViewHas('checks', [
             ['text' => 'Reserved from available earnings; $70 left after this', 'tone' => 'ok'],
             ['text' => 'Paid only from sales past the 7-day hold', 'tone' => 'ok'],
+            ['text' => 'No sales in the last 90 days', 'tone' => 'muted'],
             ['text' => 'Payout method in use for more than 7 days', 'tone' => 'ok'],
             ['text' => 'Requested from a device the creator has used before', 'tone' => 'ok'],
             ['text' => 'Payout name matches the ID', 'tone' => 'ok'],
@@ -189,9 +190,9 @@ it('lists the checks behind a request', function (): void {
     ])->allowingNegativeBalances());
 
     Livewire::test(PayoutReviews::class)->call('select', $flagged->id)
-        ->assertViewHas('checks', fn (array $checks): bool => array_column($checks, 'tone') === ['danger', 'ok', 'warning', 'warning', 'danger', 'muted', 'ok']
+        ->assertViewHas('checks', fn (array $checks): bool => array_column($checks, 'tone') === ['danger', 'ok', 'muted', 'warning', 'warning', 'danger', 'muted', 'ok']
             && $checks[0]['text'] === 'Earnings are -$12.50 after refunds since the request'
-            && $checks[5]['text'] === 'First payout for this creator')
+            && $checks[6]['text'] === 'First payout for this creator')
         ->assertSee(['New payout method', 'Payout method added in the last 7 days', 'Requested from a new device', 'Payout name does not match the ID']);
 
     expect($clean->creator_id)->not->toBe($flagged->creator_id)

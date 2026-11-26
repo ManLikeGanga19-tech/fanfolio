@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Wallet\Http\Controllers;
 
+use App\Modules\Identity\Contracts\SessionSecurity;
 use App\Modules\Wallet\Actions\StartTopUp;
 use App\Modules\Wallet\Contracts\Data\TopUpMethod;
 use App\Modules\Wallet\Contracts\WalletDisplay;
@@ -13,6 +14,7 @@ use App\Modules\Wallet\Models\TopUp;
 use App\Modules\Wallet\Support\TopUpPack;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -35,12 +37,14 @@ final class WalletController
             'approximate' => $display->approximate($credits, $currency),
             'packs' => TopUpPack::all(),
             'methods' => config()->array('fanfolio.topup.methods'),
+            // D-20: a chargeback freezes the wallet until an admin lifts it.
+            'frozen' => DB::table('wallet_freezes')->where('fan_id', $userId)->whereNull('lifted_at')->exists(),
             // One key per page view: a double tap or a resent form starts one top-up only.
             'idempotencyKey' => (string) Str::ulid(),
         ]);
     }
 
-    public function startTopUp(Request $request, StartTopUp $start): RedirectResponse
+    public function startTopUp(Request $request, StartTopUp $start, SessionSecurity $security): RedirectResponse
     {
         $request->validate([
             'pack' => ['required', 'integer', 'min:0'],
@@ -58,6 +62,7 @@ final class WalletController
                 TopUpMethod::from($request->string('method')->toString()),
                 $request->header('Idempotency-Key') ?? $request->string('idempotency_key')->toString(),
                 (string) $request->ip(),
+                ! $security->isOnNewDevice($request->session(), self::user($request)),
             );
         } catch (WalletException $e) {
             throw ValidationException::withMessages([$e->field => $e->getMessage()]);

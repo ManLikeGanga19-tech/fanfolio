@@ -217,20 +217,22 @@ it('credits nothing when the amount does not match what the fan chose', function
     Log::shouldHaveReceived('critical')->once();
 });
 
-it('records events for unknown top-ups, and keeps chargebacks for M3 PR 6', function (): void {
+it('records events for unknown top-ups, and a chargeback it cannot place', function (): void {
     Log::spy();
     $topUp = startTopUpAs(0);
     $stranger = (new TopUp)->forceFill(['gateway_ref' => 'fake_co_unknown', 'amount_minor' => 500]);
 
     sendWebhook(GatewayEventType::PaymentSucceeded, $stranger, null, 'evt_unknown_paid');
     sendWebhook(GatewayEventType::PaymentFailed, $stranger, null, 'evt_unknown_failed');
+    // No case reference: nothing can be taken back (ChargebacksTest covers the real thing).
     sendWebhook(GatewayEventType::Chargeback, $topUp, null, 'evt_cb');
 
     expect(GatewayWebhook::query()->where('event_id', 'evt_unknown_paid')->sole()->error)->toBe('No top-up with this gateway reference.')
         ->and(GatewayWebhook::query()->where('event_id', 'evt_unknown_failed')->sole()->processed_at)->not->toBeNull()
-        ->and(GatewayWebhook::query()->where('event_id', 'evt_cb')->sole()->processed_at)->toBeNull()
-        ->and(GatewayWebhook::query()->where('event_id', 'evt_cb')->sole()->error)->toContain('M3 PR 6');
+        ->and(GatewayWebhook::query()->where('event_id', 'evt_cb')->sole()->processed_at)->not->toBeNull()
+        ->and(GatewayWebhook::query()->where('event_id', 'evt_cb')->sole()->error)->toContain('without a case reference');
     Log::shouldHaveReceived('warning')->twice();
+    Log::shouldHaveReceived('critical')->once();
 
     // Applying an unknown or already-processed webhook again is a no-op.
     app(ApplyGatewayEvent::class)->handle('nope');

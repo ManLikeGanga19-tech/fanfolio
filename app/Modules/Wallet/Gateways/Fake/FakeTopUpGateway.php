@@ -6,6 +6,7 @@ namespace App\Modules\Wallet\Gateways\Fake;
 
 use App\Modules\Wallet\Contracts\Data\CheckoutRequest;
 use App\Modules\Wallet\Contracts\Data\CheckoutSession;
+use App\Modules\Wallet\Contracts\Data\DisputeNotice;
 use App\Modules\Wallet\Contracts\Data\GatewayEvent;
 use App\Modules\Wallet\Contracts\Data\GatewayEventType;
 use App\Modules\Wallet\Contracts\TopUpGateway;
@@ -48,7 +49,7 @@ final readonly class FakeTopUpGateway implements FakeDriver, TopUpGateway
      *
      * @return array{payload: string, headers: array<string, string>}
      */
-    public function signedWebhook(GatewayEventType $type, string $gatewayRef, Money $amount, ?string $eventId = null, ?DateTimeImmutable $at = null, ?string $paymentHint = 'Visa ····4242'): array
+    public function signedWebhook(GatewayEventType $type, string $gatewayRef, Money $amount, ?string $eventId = null, ?DateTimeImmutable $at = null, ?string $paymentHint = 'Visa ····4242', ?DisputeNotice $dispute = null): array
     {
         $at ??= new DateTimeImmutable;
         $payload = json_encode([
@@ -59,6 +60,7 @@ final readonly class FakeTopUpGateway implements FakeDriver, TopUpGateway
             'currency' => $amount->currency,
             'occurred_at' => $at->format(DATE_ATOM),
             'payment_hint' => $paymentHint,
+            'dispute' => $dispute instanceof DisputeNotice ? ['case_ref' => $dispute->caseRef] + $dispute->details() : null,
         ], JSON_THROW_ON_ERROR);
 
         return [
@@ -96,7 +98,24 @@ final readonly class FakeTopUpGateway implements FakeDriver, TopUpGateway
 
         $hint = $data['payment_hint'] ?? null;
 
-        return new GatewayEvent($this->name(), $data['id'], $type, $data['ref'], Money::of($data['amount_minor'], $data['currency']), $occurredAt, is_string($hint) ? $hint : null);
+        return new GatewayEvent($this->name(), $data['id'], $type, $data['ref'], Money::of($data['amount_minor'], $data['currency']), $occurredAt, is_string($hint) ? $hint : null, $this->dispute($data['dispute'] ?? null));
+    }
+
+    /** The dispute block of a chargeback, won or lost event; null when absent or malformed. */
+    private function dispute(mixed $data): ?DisputeNotice
+    {
+        if (! is_array($data) || ! is_string($data['case_ref'] ?? null) || $data['case_ref'] === '') {
+            return null;
+        }
+
+        $respondBy = is_string($data['respond_by'] ?? null) ? DateTimeImmutable::createFromFormat(DATE_ATOM, $data['respond_by']) : false;
+
+        return new DisputeNotice(
+            mb_substr($data['case_ref'], 0, 100),
+            is_string($data['reason'] ?? null) ? $data['reason'] : 'other',
+            $respondBy === false ? null : $respondBy,
+            is_string($data['three_ds'] ?? null) ? $data['three_ds'] : null,
+        );
     }
 
     private function signer(): HmacSignature

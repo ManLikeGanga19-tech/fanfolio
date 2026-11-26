@@ -1,4 +1,4 @@
-{{-- Canvas board AdminPayouts. The chargeback check arrives with disputes (M3 PR 6); see PayoutReviews. --}}
+{{-- Canvas board AdminPayouts; see PayoutReviews. --}}
 @php
     use App\Modules\Wallet\Enums\PayoutState;
     use App\Modules\Wallet\Filament\Admin\PayoutReviews;

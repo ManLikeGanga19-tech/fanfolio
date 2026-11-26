@@ -12,6 +12,7 @@ use App\Modules\Wallet\Console\CheckPayouts;
 use App\Modules\Wallet\Console\CreateLedgerPartitions;
 use App\Modules\Wallet\Console\ReleaseEarnings;
 use App\Modules\Wallet\Console\VerifyLedger;
+use App\Modules\Wallet\Contracts\DisputeGateway;
 use App\Modules\Wallet\Contracts\FxRateProvider;
 use App\Modules\Wallet\Contracts\Ledger;
 use App\Modules\Wallet\Contracts\MoneyStats;
@@ -20,6 +21,7 @@ use App\Modules\Wallet\Contracts\Purchases;
 use App\Modules\Wallet\Contracts\TopUpGateway;
 use App\Modules\Wallet\Contracts\WalletDisplay;
 use App\Modules\Wallet\Gateways\ConfiguredPayoutGateways;
+use App\Modules\Wallet\Gateways\Fake\FakeDisputeGateway;
 use App\Modules\Wallet\Gateways\Fake\FakeFxRateProvider;
 use App\Modules\Wallet\Gateways\Fake\FakePayoutGateway;
 use App\Modules\Wallet\Gateways\Fake\FakeTopUpGateway;
@@ -44,6 +46,7 @@ final class WalletServiceProvider extends ModuleServiceProvider
         'wallet_freezes',
         'wallet_preferences',
         'earning_holds',
+        'disputes',
     ];
 
     public static function moduleName(): string
@@ -55,6 +58,7 @@ final class WalletServiceProvider extends ModuleServiceProvider
     {
         $this->bindDriver(TopUpGateway::class, 'topup', ['fake' => FakeTopUpGateway::class]);
         $this->bindDriver(FxRateProvider::class, 'fx', ['fake' => FakeFxRateProvider::class]);
+        $this->bindDriver(DisputeGateway::class, 'disputes', ['fake' => FakeDisputeGateway::class]);
         $this->app->singleton(PayoutGateways::class, static fn (Application $app): PayoutGateways => new ConfiguredPayoutGateways($app, [
             'fake' => FakePayoutGateway::class,
         ]));

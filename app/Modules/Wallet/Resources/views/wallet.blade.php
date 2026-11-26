@@ -18,6 +18,10 @@
             @endif
         </section>
 
+        @if ($frozen)
+            <p role="status" class="rounded-md border border-warning bg-surface p-4 text-sm">Your wallet is on hold while we look into a payment dispute. You cannot top up or spend credits until it is resolved. Contact support if you have questions.</p>
+        @else
+
         <form method="POST" action="{{ route('wallet.topups.store') }}" class="flex flex-col gap-5">
             @csrf
             <input type="hidden" name="idempotency_key" value="{{ $idempotencyKey }}">
@@ -56,6 +60,7 @@
             <x-ui.button type="submit" variant="brand">Continue to secure checkout</x-ui.button>
             <p class="text-small text-ink-muted">Credits never expire. Card payments go through our payment partner; {{ config('fanfolio.brand.name') }} never sees your card.</p>
         </form>
+        @endif
 
         <a href="{{ route('account.purchases') }}" class="text-small text-ink-muted underline underline-offset-4 hover:text-ink">Purchases &amp; receipts</a>
     </div>

@@ -8,13 +8,17 @@ use App\Modules\Wallet\Console\VerifyLedger;
 use App\Modules\Wallet\Contracts\Data\LedgerCheck;
 use App\Modules\Wallet\Contracts\MoneyStats;
 use App\Modules\Wallet\Enums\PayoutState;
+use App\Modules\Wallet\Enums\TopUpStatus;
+use App\Modules\Wallet\Models\Dispute;
 use App\Modules\Wallet\Models\Payout;
+use App\Modules\Wallet\Models\TopUp;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 use function count;
+use function intdiv;
 use function is_array;
 use function is_string;
 
@@ -51,6 +55,21 @@ final readonly class MoneyStatsService implements MoneyStats
         $waiting = Payout::query()->whereIn('status', [PayoutState::Review, PayoutState::Held]);
 
         return ['count' => (clone $waiting)->count(), 'amount' => (int) $waiting->sum('amount_minor')];
+    }
+
+    public function chargebackRate(CarbonImmutable $since): array
+    {
+        $chargebacks = Dispute::query()->where('received_at', '>=', $since->utc())->count();
+        $topUps = TopUp::query()
+            ->whereIn('status', [TopUpStatus::Paid, TopUpStatus::ChargedBack])
+            ->where('paid_at', '>=', $since->utc())
+            ->count();
+
+        return [
+            'bps' => $topUps === 0 ? 0 : intdiv($chargebacks * 10_000, $topUps),
+            'chargebacks' => $chargebacks,
+            'topups' => $topUps,
+        ];
     }
 
     public function lastLedgerCheck(): ?LedgerCheck

@@ -21,5 +21,7 @@ final readonly class GatewayEvent
         public DateTimeImmutable $occurredAt,
         /** How the fan paid, as the gateway shows it ("Visa ····4417", "USDT"). Never a card number. */
         public ?string $paymentHint = null,
+        /** Chargeback, dispute won and dispute lost events: the case. */
+        public ?DisputeNotice $dispute = null,
     ) {}
 }

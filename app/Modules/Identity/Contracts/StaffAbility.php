@@ -59,6 +59,8 @@ enum StaffAbility: string
     case RefundPurchase = 'admin.wallet.refund';
     /** Canvas AdminPayouts: approve, hold or decline a withdrawal waiting for review. */
     case ReviewPayouts = 'admin.payouts.review';
+    /** Canvas AdminDisputes: send evidence, accept a chargeback, lift a frozen wallet (D-20). */
+    case HandleDisputes = 'admin.disputes.handle';
 
     /** Abilities moderators do not have. */
     public function adminOnly(): bool
@@ -80,7 +82,8 @@ enum StaffAbility: string
             self::ViewSettings,
             self::ProposeSettings,
             self::RefundPurchase,
-            self::ReviewPayouts => true,
+            self::ReviewPayouts,
+            self::HandleDisputes => true,
             default => false,
         };
     }

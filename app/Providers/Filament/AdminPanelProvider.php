@@ -12,6 +12,7 @@ use App\Modules\Identity\Http\Middleware\EnsureAdminAccess;
 use App\Modules\Identity\Http\Middleware\EnsureDeviceActive;
 use App\Modules\TrustSafety\Filament\Admin\ModerationBoard;
 use App\Modules\TrustSafety\Filament\Admin\UsersBoard;
+use App\Modules\Wallet\Filament\Admin\Disputes;
 use App\Modules\Wallet\Filament\Admin\PayoutReviews;
 use Filament\Enums\ThemeMode;
 use Filament\FontProviders\LocalFontProvider;
@@ -69,6 +70,7 @@ final class AdminPanelProvider extends PanelProvider
                 CreatorsDirectory::class,
                 ModerationBoard::class,
                 PayoutReviews::class,
+                Disputes::class,
                 UsersBoard::class,
             ])
             ->middleware([

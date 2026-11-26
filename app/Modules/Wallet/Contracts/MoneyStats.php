@@ -30,6 +30,14 @@ interface MoneyStats
      */
     public function payoutsWaiting(): array;
 
+    /**
+     * Chargebacks received against top-ups paid since a moment, in basis points of the
+     * paid top-ups (spec alert: warn above 0.75% a month; processors act near 1%).
+     *
+     * @return array{bps: int, chargebacks: int, topups: int}
+     */
+    public function chargebackRate(CarbonImmutable $since): array;
+
     /** The last nightly ledger check, or null before the first one has run. */
     public function lastLedgerCheck(): ?LedgerCheck;
 }

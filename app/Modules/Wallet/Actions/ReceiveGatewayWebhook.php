@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Modules\Wallet\Actions;
 
+use App\Modules\Wallet\Contracts\Data\DisputeNotice;
 use App\Modules\Wallet\Contracts\TopUpGateway;
 use App\Modules\Wallet\Jobs\ProcessGatewayWebhook;
 use App\Support\Webhooks\InvalidWebhookSignature;
@@ -44,6 +45,8 @@ final readonly class ReceiveGatewayWebhook
             'amount_minor' => $event->amount->amountMinor,
             'currency' => $event->amount->currency,
             'payment_hint' => $event->paymentHint === null ? null : mb_substr($event->paymentHint, 0, 40),
+            'case_ref' => $event->dispute?->caseRef,
+            'details' => $event->dispute instanceof DisputeNotice ? json_encode($event->dispute->details(), JSON_THROW_ON_ERROR) : null,
             // Read back through GatewayWebhook's "encrypted" cast.
             'payload' => Crypt::encryptString($payload),
             'received_at' => now(),
