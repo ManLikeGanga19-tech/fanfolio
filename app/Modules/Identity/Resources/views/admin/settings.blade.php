@@ -22,7 +22,7 @@
             <div role="status" wire:key="pending-{{ $proposal->id }}" class="flex flex-wrap items-center gap-3 rounded-lg border border-warning bg-surface px-4 py-3.5">
                 <span class="inline-flex h-6 items-center rounded-pill bg-surface-raised px-2.5 text-label text-warning">Pending</span>
                 <span class="min-w-60 flex-1 text-sm">
-                    {{ '@'.($names[$proposal->proposed_by] ?? 'unknown') }} proposed: {{ mb_strtolower($proposal->key->label()) }} {{ SettingValues::describe($proposal->key, $proposal->current_value) }} → {{ SettingValues::describe($proposal->key, $proposal->proposed_value) }}.
+                    {{ '@'.($names[$proposal->proposed_by] ?? 'unknown') }} proposed: {{ lcfirst($proposal->key->label()) }} {{ SettingValues::describe($proposal->key, $proposal->current_value) }} → {{ SettingValues::describe($proposal->key, $proposal->proposed_value) }}.
                     {{ $proposal->proposed_by === $me ? 'Waiting for another admin.' : 'Waiting for your approval.' }}
                     <span class="block text-small text-ink-muted">Why: {{ $proposal->reason }} · {{ $proposal->proposed_at->setTimezone($zone)->format('j M, H:i') }}</span>
                 </span>

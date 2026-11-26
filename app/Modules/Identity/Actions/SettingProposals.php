@@ -41,7 +41,7 @@ final readonly class SettingProposals
             }
 
             if (SettingProposal::query()->where('key', $setting)->where('status', SettingProposal::PENDING)->lockForUpdate()->exists()) {
-                throw new IdentityException('A change to '.mb_strtolower($setting->label()).' is already waiting for approval.', $setting->value);
+                throw new IdentityException('A change to '.lcfirst($setting->label()).' is already waiting for approval.', $setting->value);
             }
 
             $proposal = new SettingProposal;

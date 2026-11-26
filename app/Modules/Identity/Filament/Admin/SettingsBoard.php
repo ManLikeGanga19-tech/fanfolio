@@ -209,6 +209,7 @@ final class SettingsBoard extends Page
             ->size('sm')
             ->requiresConfirmation()
             ->modalHeading('Withdraw your proposal?')
+            ->modalDescription('Nothing changes. You can propose it again later.')
             ->modalSubmitActionLabel('Withdraw')
             ->action(function (array $arguments): void {
                 $this->decide(fn (SettingProposals $p, string $staff, string $id): SettingProposal => $p->withdraw($id, $staff), $arguments, 'Withdrawn.');
